@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="2026 九合一選舉候選人查詢。依縣市、選舉種類與選區查看登記資料及 2022 上屆結果。">
+  <title>2026 九合一選舉｜候選人查詢</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css?v=blue-green-2">
+  <link rel="stylesheet" href="./party-history.css?v=public-selected-1">
+  <link rel="stylesheet" href="./county-map.css?v=map-levels-4">
+  <link rel="stylesheet" href="./village-map.css?v=council-coverage-1">
+  <script src="./party-history.js?v=public-selected-1" defer></script>
+  <script src="./county-map.js?v=map-levels-4" defer></script>
+  <script src="./village-basemap.js?v=basemap-1" defer></script>
+  <script src="./village-map.js?v=council-coverage-1" defer></script>
+  <script src="./app.js?v=public-selected-1" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至主要內容</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand" aria-label="2026 九合一選舉候選人查詢">
+        <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div><strong>台灣選舉資料室</strong><small>2026 九合一選舉候選人查詢</small></div>
+      </div>
+      <div class="header-right"><span class="date-dot"></span> 2026.11.28 投票 <span class="header-divider"></span> 資料階段：候選人登記</div>
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    <section class="intro" aria-labelledby="page-title">
+      <div class="eyebrow"><span class="eyebrow-line"></span> 2026 LOCAL ELECTIONS</div>
+      <h1 id="page-title">從你的選區，認識每一位候選人<span class="title-dot">.</span></h1>
+      <p>選擇縣市長、議員或里長，再從地圖點選縣市，查看對應選區的參選名單與上屆結果。</p>
+      <nav class="quick-nav" aria-label="查詢步驟捷徑"><a href="#type-list">選舉種類</a><a id="county-map-jump" href="#county-map" hidden>用地圖選縣市 ↓</a><a id="county-text-jump" href="#county-list">選縣市</a><a href="#workspace">選區與候選人 ↓</a></nav>
+    </section>
+
+    <nav class="breadcrumb" id="breadcrumb" aria-label="目前位置"></nav>
+
+    <section class="selection" aria-labelledby="select-heading">
+      <div class="section-title-row"><div><span class="section-kicker">STEP 01</span><h2 id="select-heading" tabindex="-1">選擇選舉種類</h2></div><span id="coverage" class="coverage-pill">載入中</span></div>
+      <div class="type-label">選舉種類 <span id="type-count"></span></div>
+      <div id="type-list" class="type-list" role="group" aria-label="選舉種類" tabindex="-1"></div>
+      <details id="county-text-picker" class="county-text-picker" open>
+        <summary>使用縣市名稱選擇</summary>
+        <div class="county-row">
+        <div class="county-row-head"><strong id="county-list-heading">縣市</strong><p id="county-hint">正在讀取可查詢縣市…</p></div>
+        <div id="county-list" class="county-list" role="group" aria-labelledby="county-list-heading" tabindex="-1"></div>
+        </div>
+      </details>
+    </section>
+
+    <section id="workspace" class="workspace" aria-label="候選人查詢" tabindex="-1">
+      <div id="region-controls" class="region-controls">
+      <section id="county-map" class="county-map" aria-labelledby="county-map-heading" hidden>
+      <div class="county-map-header"><div><span class="section-kicker">STEP 02 · 選擇選區</span><h2 id="county-map-heading" tabindex="-1">在地圖上選擇縣市</h2></div><span class="county-map-badge">22 縣市</span></div>
+      <div class="map-election-tabs" role="group" aria-label="地圖選舉職務">
+        <button type="button" data-map-family="mayor" aria-pressed="true">縣市長</button>
+        <button type="button" data-map-family="council" aria-pressed="false">議員</button>
+        <button type="button" data-map-family="village" aria-pressed="false">里長</button>
+      </div>
+      <p id="map-election-hint" class="map-election-hint">點選縣市，查看整個縣市的首長候選人。</p>
+      <nav class="region-navigation" aria-label="選區層級導覽">
+        <button type="button" data-region-back>回到上層</button>
+        <button type="button" data-taiwan-return>回到台灣選擇縣市</button>
+      </nav>
+      <div class="county-map-layout">
+        <div class="county-map-details">
+          <span class="section-kicker">已選擇</span>
+          <h3 class="county-map-name"></h3>
+          <p class="county-map-kind"></p>
+          <div class="county-map-stats" aria-live="polite"></div>
+          <p class="county-map-status sr-only" role="status"></p>
+        </div>
+        <div class="county-map-figure">
+          <div class="county-map-canvas" aria-busy="true"><p class="county-map-loading">正在載入台灣地圖…</p></div>
+          <div class="county-map-legend"><span><i></i>縣市界</span><span><i class="selected"></i>目前選取</span><span>離島另框放大，位置與比例經調整</span></div>
+        </div>
+      </div>
+      <details class="county-map-source"><summary>圖資來源</summary><p>縣市界：<a href="https://data.gov.tw/dataset/7442" target="_blank" rel="noopener noreferrer">內政部國土測繪中心 ↗</a><br>圖資版本 2020-08-20 · <a href="https://data.gov.tw/license" target="_blank" rel="noopener noreferrer">政府資料開放授權第 1 版</a><br>離島位置與比例經調整，遠方島嶼未呈現。</p></details>
+      </section>
+      </div>
+      <div class="query-content">
+      <section id="local-map-section" class="local-map-section" aria-label="行政區與村里選擇地圖" tabindex="-1" hidden>
+        <nav class="region-navigation" aria-label="細部地圖層級導覽">
+          <button type="button" data-region-back>回到上層</button>
+          <button type="button" data-taiwan-return>回到台灣選擇縣市</button>
+        </nav>
+        <div id="village-map"></div>
+        <p id="local-map-routing-status" class="local-map-routing-status" role="status"></p>
+        <div id="map-council-options" class="map-council-options" hidden></div>
+      </section>
+      <section id="region-browser" class="region-browser" aria-labelledby="region-level-heading" hidden>
+        <span class="section-kicker">選擇查詢區域</span>
+        <h2 id="region-level-heading" tabindex="-1"></h2>
+        <p id="region-summary"></p>
+        <nav class="region-navigation" aria-label="清單層級導覽">
+          <button type="button" data-region-back>回到上層</button>
+          <button type="button" data-taiwan-return>回到台灣選擇縣市</button>
+        </nav>
+        <details id="region-list-fallback" class="region-list-fallback"><summary>也可以從清單選擇</summary>
+        <div id="district-browser" hidden><div id="district-list" class="district-cards" role="group" aria-label="行政區"></div></div>
+      <aside class="zone-panel" aria-labelledby="zone-heading">
+        <div class="panel-heading"><div><span class="section-kicker">STEP 02</span><h2 id="zone-heading" tabindex="-1">選擇選區</h2></div><span id="zone-count" class="panel-count"></span></div>
+        <div id="district-control" class="district-control" hidden>
+          <label for="district-select">行政區</label>
+          <div class="select-wrap"><select id="district-select"></select></div>
+        </div>
+        <div id="zone-search-wrap" class="zone-search-wrap" hidden>
+          <label for="zone-search">搜尋里名或候選人</label>
+          <input id="zone-search" type="search" placeholder="例如：留侯里、姓名" autocomplete="off">
+          <button id="clear-zone-search" type="button" class="clear-filter" hidden>清除搜尋</button>
+          <p id="zone-search-scope" class="search-scope"></p>
+        </div>
+        <div id="zone-list" class="zone-list" role="group" aria-label="選區或里別"></div>
+        <p id="zone-hint" class="zone-hint"></p>
+      </aside>
+        </details>
+      </section>
+
+      <div class="results-panel">
+        <div id="empty-state" class="empty-state" hidden></div>
+        <div id="result-content">
+          <div class="result-topline"><span class="section-kicker">STEP 03 · CANDIDATES</span><div class="result-actions"><span id="data-stage" class="status-tag">2026 登記資料</span><a id="result-source" href="#" target="_blank" rel="noopener noreferrer">中選會登記 PDF ↗</a></div></div>
+          <div class="result-heading"><div class="result-heading-main"><p id="result-parent" class="result-parent"></p><div class="result-title-row"><h2 id="result-title"></h2><span id="result-geography" class="result-geography" hidden></span></div><p id="result-description" class="result-description"></p></div><div id="seat-card" class="seat-card"><small>應選名額</small><strong id="seat-value"></strong><span>席</span></div></div>
+          <div id="zone-event" class="zone-event" hidden></div>
+          <div id="electorate-reference" class="electorate-reference" aria-label="選區選舉人數參考"></div>
+          <div class="list-heading"><h3 id="candidate-heading" tabindex="-1">2026 登記資料 <span id="candidate-zone-label"></span><span id="filtered-count"></span></h3><label class="filter-control">政黨 <select id="party-filter" aria-label="篩選政黨"><option value="">全部政黨</option></select></label></div>
+          <div class="candidate-table-scroll"><table id="candidate-table" class="candidate-table sortable-table" aria-labelledby="candidate-heading"><thead id="candidate-columns"></thead><tbody id="candidate-list" aria-live="polite"></tbody></table></div>
+          <span id="candidate-sort-status" class="sr-only" aria-live="polite"></span>
+          <nav class="result-navigation" aria-label="候選人名單查詢切換"><a data-zone-return href="#zone-heading">返回選區 ↑</a><a data-map-return href="#county-map-heading" hidden>返回地圖 ↑</a><a href="#select-heading">更換縣市／種類 ↑</a><a id="party-history-jump" href="#party-history" hidden>歷年政黨比例 ↓</a></nav>
+          <section class="history-block" aria-labelledby="history-heading">
+            <div class="history-heading"><h3 id="history-heading">2022 上屆結果</h3><span>同選區投票結果</span></div>
+            <div id="history-content" class="history-content" aria-live="polite"></div>
+          </section>
+          <nav class="result-navigation" aria-label="上屆結果查詢切換"><a data-zone-return href="#zone-heading">返回選區 ↑</a><a data-map-return href="#county-map-heading" hidden>返回地圖 ↑</a><a href="#select-heading">更換縣市／種類 ↑</a></nav>
+          <section id="party-history" class="party-history" aria-label="縣市歷史政黨得票比例" hidden></section>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <footer class="site-footer"><div><strong>資料說明</strong><p>2026：直接轉換<a href="https://web.cec.gov.tw/central/article/64733" target="_blank" rel="noopener noreferrer">中選會候選人登記名冊 PDF</a>；2022：直接讀取<a href="https://data.cec.gov.tw/?dir=%E9%81%B8%E8%88%89%E8%B3%87%E6%96%99%E5%BA%AB" target="_blank" rel="noopener noreferrer">中選會選舉資料庫</a>的候選人與投票結果 CSV。「追求連任」與「2026 有參選」依同選區姓名紀錄比對；選區變動或姓名資料缺漏可能影響比對。</p></div><span>台灣選舉資料室 · 2026 登記資料版</span></footer>
+    <div class="intro-note footer-notice"><span class="note-icon">i</span><span>目前顯示 2026 候選人<strong>登記資料</strong>，須以後續中選會審定公告為準；本站不提供預測、支持度或推薦。</span></div>
+    <section class="usage-guide" id="usage-guide" aria-labelledby="usage-title">
+      <h2 id="usage-title">操作方法與欄位說明</h2>
+      <p class="table-sort-hint">點選欄位標題排序，再點一次切換順序。得票數／得票率首次由高到低；排序僅整理資料。</p>
+      <p class="reading-note" id="reelection-help" tabindex="-1">「追求連任」依 2022 同類、同選區紀錄顯示：上屆當選＝是，參選但未當選＝再次參選。空白表示沒有可匹配的同區紀錄或缺少可比資料，不表示這個人從未參選。</p>
+      <p class="reading-note">「參選備註」保留同選區的「2026 有參選」；經姓名與完整生日確認的 2024 當選人會標示「2024立委當選」，點擊可查看中選會當選公告。</p>
+      <p class="profile-note">兩年表格姓名旁的 WIKI（中文維基百科）／VOTETW（台灣選舉維基百科）為外部人物介紹，點選另開分頁。沒有連結表示目前沒有已核實的對應介紹，不代表外站一定沒有資料。</p>
+      <p class="reading-note" id="party-history-help" tabindex="-1">政黨選項：國民黨、民進黨固定列出；其他政黨在該縣市已收錄的任一次歷史選舉曾超過 5% 即列入，後來低於 5% 的比例也保留。「占全部有效票」模式可點政黨名稱顯示或隱藏折線及表格欄位，分母包含無政黨推薦等全部候選人有效票；折線只在第一次到最後一次參選之間顯示。切換「只看藍綠（合計100%）」時，固定顯示中國國民黨與民主進步黨，依兩黨原始票數合計重算比例，兩者合計 100%，其他政黨不列入分母。兩黨合計 0 票或資料未知時顯示「—」。切回原模式會恢復原本政黨選擇。2022 上屆候選人表、歷史圖表、提示與歷年表格同步切換，原始票數及當選結果保留。各次總統與縣市長選舉保留年份及種類。<a href="#party-history">返回圖表 ↑</a></p>
+      <p class="reading-note">滑鼠移到折線資料點，圖內立即顯示年份、選舉種類、目前各顯示政黨的票數、比例與分母；手機可點資料點查看。鍵盤移到資料點也可查看，按 Esc 關閉提示。</p>
+      <ol><li>在地圖上方選「縣市長」「議員」或「里長」，再點縣市範圍。縣市長直接看名單；里長依序點行政區地圖、村里地圖，最後查看自己的村里。議員先從縣市地圖選議員選區，放大查看區內村里與名單；區域、平地原住民、山地原住民分開切換，需依選民資格選擇。</li><li>地圖可以拖曳、按加減縮放，也能搜尋行政區或村里名稱放大定位。「底圖＋里界」可對照道路與地名；「顯示全部里名」會在里界內顯示名稱，字也會隨地圖一起縮放。「使用縣市名稱選擇」及「也可以從清單選擇」提供文字入口；議員分區卡列出完整官方範圍、應選席次與登記人數。</li><li>名單旁的政黨選單可篩選，選「全部政黨」即可取消；2022 結果與參選備註不受篩選影響。</li><li>2022 結果自動顯示；手機可在歷史表格內左右滑動。</li><li>「回到上層」依序返回村里地圖、行政區地圖或縣市；「回到台灣選擇縣市」直接回台灣地圖並保留職務。瀏覽器上一頁／下一頁與網址重載也會恢復當時層級。</li></ol>
+      <a class="help-return" href="#candidate-heading">返回候選人名單 ↑</a>
+    </section>
+  </main>
+</body>
+</html>
