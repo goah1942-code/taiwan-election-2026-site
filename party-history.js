@@ -325,6 +325,9 @@
     tooltip.setAttribute('role', 'tooltip');
     tooltip.hidden = true;
     chartFrame.append(tooltip);
+    const chartMessage = element('p', 'ph-all-hidden');
+    chartMessage.hidden = true;
+    chartFrame.append(chartMessage);
     const tooltipEvents = new AbortController();
     let chartSvg = null, chartPoints = [], focusedPoint = null, hoveredPoint = null, tappedPoint = null;
     let tooltipKey = '', tooltipDismissed = false, pointerType = 'mouse', focusFrame = null;
@@ -526,8 +529,15 @@
       chartSvg = chart.svg;
       chartPoints = chart.points;
       chartScroll.replaceChildren(chart.svg);
-      if (!selectedParties.length) chartScroll.append(element('p', 'ph-all-hidden', blueMode ? '未提供兩黨完整資料，無法計算藍綠比例。' : '目前已隱藏所有政黨。點選上方政黨即可顯示。'));
-      else if (selectedMode && !chartPoints.length) chartScroll.append(element('p', 'ph-all-hidden', '所選政黨合計為 0 票或票數資料不完整，目前沒有可計算的資料點。'));
+      chartMessage.hidden = true;
+      chartMessage.textContent = '';
+      if (!selectedParties.length) {
+        chartMessage.textContent = blueMode ? '未提供兩黨完整資料，無法計算藍綠比例。' : '目前已隱藏所有政黨。點選上方政黨即可顯示。';
+        chartMessage.hidden = false;
+      } else if (selectedMode && !chartPoints.length) {
+        chartMessage.textContent = '所選政黨合計為 0 票或票數資料不完整，目前沒有可計算的資料點。';
+        chartMessage.hidden = false;
+      }
       detail.replaceChildren();
       detail.hidden = selectedIndex == null;
       if (selectedIndex != null) {

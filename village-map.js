@@ -118,7 +118,7 @@ window.TaiwanVillageMap = (() => {
     const zoomOut = node('button', null, '−'); zoomOut.type = 'button'; zoomOut.setAttribute('aria-label', '縮小村里地圖');
     const reset = node('button', 'village-map-reset', '完整範圍'); reset.type = 'button';
     toolbar.append(zoomIn, zoomOut, reset);
-    frame.append(canvas, tooltip, toolbar);
+    frame.append(toolbar, canvas, tooltip);
     const baseInfo = node('div', 'village-map-base-info');
     const baseAttribution = node('a', 'village-map-base-attribution', '底圖：內政部國土測繪中心 · 臺灣通用電子地圖');
     baseAttribution.href = 'https://maps.nlsc.gov.tw/S09SOA/pro/Wmts_ajax_main.jsp';
@@ -179,8 +179,10 @@ window.TaiwanVillageMap = (() => {
         button.dataset.councilKind = group.kind; button.setAttribute('aria-pressed', String(group.kind === councilKind));
         button.addEventListener('click', () => {
           if (context.level !== 'county' || councilKind === group.kind) return;
+          const restoreFocus = document.activeElement === button;
           councilKind = group.kind; councilKindsByCounty.set(String(countyId()), councilKind);
           search.value = ''; searchResults.hidden = true; viewKey = contextKey(); renderGeometry();
+          if (restoreFocus && !councilControls.hidden) councilControls.querySelector(`[data-council-kind="${group.kind}"]`)?.focus({preventScroll: true});
         });
         councilControls.append(button);
       }

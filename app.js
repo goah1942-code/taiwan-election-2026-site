@@ -28,7 +28,7 @@ function updateSortHeaders(tableId, sort, statusId) {
   const table = $(tableId);
   for (const button of table.querySelectorAll('[data-sort-key]')) {
     const active = button.dataset.sortKey === sort.key;
-    button.parentElement.setAttribute('aria-sort', active ? (sort.direction === 'asc' ? 'ascending' : 'descending') : 'none');
+    button.closest('th')?.setAttribute('aria-sort', active ? (sort.direction === 'asc' ? 'ascending' : 'descending') : 'none');
     button.querySelector('.sort-indicator').textContent = active ? (sort.direction === 'asc' ? '↑' : '↓') : '↕';
     button.setAttribute('aria-label', `${button.dataset.label}，點選排序${active ? '，再點一次切換順序' : ''}`);
   }
@@ -45,6 +45,25 @@ function attachTableSorting(tableId, kind) {
       (['votes', 'voteSharePercent', 'elected', 'registration', 'reelection'].includes(key) ? 'desc' : 'asc')};
     if (kind === 'candidate') renderCandidates();
     else renderHistoryRows();
+  });
+}
+function keepHistorySortFocusVisible(table) {
+  table.addEventListener('focusin', (event) => {
+    const button = event.target.closest('button[data-sort-key]');
+    if (!button || !table.contains(button) || button.closest('th').cellIndex < 2) return;
+    requestAnimationFrame(() => {
+      if (!button.isConnected || document.activeElement !== button) return;
+      const scroll = table.closest('.history-table-scroll');
+      const nameHeading = table.querySelector('thead th:nth-child(2)');
+      if (!scroll || !nameHeading || getComputedStyle(nameHeading).position !== 'sticky' || scroll.scrollWidth <= scroll.clientWidth) return;
+      const target = button.getBoundingClientRect();
+      const left = nameHeading.getBoundingClientRect().right;
+      const right = scroll.getBoundingClientRect().left + scroll.clientLeft + scroll.clientWidth;
+      const gap = Math.min(4, Math.max(0, (right - left - target.width) / 2));
+      const delta = target.left < left + gap ? target.left - left - gap :
+        target.right > right - gap ? target.right - right + gap : 0;
+      scroll.scrollLeft = Math.max(0, Math.min(scroll.scrollWidth - scroll.clientWidth, scroll.scrollLeft + delta));
+    });
   });
 }
 function reelectionStatuses(currentCandidates, previousCandidates) {
@@ -89,6 +108,7 @@ function profileLinksHtml(candidate) {
 function updateUrl(commit = false) {
   if (!commit) return;
   const query = new URLSearchParams();
+  if (new URLSearchParams(location.search).get('tab') === 'voting') query.set('tab', 'voting');
   if (state.county) query.set('county', state.county.id);
   if (state.type || state.selectionTypeId) query.set('type', state.type?.id || state.selectionTypeId);
   if (state.district) query.set('district', state.district.id);
@@ -147,6 +167,23 @@ function renderTypes() {
   const types = state.countyData?.types || [];
   $('type-count').textContent = types.length ? `${types.length} 種可查詢` : '請先從地圖選縣市';
   $('type-list').innerHTML = '';
+  if (!types.length) {
+    $('type-count').textContent = '先選種類，再從地圖或名稱選縣市';
+    const selectedFamily = mapElectionFamily(state.type?.id || state.selectionTypeId) || 'mayor';
+    for (const [family, label, hint] of [
+      ['mayor', '縣市長', '選縣市查看首長候選人'],
+      ['council', '議員', '選縣市與議員選區'],
+      ['village', '村里長', '選縣市、行政區與村里'],
+    ]) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `type-button${selectedFamily === family ? ' active' : ''}`;
+      button.setAttribute('aria-pressed', String(selectedFamily === family));
+      button.innerHTML = `<strong>${label}</strong><small>${hint}</small>`;
+      button.addEventListener('click', () => { state.navigationMode = 'user'; showTaiwan(family, true); });
+      $('type-list').append(button);
+    }
+  }
   for (const type of types) {
     const button = document.createElement('button');
     button.type = 'button';
@@ -310,6 +347,7 @@ function focusLevel(sequence, id) {
   const previousFocus = document.activeElement;
   requestAnimationFrame(() => {
     if (sequence !== state.sequence) return;
+    if ($('candidate-panel')?.hidden) return;
     if (document.activeElement !== previousFocus && document.activeElement !== document.body) return;
     const target = id === 'region-level-heading' && !$('local-map-section').hidden ? $('local-map-section') : $(id);
     target.focus({preventScroll: true});
@@ -602,6 +640,8 @@ function renderResult() {
   $('seat-card').title = zone.seats == null ? '登記資料未提供此選區應選名額' : '';
   $('result-source').href = zone.registrationSourceUrl || state.type.sourceUrl;
   $('result-source').textContent = zone.registrationRound ? `第${zone.registrationRound}次登記 PDF ↗` : '中選會登記 PDF ↗';
+  const provenance = $('registration-provenance');
+  if (provenance) provenance.textContent = window.ElectionRegistrationSource?.describe(zone.registrationSource || state.type.registrationSource, zone.registrationSourceUrl || state.type.sourceUrl) || '名冊製表日與官方網站更新日：本次未取得。本站非即時同步，請核對官方名冊。';
   const parties = [...new Set(state.zoneData.candidates.map((candidate) => candidate.party))].sort((a,b) => a.localeCompare(b,'zh-Hant'));
   $('party-filter').innerHTML = '<option value="">全部政黨</option>' + parties.map((party) => `<option value="${escapeHtml(party)}">${escapeHtml(party === '無' ? '無政黨推薦（原資料：無）' : party)}</option>`).join('');
   renderCandidates();
@@ -635,7 +675,7 @@ async function loadPartyHistory(sequence, historyReady) {
       // Restore the fragment only after both asynchronous sections settle.
       await historyReady;
       requestAnimationFrame(() => {
-        if (sequence !== state.sequence || location.hash !== '#party-history') return;
+        if (sequence !== state.sequence || location.hash !== '#party-history' || $('candidate-panel')?.hidden) return;
         container.focus({preventScroll: true});
         container.scrollIntoView({block: 'start'});
       });
@@ -665,34 +705,7 @@ function renderCandidates() {
   updateSortHeaders('candidate-table', sort, 'candidate-sort-status');
 }
 function matchingRegistrationCandidates(currentCandidates, previousCandidates) {
-  const names = (candidates) => candidates.filter((candidate) => candidate.name && candidate.name !== '姓名未載').map((candidate) => {
-    const exact = candidate.name.trim();
-    const normalized = exact.normalize('NFKC');
-    return {candidate, exact, key: normalized.toLowerCase().replace(/[^\p{L}\p{N}]/gu, ''),
-      han: normalized.replace(/[^\u4e00-\u9fff]/g, '')};
-  });
-  const index = (entries, field) => {
-    const groups = new Map();
-    for (const entry of entries) {
-      const key = entry[field];
-      if (key) groups.set(key, [...(groups.get(key) || []), entry]);
-    }
-    return groups;
-  };
-  const current = names(currentCandidates);
-  const previous = names(previousCandidates);
-  const currentIndexes = Object.fromEntries(['exact', 'key', 'han'].map((field) => [field, index(current, field)]));
-  const previousIndexes = Object.fromEntries(['exact', 'key', 'han'].map((field) => [field, index(previous, field)]));
-  const matches = new Map();
-  for (const entry of previous) {
-    const unique = (field) => currentIndexes[field].get(entry[field])?.length === 1 && previousIndexes[field].get(entry[field])?.length === 1;
-    // Keep comparisons within the selected zone and follow the build script's unique-name rule.
-    if (unique('exact')) matches.set(entry.candidate, currentIndexes.exact.get(entry.exact)[0].candidate);
-    else if (unique('key')) matches.set(entry.candidate, currentIndexes.key.get(entry.key)[0].candidate);
-    else if (entry.han.length >= 2 && unique('han') &&
-      (entry.key === entry.han || currentIndexes.han.get(entry.han)[0].key === entry.han)) matches.set(entry.candidate, currentIndexes.han.get(entry.han)[0].candidate);
-  }
-  return matches;
+  return window.ElectionCandidateMatching.match(currentCandidates, previousCandidates);
 }
 function currentRegistrationMatches(currentCandidates, previousCandidates) {
   return new Set(matchingRegistrationCandidates(currentCandidates, previousCandidates).keys());
@@ -838,6 +851,7 @@ async function loadHistory(sequence) {
       button.addEventListener('click', () => setPartyShareMode(button.dataset.historyShareMode));
     }
     attachTableSorting('history-table', 'history');
+    keepHistorySortFocusVisible($('history-table'));
     renderHistoryRows();
   } catch (error) {
     if (sequence !== state.sequence) return;
@@ -877,7 +891,12 @@ async function init() {
     link.addEventListener('click', () => { $('county-text-picker').open = true; });
   }
   addEventListener('popstate', async () => {
-    if (!state.manifest || (!state.loading && `${location.pathname}${location.search}` === state.routeUrl)) return;
+    const candidateRoute = (value) => {
+      const url = new URL(value, location.href);
+      url.searchParams.delete('tab');
+      return `${url.pathname}?${url.searchParams}`;
+    };
+    if (!state.manifest || (!state.loading && state.routeUrl && candidateRoute(location.href) === candidateRoute(state.routeUrl))) return;
     state.navigationMode = 'restore';
     await restoreRoute();
   });
