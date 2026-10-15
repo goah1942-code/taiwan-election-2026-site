@@ -261,7 +261,7 @@ window.TaiwanVillageMap = (() => {
     }
     function defaultInspection() {
       const chosen = visible.find(selected);
-      inspection.textContent = councilMode ? '點選議員選區範圍，查看候選人並放大該選區。' : councilResult ? `目前顯示${activeCouncilZone.name}範圍內的 ${visible.length} 個村里${chosen ? ` · 已標示${featureLabel(chosen)}` : ''}。` : fallbackResult ? `候選人名單保留；${fallbackMemberView ? `顯示 ${visible.length} 個已確認村里位置` : '目前為全縣市概略，不能推定本選區範圍'}。` : districtMode ? '點選鄉鎮市區範圍，進入該區的村里地圖。' : chosen && family() === 'village' ? `已選取 ${chosen.districtName}${chosen.name}` : `點選村里範圍，${family() === 'council' ? '查看該村里所屬區域議員選區' : '查看村里長候選人'}。`;
+      inspection.textContent = councilMode ? '點選議員選區範圍，直接查看該選區候選人。' : councilResult ? `目前顯示${activeCouncilZone.name}範圍內的 ${visible.length} 個村里${chosen ? ` · 已標示${featureLabel(chosen)}` : ''}。` : fallbackResult ? `候選人名單保留；${fallbackMemberView ? `顯示 ${visible.length} 個已確認村里位置` : '目前為全縣市概略，不能推定本選區範圍'}。` : districtMode ? '點選鄉鎮市區範圍，進入該區的村里地圖。' : chosen && family() === 'village' ? `已選取 ${chosen.districtName}${chosen.name}` : `點選村里範圍，${family() === 'council' ? '查看該村里所屬區域議員選區' : '查看村里長候選人'}。`;
     }
     function positionTooltip() {
       if (!active || !svg || !svg.getScreenCTM()) { tooltip.hidden = true; return; }
@@ -476,10 +476,10 @@ window.TaiwanVillageMap = (() => {
       svg = svgNode('svg', {viewBox: geometry.viewBox, role: 'group', 'aria-labelledby': `${instanceId}-svg-title ${instanceId}-svg-description`, preserveAspectRatio: 'xMidYMid meet'});
       const mapUnit = councilMode ? '議員選區' : districtMode ? '行政區' : '村里';
       svg.append(svgNode('title', {id: `${instanceId}-svg-title`}, `${geometry.countyName}${councilResult ? activeCouncilZone.name : districtView ? visible[0].districtName : ''}${mapUnit}選擇地圖`));
-      svg.append(svgNode('desc', {id: `${instanceId}-svg-description`}, councilMode ? '每個範圍是目前種類的一個議員選區。點選範圍查看候選人並放大選區村里。Tab 移至選區，Enter 或空白鍵選擇。地理位置不判定選民資格。' : districtMode ? '每個範圍是一個鄉鎮市區。點選範圍可進入村里地圖。Tab 移至行政區，Enter 或空白鍵選擇。可搜尋名稱放大定位，或用加減按鈕縮放、拖曳移動。' : '每個範圍是一個村里。點選範圍可查詢選舉資料。Tab 移至村里，Enter 或空白鍵選擇。可搜尋村里名稱放大定位，或用加減按鈕縮放、拖曳移動。'));
+      svg.append(svgNode('desc', {id: `${instanceId}-svg-description`}, councilMode ? '每個範圍是目前種類的一個議員選區。點選範圍直接查看該選區候選人。Tab 移至選區，Enter 或空白鍵選擇。地理位置不判定選民資格。' : districtMode ? '每個範圍是一個鄉鎮市區。點選範圍可進入村里地圖。Tab 移至行政區，Enter 或空白鍵選擇。可搜尋名稱放大定位，或用加減按鈕縮放、拖曳移動。' : '每個範圍是一個村里。點選範圍可查詢選舉資料。Tab 移至村里，Enter 或空白鍵選擇。可搜尋村里名稱放大定位，或用加減按鈕縮放、拖曳移動。'));
       const shapes = svgNode('g', {class: 'village-map-shapes'});
       for (const feature of visible) {
-        const action = councilMode ? '查看議員候選人並放大選區' : districtMode ? '進入村里地圖' : councilResult ? `標示在${activeCouncilZone.name}內的位置` : fallbackResult ? '核對位置，候選人名單保留' : villageAction(feature);
+        const action = councilMode ? '查看該選區議員候選人' : districtMode ? '進入村里地圖' : councilResult ? `標示在${activeCouncilZone.name}內的位置` : fallbackResult ? '核對位置，候選人名單保留' : villageAction(feature);
         const group = svgNode('g', {class: `village-map-village${councilMode ? ' village-map-council-zone' : ''}`, role: 'button', tabindex: 0, [councilMode ? 'data-council-zone-id' : districtMode ? 'data-district-id' : 'data-village-id']: featureKey(feature), 'data-zone-id': feature.zoneId || '', 'aria-label': `${featureLabel(feature)}，${action}`, 'aria-pressed': String(selected(feature))});
         group.classList.toggle('is-selected', selected(feature));
         group.append(svgNode('path', {d: feature.path, 'fill-rule': geometry.fillRule || 'evenodd', 'vector-effect': 'non-scaling-stroke'}));
@@ -562,7 +562,7 @@ window.TaiwanVillageMap = (() => {
       if (missingVillages().length) count.textContent = `地圖顯示 ${visible.length.toLocaleString('zh-TW')} 個村里`;
       renderCoverageNotice();
       title.textContent = councilMode ? `${geometry.countyName} · ${KIND_LABELS[councilKind]}選區地圖` : councilResult ? `${geometry.countyName} · ${activeCouncilZone.name}村里地圖` : fallbackResult ? `${geometry.countyName} · ${fallbackMemberView ? '已確認村里位置' : '村里概略圖'}` : `${geometry.countyName}${districtView ? ` · ${visible[0].districtName}` : ''}${districtMode ? '行政區地圖' : '村里地圖'}`;
-      description.textContent = councilMode ? '直接點選選區範圍，查看候選人並放大該選區。' : councilResult ? `${activeCouncilZone.coverage || activeCouncilZone.name}；點村里可標示其位置。` : fallbackResult ? fallbackMemberView ? '選區合併圖形未載入；只呈現已確認能對應本選區的村里位置，候選人名單保留。' : '全縣市概略地圖，不能由此推定目前選區範圍；候選人名單保留。' : districtMode ? '直接點選鄉鎮市區，進入該區的完整村里地圖。' : `直接點選村里範圍，${family() === 'council' ? '進入所屬區域議員選區' : '查看村里長候選人'}。`;
+      description.textContent = councilMode ? '點選選區範圍，直接查看該選區候選人。' : councilResult ? `${activeCouncilZone.coverage || activeCouncilZone.name}；點村里可標示其位置。` : fallbackResult ? fallbackMemberView ? '選區合併圖形未載入；只呈現已確認能對應本選區的村里位置，候選人名單保留。' : '全縣市概略地圖，不能由此推定目前選區範圍；候選人名單保留。' : districtMode ? '直接點選鄉鎮市區，進入該區的完整村里地圖。' : `直接點選村里範圍，${family() === 'council' ? '進入所屬區域議員選區' : '查看村里長候選人'}。`;
       label.textContent = councilMode ? '找選區' : districtMode ? '找行政區' : '找村里';
       search.placeholder = councilMode ? '輸入選區或行政區名稱' : districtMode ? '輸入鄉鎮市區名稱' : '輸入村里或鄉鎮市區名稱';
       borderKey.lastChild.textContent = councilMode ? '議員選區界' : districtMode ? '行政區界' : '村里界';
@@ -619,7 +619,7 @@ window.TaiwanVillageMap = (() => {
     }
     async function update(next) {
       context = {...next}; const request = ++sequence;
-      const enabled = Boolean(countyId() && TYPES.has(context.typeId) && ['county', 'district', 'result'].includes(context.level));
+      const enabled = Boolean(context.enabled !== false && countyId() && TYPES.has(context.typeId) && ['county', 'district', 'result'].includes(context.level));
       root.hidden = !enabled;
       if (!enabled || destroyed) { basemap?.setEnabled(false); return; }
       baseInfo.hidden = false; layerControls.hidden = false;

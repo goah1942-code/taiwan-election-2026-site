@@ -213,7 +213,9 @@ function syncCountyMap(typeId = state.type?.id || state.selectionTypeId, loading
   const mapMode = Boolean(state.countyMapView) && Boolean(family);
   $('workspace').classList.toggle('map-mode', mapMode);
   $('workspace').classList.toggle('is-taiwan', mapMode && state.level === 'taiwan');
-  const localMap = Boolean(state.villageMapView && state.county && state.type && ['council', 'village'].includes(family) && state.level !== 'taiwan');
+  const councilResult = family === 'council' && state.level === 'result';
+  $('workspace').classList.toggle('council-result', councilResult);
+  const localMap = Boolean(state.villageMapView && state.county && state.type && ['council', 'village'].includes(family) && state.level !== 'taiwan' && !councilResult);
   $('workspace').classList.toggle('has-local-map', localMap);
   $('local-map-section').hidden = !localMap;
   if (!localMap) $('local-map-routing-status').textContent = '';
@@ -233,7 +235,7 @@ function syncCountyMap(typeId = state.type?.id || state.selectionTypeId, loading
   }
   $('map-election-hint').textContent = {
     mayor: '點選縣市，查看整個縣市的首長候選人。',
-    council: state.level === 'taiwan' ? '點選縣市，進入該縣市的議員選區地圖。' : state.level === 'county' ? '點選議員選區的範圍，放大查看區內村里與候選人。' : '目前顯示所選議員選區的村里範圍與名單，可回到上層更換選區。',
+    council: state.level === 'taiwan' ? '點選縣市，進入該縣市的議員選區地圖。' : state.level === 'county' ? '點選議員選區的範圍，直接查看該選區候選人。' : '目前顯示所選議員選區的候選人名單；更換選區可使用列表或回到議員選區總覽。',
     village: state.level === 'taiwan' ? '點選縣市，進入可點選的行政區地圖。' : state.level === 'county' ? '點選行政區的實際範圍，放大到該區各村里。' : '依照位置點選自己的村里，查看村里長名單。',
   }[family] || '';
   $('county-map-heading').textContent = state.level === 'taiwan' || family === 'mayor' ? '在台灣地圖上選擇縣市' : `${state.county?.name || ''} · ${family === 'council' ? '議員選區' : '村里長'}`;
@@ -252,7 +254,7 @@ function syncCountyMap(typeId = state.type?.id || state.selectionTypeId, loading
     link.textContent = '回全台重選縣市 ↑';
   }
   state.countyMapView?.update({county: state.county, type: state.type, typeId, zone: state.zone, level: state.level, loading, error});
-  state.mapReady = state.villageMapView?.update({county: state.county, typeId, level: state.level, districtId: state.district?.id,
+  state.mapReady = state.villageMapView?.update({enabled: localMap, county: state.county, typeId, level: state.level, districtId: state.district?.id,
     districtName: state.district?.name, zoneId: state.zone?.id, selectedVillageId: state.mapVillage?.id,
     councilVillageIds: family === 'council' && state.zone && state.councilMapLinks ? Object.entries(state.councilMapLinks.byVillageZoneId).filter(([, link]) => link.councilZoneIds.includes(state.zone.id)).map(([id]) => id) : []});
   renderMapCouncilOptions();

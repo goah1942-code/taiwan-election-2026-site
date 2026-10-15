@@ -9,7 +9,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=20261015-council-sidebar-v2">
   <link rel="stylesheet" href="./party-history.css?v=20261015-ui50-final">
-  <link rel="stylesheet" href="./county-map.css?v=20261015-ui50-final">
+  <link rel="stylesheet" href="./county-map.css?v=20261016-council-candidates-v1">
   <link rel="stylesheet" href="./village-map.css?v=20261015-ui50-final">
   <link rel="stylesheet" href="./ballot-notice.css?v=20261015-ui50-final">
   <link rel="stylesheet" href="./ballot-history.css?v=20261015-ui50-final">
@@ -22,8 +22,8 @@
   <script src="./party-history.js?v=20261015-ui50-final" defer></script>
   <script src="./county-map.js?v=20261015-ui50-final" defer></script>
   <script src="./village-basemap.js?v=20261015-ui50-final" defer></script>
-  <script src="./village-map.js?v=20261015-ui50-final" defer></script>
-  <script src="./app.js?v=20261015-council-sidebar-v2" defer></script>
+  <script src="./village-map.js?v=20261016-council-candidates-v1" defer></script>
+  <script src="./app.js?v=20261016-council-candidates-v1" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至主要內容</a>
@@ -194,7 +194,7 @@
       <p class="profile-note">兩年表格姓名旁的 WIKI（中文維基百科）／VOTETW（台灣選舉維基百科）為外部人物介紹，點選另開分頁。沒有連結表示目前沒有已核實的對應介紹，不代表外站一定沒有資料。</p>
       <p class="reading-note" id="party-history-help" tabindex="-1">政黨選項：國民黨、民進黨固定列出；其他政黨在該縣市已收錄的任一次歷史選舉曾超過 5% 即列入，後來低於 5% 的比例也保留。「占全部有效票」模式可點政黨名稱顯示或隱藏折線及表格欄位，分母包含無政黨推薦等全部候選人有效票；折線只在第一次到最後一次參選之間顯示。切換「只看藍綠（合計100%）」時，固定顯示中國國民黨與民主進步黨，依兩黨原始票數合計重算比例，兩者合計 100%，其他政黨不列入分母。兩黨合計 0 票或資料未知時顯示「—」。切回原模式會恢復原本政黨選擇。2022 上屆候選人表、歷史圖表、提示與歷年表格同步切換，原始票數及當選結果保留。各次總統與縣市長選舉保留年份及種類。<a href="#party-history">返回圖表 ↑</a></p>
       <p class="reading-note">滑鼠移到折線資料點，圖內立即顯示年份、選舉種類、目前各顯示政黨的票數、比例與分母；手機可點資料點查看。鍵盤移到資料點也可查看，按 Esc 關閉提示。</p>
-      <ol><li>在地圖上方選「縣市長」「議員」或「里長」，再點縣市範圍。縣市長直接看名單；里長依序點行政區地圖、村里地圖，最後查看自己的村里。議員先從縣市地圖選議員選區，放大查看區內村里與名單；區域、平地原住民、山地原住民分開切換，需依選民資格選擇。</li><li>地圖可以拖曳、按加減縮放，也能搜尋行政區或村里名稱放大定位。「底圖＋里界」可對照道路與地名；「顯示全部里名」會在里界內顯示名稱，字也會隨地圖一起縮放。「使用縣市名稱選擇」及「也可以從清單選擇」提供文字入口；議員分區卡列出完整官方範圍、應選席次與登記人數。</li><li>名單旁的政黨選單可篩選，選「全部政黨」即可取消；2022 結果與參選備註不受篩選影響。</li><li>2022 結果自動顯示；手機可在歷史表格內左右滑動。</li><li>「回到上層」依序返回村里地圖、行政區地圖或縣市；「回到台灣選擇縣市」直接回台灣地圖並保留職務。瀏覽器上一頁／下一頁與網址重載也會恢復當時層級。</li></ol>
+      <ol><li>在地圖上方選「縣市長」「議員」或「里長」，再點縣市範圍。縣市長直接看名單；里長依序點行政區地圖、村里地圖，最後查看自己的村里。議員先從縣市地圖選議員選區，再直接查看候選人名單；電腦版可從左側「列表選區」直接換區。區域、平地原住民、山地原住民分開切換，需依選民資格選擇。</li><li>地圖可以拖曳、按加減縮放，也能搜尋行政區或村里名稱放大定位。「底圖＋里界」可對照道路與地名；「顯示全部里名」會在里界內顯示名稱，字也會隨地圖一起縮放。「使用縣市名稱選擇」及「也可以從清單選擇」提供文字入口；議員分區卡列出完整官方範圍、應選席次與登記人數。</li><li>名單旁的政黨選單可篩選，選「全部政黨」即可取消；2022 結果與參選備註不受篩選影響。</li><li>2022 結果自動顯示；手機可在歷史表格內左右滑動。</li><li>「回到上層」依序返回村里地圖、行政區地圖或縣市；「回到台灣選擇縣市」直接回台灣地圖並保留職務。瀏覽器上一頁／下一頁與網址重載也會恢復當時層級。</li></ol>
       <a class="help-return" href="#candidate-heading">返回候選人名單 ↑</a>
     </section>
     </div>

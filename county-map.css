@@ -93,8 +93,8 @@
 .region-navigation button:hover{border-color:#83b6a5;background:#edf7f1}
 .region-navigation button:focus-visible{outline:2px solid #168e80;outline-offset:3px}
 .region-navigation button:disabled{opacity:.45;cursor:default;background:#f5f7f5;box-shadow:none}
-.workspace.has-local-map{grid-template-columns:minmax(260px,300px) minmax(0,1fr)}
-.workspace.has-local-map .county-map-figure,.workspace.has-local-map .county-map-details{display:none}
+.workspace.has-local-map,.workspace.council-result{grid-template-columns:minmax(260px,300px) minmax(0,1fr)}
+.workspace.has-local-map .county-map-figure,.workspace.has-local-map .county-map-details,.workspace.council-result .county-map-figure,.workspace.council-result .county-map-details{display:none}
 .local-map-section{min-width:0;margin-bottom:18px;padding:16px;border:1px solid #dce8e3;border-radius:16px;background:#fff}
 .local-map-section:focus{outline:none}
 .local-map-section>.region-navigation{margin:0 0 13px}
@@ -105,7 +105,7 @@
 .map-council-options h3{margin:0;font-size:16px}.map-council-options p{font-size:12px;line-height:1.7;color:#63766d;margin:8px 0}
 .map-council-options button{min-height:44px;margin:3px 6px 3px 0;padding:10px 12px;border:1px solid #cddfd5;border-radius:8px;background:#fff;color:#276c60;font-size:13px}
 .map-council-options button[aria-pressed=true]{background:#10786b;color:#fff;border-color:#10786b}
-@media(max-width:1050px){.workspace.has-local-map{grid-template-columns:minmax(0,1fr)}.workspace.has-local-map .county-map{padding-bottom:18px}.local-map-section{padding:12px}}
+@media(max-width:1050px){.workspace.has-local-map,.workspace.council-result{grid-template-columns:minmax(0,1fr)}.workspace.has-local-map .county-map,.workspace.council-result .county-map{padding-bottom:18px}.local-map-section{padding:12px}}
 .district-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0 0;padding:2px 3px 3px 2px}
 .district-card{display:grid;gap:5px;align-content:start;min-width:0;min-height:68px;padding:12px;border:1px solid #d9e5de;border-radius:9px;background:#f8fbf9;text-align:left;color:#365e52;overflow-wrap:anywhere}
 .district-card>strong,.district-card>span{font-size:14px;font-weight:700;line-height:1.5}
