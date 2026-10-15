@@ -7,7 +7,7 @@
   <meta name="description" content="輸入戶籍地址，查看 2026 九合一選舉的選票種類、選區與候選人登記名單，也可從全台地圖查詢。">
   <title>2026 九合一選舉｜候選人查詢</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=20261015-ui50-final">
+  <link rel="stylesheet" href="./styles.css?v=20261015-council-sidebar-v2">
   <link rel="stylesheet" href="./party-history.css?v=20261015-ui50-final">
   <link rel="stylesheet" href="./county-map.css?v=20261015-ui50-final">
   <link rel="stylesheet" href="./village-map.css?v=20261015-ui50-final">
@@ -23,7 +23,7 @@
   <script src="./county-map.js?v=20261015-ui50-final" defer></script>
   <script src="./village-basemap.js?v=20261015-ui50-final" defer></script>
   <script src="./village-map.js?v=20261015-ui50-final" defer></script>
-  <script src="./app.js?v=20261015-ui50-final" defer></script>
+  <script src="./app.js?v=20261015-council-sidebar-v2" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至主要內容</a>
@@ -105,6 +105,11 @@
           <div class="county-map-legend"><span><i></i>縣市界</span><span><i class="selected"></i>目前選取</span><span>離島另框放大，位置與比例經調整</span></div>
         </div>
       </div>
+      <section id="council-switcher" class="council-switcher" aria-labelledby="council-switch-heading" hidden>
+        <h3 id="council-switch-heading">列表選區</h3>
+        <p>點選可直接切換選區，列表包含全部議員類別。</p>
+        <div id="council-switch-list" class="council-switch-list" role="group" aria-label="議員選區列表"></div>
+      </section>
       <details class="county-map-source"><summary>圖資來源</summary><p>縣市界：<a href="https://data.gov.tw/dataset/7442" target="_blank" rel="noopener noreferrer">內政部國土測繪中心 ↗</a><br>圖資版本 2020-08-20 · <a href="https://data.gov.tw/license" target="_blank" rel="noopener noreferrer">政府資料開放授權第 1 版</a><br>離島位置與比例經調整，遠方島嶼未呈現。</p></details>
       </section>
       </div>
@@ -113,7 +118,7 @@
         <strong>選區顯示</strong>
         <button type="button" data-council-display="map" aria-controls="local-map-section region-browser" aria-pressed="false">地圖顯示</button>
         <button type="button" data-council-display="list" aria-controls="local-map-section region-browser" aria-pressed="false">列表顯示</button>
-        <button type="button" data-council-display="both" aria-controls="local-map-section region-browser" aria-pressed="false">地圖＋列表</button>
+        <button type="button" data-council-display="both" aria-controls="local-map-section region-browser" aria-pressed="false">列表＋地圖</button>
       </div>
       <div id="council-display-layout" class="council-display-layout">
       <section id="local-map-section" class="local-map-section" aria-label="行政區與村里選擇地圖" tabindex="-1" hidden>

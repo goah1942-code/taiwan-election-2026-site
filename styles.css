@@ -93,7 +93,7 @@
 .council-overview #region-browser .panel-heading{margin-top:16px}
 .council-overview .council-display-layout>.local-map-section{margin:0}
 @media(min-width:1100px){
- .council-display-layout[data-mode=both]{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(320px,1fr);gap:18px;align-items:start}
+ .council-display-layout[data-mode=both]{display:grid;grid-template-columns:minmax(320px,1fr) minmax(0,1.65fr);gap:18px;align-items:start}
  .council-display-layout[data-mode=both]>.region-browser{min-width:0;padding:20px}
  .council-overview .council-display-layout[data-mode=both] .zone-list{grid-template-columns:minmax(0,1fr);max-height:760px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:3px}
  .workspace.council-overview .region-controls .county-map{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 20px;padding:18px 24px}
@@ -129,3 +129,17 @@
 
 #local-map-routing-status:not(:empty){padding:14px;border-left:3px solid #beb875;background:#faf8ec;color:#534e2c;font-size:14px;line-height:1.7}
 .map-routing-recovery{display:block;margin-top:10px;min-height:44px;padding:9px 14px;border:1px solid #aebeb4;border-radius:8px;background:#fff;color:#214f40;font:inherit;font-weight:700}
+
+/* Desktop council results: direct district switching in the left navigation card. */
+.council-switcher{display:none;margin-top:20px;padding-top:18px;border-top:1px solid #dce8e3}
+.council-switcher h3{margin:0;color:#244d48;font-size:18px}
+.council-switcher>p{margin:8px 0 12px;color:#526e60;font-size:12px;line-height:1.7}
+.council-switch-list{position:relative;display:grid;gap:8px;max-height:min(52vh,520px);overflow-y:auto;overscroll-behavior:contain;padding:3px}
+.council-switch-button{display:grid;gap:4px;min-width:0;min-height:80px;width:100%;padding:11px 12px;text-align:left;border:1px solid #d9e5de;border-radius:8px;background:#f8fbf9;color:#365e52;overflow-wrap:anywhere}
+.council-switch-button strong{font-size:14px;line-height:1.5}
+.council-switch-button span{font-size:12px;line-height:1.6}
+.council-switch-button small{font-size:11px;line-height:1.5;color:#526e60}
+.council-switch-button:hover{border-color:#8ebbaa;background:#edf7f1}
+.council-switch-button.active{border-color:#178171;background:#e7f4ed;color:#0c6f5f}
+.council-switch-button:disabled{cursor:wait}
+@media(min-width:1100px){.council-switcher{display:block}}

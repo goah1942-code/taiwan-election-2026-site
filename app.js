@@ -256,8 +256,55 @@ function syncCountyMap(typeId = state.type?.id || state.selectionTypeId, loading
     districtName: state.district?.name, zoneId: state.zone?.id, selectedVillageId: state.mapVillage?.id,
     councilVillageIds: family === 'council' && state.zone && state.councilMapLinks ? Object.entries(state.councilMapLinks.byVillageZoneId).filter(([, link]) => link.councilZoneIds.includes(state.zone.id)).map(([id]) => id) : []});
   renderMapCouncilOptions();
+  renderCouncilSwitcher();
   syncCouncilDisplay();
   renderQueryNavigation();
+}
+// Keep other council districts reachable while the selected result stays open.
+function renderCouncilSwitcher() {
+  const section = $('council-switcher');
+  const list = $('council-switch-list');
+  if (!section || !list) return;
+  const active = Boolean(state.county && state.type && state.level === 'result'
+    && mapElectionFamily(state.type.id) === 'council');
+  section.hidden = !active;
+  const previousScroll = list.scrollTop || 0;
+  list.replaceChildren();
+  if (!active) return;
+  list.setAttribute('aria-label', `${state.county.name}議員選區列表`);
+  list.setAttribute('aria-busy', String(state.loading));
+  for (const zone of state.type.zones) {
+    const selected = zone.id === state.zone?.id;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `council-switch-button${selected ? ' active' : ''}`;
+    button.dataset.zoneId = zone.id;
+    button.disabled = state.loading;
+    button.setAttribute('aria-pressed', String(selected));
+    const coverage = zone.geography?.coverage || '選區範圍待確認';
+    button.setAttribute('aria-label', `${zone.name}，${coverage}，應選 ${zone.seats ?? '待確認'} 席${selected ? '，目前查看' : ''}`);
+    button.innerHTML = `<strong>${escapeHtml(zone.name)}${selected ? ' · 目前' : ''}</strong><span>${escapeHtml(coverage)}</span><small>應選 ${zone.seats ?? '待確認'} 席 · 登記 ${zone.candidateCount} 人</small>`;
+    button.addEventListener('click', async () => {
+      if (state.loading || state.zone?.id === zone.id) return;
+      const focused = document.activeElement === button;
+      const countyId = state.county.id, typeId = state.type.id;
+      state.navigationMode = 'user';
+      clearRouteHash();
+      await selectZone(zone, false);
+      if (focused && document.activeElement === document.body && state.county?.id === countyId
+          && state.type?.id === typeId && state.zone?.id === zone.id) {
+        [...list.children].find(item => item.dataset.zoneId === zone.id)?.focus({preventScroll: true});
+      }
+    });
+    list.append(button);
+  }
+  list.scrollTop = previousScroll;
+  const current = list.querySelector('.active');
+  if (current && list.clientHeight) {
+    const bottom = current.offsetTop + current.offsetHeight;
+    if (current.offsetTop < list.scrollTop) list.scrollTop = current.offsetTop;
+    else if (bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight;
+  }
 }
 function syncCouncilDisplay() {
   const active = Boolean(state.villageMapView && state.type && state.county && !state.loading && !state.error
@@ -266,6 +313,10 @@ function syncCouncilDisplay() {
   $('workspace').classList.toggle('council-overview', active);
   $('council-display-controls').hidden = !active;
   const layout = $('council-display-layout');
+  const map = $('local-map-section'), list = $('region-browser');
+  // Match desktop visual order with keyboard/reading order; restore other layouts.
+  if (active && wide && map.nextElementSibling === list) layout.insertBefore(list, map);
+  if ((!active || !wide) && list.nextElementSibling === map) layout.insertBefore(map, list);
   if (!active) { layout.dataset.mode = ''; return; }
   const preferred = state.councilDisplayMode || (wide ? 'both' : 'map');
   const mode = preferred === 'both' && !wide ? 'map' : preferred;
