@@ -18,6 +18,18 @@ window.TaiwanVillageMap = (() => {
     if (text != null) item.textContent = text;
     return item;
   }
+  function councilNumberLabel(feature) {
+    // Use the source's election number, never a polygon's position in the list.
+    const match = feature.name.match(/^第0*([1-9]\d?)選舉區$/);
+    if (!match) return feature.name;
+    const value = Number(match[1]), digits = '零一二三四五六七八九';
+    if (value < 10) return digits[value];
+    return `${value < 20 ? '' : digits[Math.floor(value / 10)]}十${value % 10 ? digits[value % 10] : ''}`;
+  }
+  function councilDisplayName(feature) {
+    const number = councilNumberLabel(feature);
+    return number === feature.name ? feature.name : `第${number}選舉區`;
+  }
   function boxOf(bounds, padding = .055) {
     const [x1, y1, x2, y2] = bounds;
     const width = Math.max(x2 - x1, .1), height = Math.max(y2 - y1, .1);
@@ -142,7 +154,7 @@ window.TaiwanVillageMap = (() => {
     let context = {}, geometry = null, svg = null, visible = [], features = new Map(), home = null, viewport = null;
     let sequence = 0, destroyed = false, viewKey = '', active = null, pointerDrag = null, suppressClickUntil = 0, districtMode = false, hoverLock = null;
     let basemap = null, showBasemap = true;
-    let showNames = false, villageNames = null;
+    let showNames = false, showCouncilNames = true, villageNames = null;
     let pointerPosition = null;
     let councilGeometry = null, councilMode = false, councilResult = false, activeCouncilZone = null, councilKind = 'geographic', councilLoadError = false, fallbackResult = false, fallbackMemberView = false;
     const councilKindsByCounty = new Map();
@@ -217,11 +229,13 @@ window.TaiwanVillageMap = (() => {
     }
     function clearBasemap() { basemap?.destroy(); basemap = null; }
     function syncNames() {
-      namesButton.setAttribute('aria-pressed', String(showNames));
-      const unit = councilMode ? '選區名' : '里名';
-      namesButton.textContent = `${showNames ? '隱藏' : '顯示'}全部${unit}`;
-      namesHint.textContent = `${unit}固定在各自${councilMode ? '選區' : '里界'}內，會隨地圖一起縮放；小範圍可放大查看。`;
-      const enabled = showNames && !namesButton.hidden;
+      const shown = councilMode ? showCouncilNames : showNames;
+      namesButton.setAttribute('aria-pressed', String(shown));
+      namesButton.textContent = councilMode ? `${shown ? '隱藏' : '顯示'}選區編號` : `${shown ? '隱藏' : '顯示'}全部里名`;
+      namesHint.textContent = councilMode
+        ? `${['澎湖縣', '連江縣'].includes(geometry.countyName) ? '離島選區編號拉至旁側，以引線連回對應選區。' : ''}一、二、三等國字代表選區編號；滑鼠移到範圍或編號，或以鍵盤移至選區，可查看完整選區名稱與行政區範圍。`
+        : '里名固定在各自里界內，會隨地圖一起縮放；小範圍可放大查看。';
+      const enabled = shown && !namesButton.hidden;
       root.dataset.villageLabels = String(enabled);
       namesHint.hidden = !enabled;
       if (villageNames) villageNames.style.display = enabled ? '' : 'none';
@@ -277,7 +291,8 @@ window.TaiwanVillageMap = (() => {
       active = feature || null;
       if (!active) { tooltip.hidden = true; defaultInspection(); return; }
       features.get(featureKey(active))?.classList.add('is-hovered');
-      tooltipDistrict.textContent = councilMode ? active.electorateLabel || KIND_LABELS[active.kind] : districtMode ? geometry.countyName : active.districtName; tooltipName.textContent = active.name;
+      tooltipDistrict.textContent = councilMode ? active.electorateLabel || KIND_LABELS[active.kind] : districtMode ? geometry.countyName : active.districtName;
+      tooltipName.textContent = councilMode ? `${geometry.countyName} · ${councilDisplayName(active)}` : active.name;
       const coverage = councilMode ? active.coverage : '';
       tooltipCoverage.hidden = !coverage;
       tooltipCoverage.textContent = coverage ? `範圍：${coverage}` : '';
@@ -373,6 +388,26 @@ window.TaiwanVillageMap = (() => {
         }
       }
     }
+    function islandCallouts() {
+      const placements = new Map();
+      if (!councilMode || !['澎湖縣', '連江縣'].includes(geometry.countyName)) return placements;
+      // Keep the official geometry unchanged; labels sit in nearby open columns.
+      const matzu = geometry.countyName === '連江縣';
+      for (const side of ['left', 'right']) {
+        const items = visible.filter(item => (item.labelAnchor.x < home.x + home.width * .55 ? 'left' : 'right') === side)
+          .sort((a, b) => a.labelAnchor.y - b.labelAnchor.y);
+        const x = home.x + home.width * (side === 'left' ? (matzu ? .28 : .18) : (matzu ? .74 : .82));
+        const gap = home.height * .11, top = home.y + gap / 2, bottom = home.y + home.height - gap / 2;
+        const rows = items.map(item => ({item, y: Math.max(top, Math.min(bottom, item.labelAnchor.y - home.height * .08))}));
+        for (let i = 1; i < rows.length; i++) rows[i].y = Math.max(rows[i].y, rows[i - 1].y + gap);
+        if (rows.length && rows[rows.length - 1].y > bottom) {
+          rows[rows.length - 1].y = bottom;
+          for (let i = rows.length - 2; i >= 0; i--) rows[i].y = Math.min(rows[i].y, rows[i + 1].y - gap);
+        }
+        for (const row of rows) placements.set(row.item.id, {x, y: row.y});
+      }
+      return placements;
+    }
     function renderGeometry() {
       clearBasemap();
       villageNames = null;
@@ -403,7 +438,7 @@ window.TaiwanVillageMap = (() => {
         const group = svgNode('g', {class: `village-map-village${councilMode ? ' village-map-council-zone' : ''}`, role: 'button', tabindex: 0, [councilMode ? 'data-council-zone-id' : districtMode ? 'data-district-id' : 'data-village-id']: featureKey(feature), 'data-zone-id': feature.zoneId || '', 'aria-label': `${featureLabel(feature)}，${action}`, 'aria-pressed': String(selected(feature))});
         group.classList.toggle('is-selected', selected(feature));
         group.append(svgNode('path', {d: feature.path, 'fill-rule': geometry.fillRule || 'evenodd', 'vector-effect': 'non-scaling-stroke'}));
-        group.append(svgNode('title', {}, featureLabel(feature)));
+        group.append(svgNode('title', {}, councilMode ? `${geometry.countyName} · ${councilDisplayName(feature)}；範圍：${feature.coverage || '本次未取得'}` : featureLabel(feature)));
         group.addEventListener('click', () => choose(feature));
         group.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); choose(feature); } });
         group.addEventListener('pointerenter', event => { if (!pointerDrag && allowPointerInspection(event)) inspect(feature); });
@@ -441,15 +476,30 @@ window.TaiwanVillageMap = (() => {
       }
       namesButton.hidden = !(districtView || councilMode || councilResult || fallbackMemberView);
       villageNames = svgNode('g', {class: 'village-map-name-labels', 'aria-hidden': 'true'});
+      const callouts = islandCallouts();
       if (districtView || councilMode || councilResult || fallbackMemberView) for (const feature of visible) {
         const group = svgNode('g', {[councilMode ? 'data-label-council-zone-id' : 'data-label-village-id']: feature.id});
-        const point = feature.labelAnchor;
+        const callout = callouts.get(feature.id);
+        const point = callout || feature.labelAnchor;
         const box = feature.labelBox;
         // Fixed SVG units: text and village boundaries share the same viewBox.
         // The label box comes from a verified rectangle inside this village.
-        const font = Math.min(box.width/(feature.name.length+.5), box.height/1.6, home.width*.035);
-        const text = svgNode('text', {x:point.x, y:point.y, 'font-size':font}, feature.name);
+        const labelText = councilMode ? councilNumberLabel(feature) : feature.name;
+        // Refit short numbers inside the same verified inscribed circle.
+        const radius = councilMode ? feature.labelPlacement?.safeRadius : null;
+        const fit = Number.isFinite(radius) && radius > 0 ? radius * 2 / Math.hypot(labelText.length + .5, 1.6)
+          : Math.min(box.width / (labelText.length + .5), box.height / 1.6);
+        const font = callout ? home.width * .045 : Math.min(fit, home.width * .035);
+        const text = svgNode('text', {x:point.x, y:point.y, 'font-size':font}, labelText);
         text.style.fontSize = `${font}px`; text.style.strokeWidth = `${font*.16}px`;
+        if (callout) {
+          group.classList.add('village-map-council-callout');
+          const halfWidth = font * Math.max(.8, (labelText.length + .6) / 2), halfHeight = font * .75;
+          const edgeX = point.x + (feature.labelAnchor.x < point.x ? -halfWidth : halfWidth);
+          group.append(svgNode('line', {x1: feature.labelAnchor.x, y1: feature.labelAnchor.y, x2: edgeX, y2: point.y, class: 'village-map-callout-line', 'vector-effect': 'non-scaling-stroke'}));
+          group.append(svgNode('circle', {cx: feature.labelAnchor.x, cy: feature.labelAnchor.y, r: home.width * .004, class: 'village-map-callout-anchor'}));
+          group.append(svgNode('rect', {x: point.x - halfWidth, y: point.y - halfHeight, width: halfWidth * 2, height: halfHeight * 2, rx: font * .22, class: 'village-map-callout-badge', 'vector-effect': 'non-scaling-stroke'}));
+        }
         group.append(text); villageNames.append(group);
         group.addEventListener('click', () => choose(feature));
         group.addEventListener('pointerenter', event => { if (!pointerDrag && allowPointerInspection(event)) inspect(feature); });
@@ -571,7 +621,11 @@ window.TaiwanVillageMap = (() => {
     listen(boundaryButton, 'click', () => { showBasemap = false; syncBasemapMode(); });
     listen(baseRetry, 'click', () => basemap?.retry());
     listen(councilRetry, 'click', () => { cache.delete(councilUrl(countyId())); councilGeometry = null; viewKey = ''; update(context); });
-    listen(namesButton, 'click', () => { showNames = !showNames; syncNames(); });
+    listen(namesButton, 'click', () => {
+      if (councilMode) showCouncilNames = !showCouncilNames;
+      else showNames = !showNames;
+      syncNames();
+    });
     syncBasemapMode();
     return {update, destroy() { destroyed = true; sequence++; clearBasemap(); listeners.forEach(remove => remove()); root.replaceChildren(); root.classList.remove('is-dragging'); root.hidden = true; }};
   }

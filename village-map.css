@@ -27,6 +27,10 @@
 .village-map-layers>button:focus-visible{outline:2px solid #168e80;outline-offset:2px}
 .village-map-layers>.village-map-names-toggle{margin-left:auto}
 .village-map-name-labels>g{cursor:pointer}
+.village-map-callout-line{stroke:#356f61;stroke-width:1.4;pointer-events:none}
+.village-map-callout-anchor{fill:#356f61;pointer-events:none}
+.village-map-callout-badge{fill:#fffffff5;stroke:#87b1a4;stroke-width:1}
+.village-map-council-callout:hover .village-map-callout-badge{fill:#e5f3eb;stroke:#287c6d}
 .village-map-name-labels text{text-anchor:middle;dominant-baseline:middle;fill:#173e36;stroke:#fffffff5;paint-order:stroke fill;stroke-linejoin:round;font-weight:700;pointer-events:all}
 .village-map-names-hint{margin:3px 0 0;color:#596f73;font-size:11px;line-height:1.8}
 .village-map-base-info{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;margin-top:8px;font-size:11px;line-height:1.8;color:#596f73}
@@ -67,6 +71,7 @@
 .village-map-tooltip>span{display:block;margin-bottom:3px;color:#667f74;font-size:10px}
 .village-map-tooltip>strong{display:block;font-size:14px;white-space:nowrap}
 .village-map-tooltip.has-coverage{width:max-content;max-width:min(340px,calc(100% - 16px))}
+.village-map-tooltip.has-coverage>strong{white-space:normal;overflow-wrap:anywhere}
 .village-map-tooltip-coverage{margin:7px 0 0;color:#315c58;font-size:12px;line-height:1.6;text-align:left;white-space:normal;overflow-wrap:anywhere}
 .village-map-inspection{min-height:25px;margin:10px 0 0;color:#365e52;font-size:12px;line-height:1.7}
 .village-map-legend{display:flex;flex-wrap:wrap;align-items:center;gap:9px 15px;margin-top:7px;color:#72867e;font-size:10px;line-height:1.6}

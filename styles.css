@@ -79,3 +79,28 @@
 @media(max-width:360px){.history-table th:nth-child(2),.history-table td:nth-child(2){width:100px;min-width:100px;max-width:100px}}
 
 .history-table .table-sort:focus-visible{outline-offset:-3px}
+
+/* Council overview: visible display controls and desktop map/list comparison. */
+.council-display-controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px;padding:14px 18px;background:#fff;border:1px solid #dce8e3;border-radius:12px;color:#315c58}
+.council-display-controls>strong{margin-right:8px;font-size:14px}
+.council-display-controls>button{min-height:44px;padding:9px 16px;border:1px solid #cbded4;border-radius:8px;background:#fff;color:#365e52;font-size:14px;font-weight:650}
+.council-display-controls>button[aria-pressed=true]{border-color:#287c6d;background:#287c6d;color:#fff}
+.workspace.map-mode.council-overview{grid-template-columns:minmax(0,1fr)}
+.workspace.council-overview .query-content{min-width:0}
+.council-overview #region-list-fallback>summary{display:none}
+.council-overview #region-browser .zone-panel{padding:0;border:0;box-shadow:none;background:transparent}
+.council-overview #region-browser>.region-navigation{display:none}
+.council-overview #region-browser .panel-heading{margin-top:16px}
+.council-overview .council-display-layout>.local-map-section{margin:0}
+@media(min-width:1100px){
+ .council-display-layout[data-mode=both]{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(320px,1fr);gap:18px;align-items:start}
+ .council-display-layout[data-mode=both]>.region-browser{min-width:0;padding:20px}
+ .council-overview .council-display-layout[data-mode=both] .zone-list{grid-template-columns:minmax(0,1fr);max-height:760px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:3px}
+ .workspace.council-overview .region-controls .county-map{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 20px;padding:18px 24px}
+ .council-overview .region-controls .county-map-header{grid-column:1;grid-row:1}
+ .council-overview .region-controls .map-election-tabs{grid-column:2;grid-row:1;margin:0}
+ .council-overview .region-controls .map-election-hint{grid-column:1;grid-row:2;margin:0}
+ .council-overview .region-controls .region-navigation{grid-column:2;grid-row:2;margin:0}
+ .council-overview .region-controls .county-map-source{grid-column:1/-1;margin:0}
+}
+@media(max-width:680px){.council-display-controls{padding:12px;gap:6px}.council-display-controls>strong{flex-basis:100%}.council-display-controls>button{flex:1}}

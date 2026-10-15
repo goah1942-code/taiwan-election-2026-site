@@ -249,6 +249,30 @@ function syncCountyMap(typeId = state.type?.id || state.selectionTypeId, loading
     districtName: state.district?.name, zoneId: state.zone?.id, selectedVillageId: state.mapVillage?.id,
     councilVillageIds: family === 'council' && state.zone && state.councilMapLinks ? Object.entries(state.councilMapLinks.byVillageZoneId).filter(([, link]) => link.councilZoneIds.includes(state.zone.id)).map(([id]) => id) : []});
   renderMapCouncilOptions();
+  syncCouncilDisplay();
+}
+function syncCouncilDisplay() {
+  const active = Boolean(state.villageMapView && state.type && state.county && !state.loading && !state.error
+    && state.level === 'county' && mapElectionFamily(state.type.id) === 'council');
+  const wide = typeof window !== 'undefined' && Boolean(window.matchMedia?.('(min-width: 1100px)').matches);
+  $('workspace').classList.toggle('council-overview', active);
+  $('council-display-controls').hidden = !active;
+  const layout = $('council-display-layout');
+  if (!active) { layout.dataset.mode = ''; return; }
+  const preferred = state.councilDisplayMode || (wide ? 'both' : 'map');
+  const mode = preferred === 'both' && !wide ? 'map' : preferred;
+  layout.dataset.mode = mode;
+  $('local-map-section').hidden = mode === 'list';
+  $('region-browser').hidden = mode === 'map';
+  $('region-list-fallback').open = mode !== 'map';
+  for (const button of document.querySelectorAll('[data-council-display]')) {
+    button.hidden = button.dataset.councilDisplay === 'both' && !wide;
+    button.setAttribute('aria-pressed', String(button.dataset.councilDisplay === mode));
+  }
+  const focused = document.activeElement;
+  if (focused?.dataset?.councilDisplay === 'both' && !wide) {
+    document.querySelector(`[data-council-display="${mode}"]`)?.focus({preventScroll: true});
+  }
 }
 async function readCouncilMapLinks(countyId) {
   const key = `council-map-links/${countyId}`;
@@ -900,6 +924,10 @@ async function init() {
     state.navigationMode = 'restore';
     await restoreRoute();
   });
+  for (const button of document.querySelectorAll('[data-council-display]')) {
+    button.addEventListener('click', () => { state.councilDisplayMode = button.dataset.councilDisplay; syncCouncilDisplay(); });
+  }
+  window.matchMedia('(min-width: 1100px)').addEventListener('change', syncCouncilDisplay);
   $('zone-search').addEventListener('input', renderZones);
   $('clear-zone-search').addEventListener('click', () => { $('zone-search').value=''; renderZones(); $('zone-search').focus(); });
   $('party-filter').addEventListener('change', renderCandidates);

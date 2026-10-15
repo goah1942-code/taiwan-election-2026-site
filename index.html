@@ -7,10 +7,10 @@
   <meta name="description" content="輸入戶籍地址，查看 2026 九合一選舉的選票種類、選區與候選人登記名單，也可從全台地圖查詢。">
   <title>2026 九合一選舉｜候選人查詢</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=persona15-r15-final3">
+  <link rel="stylesheet" href="./styles.css?v=council-display-20261015">
   <link rel="stylesheet" href="./party-history.css?v=public-selected-1">
   <link rel="stylesheet" href="./county-map.css?v=map-levels-4">
-  <link rel="stylesheet" href="./village-map.css?v=council-coverage-1">
+  <link rel="stylesheet" href="./village-map.css?v=council-numerals-20261015">
   <link rel="stylesheet" href="./ballot-notice.css?v=persona15-r15">
   <link rel="stylesheet" href="./ballot-history.css?v=persona15-r15">
   <link rel="stylesheet" href="./page-tabs.css?v=tabs-1">
@@ -22,8 +22,8 @@
   <script src="./party-history.js?v=persona15-r11" defer></script>
   <script src="./county-map.js?v=map-levels-4" defer></script>
   <script src="./village-basemap.js?v=basemap-1" defer></script>
-  <script src="./village-map.js?v=persona15-r06" defer></script>
-  <script src="./app.js?v=persona15-r15" defer></script>
+  <script src="./village-map.js?v=council-numerals-20261015" defer></script>
+  <script src="./app.js?v=council-display-20261015" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至主要內容</a>
@@ -97,6 +97,13 @@
       </section>
       </div>
       <div class="query-content">
+      <div id="council-display-controls" class="council-display-controls" role="group" aria-label="選區顯示方式" hidden>
+        <strong>選區顯示</strong>
+        <button type="button" data-council-display="map" aria-controls="local-map-section region-browser" aria-pressed="false">地圖顯示</button>
+        <button type="button" data-council-display="list" aria-controls="local-map-section region-browser" aria-pressed="false">列表顯示</button>
+        <button type="button" data-council-display="both" aria-controls="local-map-section region-browser" aria-pressed="false">地圖＋列表</button>
+      </div>
+      <div id="council-display-layout" class="council-display-layout">
       <section id="local-map-section" class="local-map-section" aria-label="行政區與村里選擇地圖" tabindex="-1" hidden>
         <nav class="region-navigation" aria-label="細部地圖層級導覽">
           <button type="button" data-region-back>回到上層</button>
@@ -133,6 +140,8 @@
       </aside>
         </details>
       </section>
+
+      </div>
 
       <div class="results-panel">
         <div id="empty-state" class="empty-state" hidden></div>
