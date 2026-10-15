@@ -6,7 +6,7 @@ const state = { manifest: null, county: null, countyData: null, type: null, dist
 const candidateColumns = [{key: 'name', label: '候選人', caption: '人物簡介'}, {key: 'party', label: '推薦政黨'}, {key: 'reelection', label: '追求連任', helpAnchor: 'reelection-help'}];
 const historyColumns = [{key: 'number', label: '號次'}, {key: 'name', label: '候選人', caption: '人物簡介'}, {key: 'party', label: '推薦政黨'},
   {key: 'votes', label: '得票數'}, {key: 'voteSharePercent', label: '得票率'}, {key: 'elected', label: '結果'}, {key: 'registration', label: '參選備註'}];
-function normalizeSearch(text) { return String(text ?? '').normalize('NFKC').toLocaleLowerCase('zh-TW').replace(/台/g,'臺').replace(/\s+/g,''); }
+function normalizeSearch(text) { return String(text ?? '').normalize('NFKC').toLocaleLowerCase('zh-TW').replace(/台/g,'臺').replace(/選舉區/g,'選區').replace(/\s+/g,''); }
 function searchMatches(text, query) {
   const haystack = normalizeSearch(text);
   return query.trim().split(/\s+/).filter(Boolean).every(term => haystack.includes(normalizeSearch(term)));
@@ -120,6 +120,8 @@ function updateUrl(commit = false) {
   else if (routeUrl !== `${location.pathname}${location.search}`) history.pushState(null, '', routeUrl);
   state.routeUrl = routeUrl;
   state.navigationMode = 'user';
+  rememberQuery();
+  renderQueryNavigation();
 }
 function breadcrumb() {
   const familyLabel = {mayor: '縣市長', council: '議員', village: '里長'}[mapElectionFamily(state.selectionTypeId)];
@@ -190,7 +192,7 @@ function renderTypes() {
     button.className = `type-button${state.type?.id === type.id ? ' active' : ''}`;
     button.setAttribute('aria-pressed', String(state.type?.id === type.id));
     button.innerHTML = `<strong>${escapeHtml(type.label)}</strong><small>${type.zoneCount.toLocaleString('zh-TW')} 選區 · ${type.candidateCount.toLocaleString('zh-TW')} 人登記</small>`;
-    button.addEventListener('click', () => { state.navigationMode='user'; selectType(type); });
+    button.addEventListener('click', () => switchElectionType(type));
     $('type-list').append(button);
   }
   syncCountyMap();
@@ -201,6 +203,11 @@ function mapElectionFamily(typeId) {
   if (['village', 'village_head'].includes(typeId)) return 'village';
   return null;
 }
+function prefersVillageList() {
+  const preference = state.villageListPreference;
+  return mapElectionFamily(state.type?.id) === 'village' && Boolean(preference)
+    && preference.countyId === state.county?.id && preference.districtId === state.district?.id;
+}
 function syncCountyMap(typeId = state.type?.id || state.selectionTypeId, loading = state.loading, error = state.error) {
   const family = mapElectionFamily(typeId);
   const mapMode = Boolean(state.countyMapView) && Boolean(family);
@@ -210,7 +217,7 @@ function syncCountyMap(typeId = state.type?.id || state.selectionTypeId, loading
   $('workspace').classList.toggle('has-local-map', localMap);
   $('local-map-section').hidden = !localMap;
   if (!localMap) $('local-map-routing-status').textContent = '';
-  $('region-list-fallback').open = !localMap;
+  $('region-list-fallback').open = !localMap || prefersVillageList();
   const districtPicker = family === 'village' && state.level === 'county';
   document.querySelector('.zone-panel').hidden = (mapMode && (state.level === 'taiwan' || family === 'mayor' || districtPicker)) || !state.county?.available;
   $('region-browser').hidden = !state.type || state.loading || Boolean(error) || (mapMode && (state.level === 'taiwan' || state.level === 'result'));
@@ -234,22 +241,23 @@ function syncCountyMap(typeId = state.type?.id || state.selectionTypeId, loading
   for (const button of document.querySelectorAll('[data-region-back], [data-taiwan-return]')) button.disabled = state.level === 'taiwan';
   if (state.type) {
     $('region-level-heading').textContent = districtPicker ? `${state.county.name} · 選擇行政區` : `${state.county.name}${state.district ? ` · ${state.district.name}` : ''} · ${family === 'village' ? '村里清單' : family === 'council' ? '議員分區' : '選擇選區'}`;
-    $('region-summary').textContent = districtPicker ? `共 ${state.type.districts.length} 個鄉鎮市區，點選行政區後列出各村里。` : family === 'council' ? `共 ${state.type.zoneCount} 個議員選區；下列範圍依中選會公告。` : family === 'village' && state.district ? `共 ${state.district.zoneCount} 個村里，點選後查看候選人與上屆結果。` : '點選要查看的區域，即可顯示候選人與上屆結果。';
+    $('region-summary').textContent = districtPicker ? `共 ${state.type.districts.length} 個鄉鎮市區，點選行政區後列出各村里。` : family === 'council' ? `共 ${state.type.zoneCount} 個議員選區，包含全部類別；範圍依中選會公告。` : family === 'village' && state.district ? `共 ${state.district.zoneCount} 個村里，點選後查看候選人與上屆結果。` : '點選要查看的區域，即可顯示候選人與上屆結果。';
   }
   for (const link of document.querySelectorAll('[data-zone-return]')) {
     link.href = mapMode ? '#region-level-heading' : '#zone-heading';
-    link.textContent = mapMode ? '回到上層 ↑' : '返回選區 ↑';
+    link.textContent = `${parentQueryLabel()} ↑`;
   }
   for (const link of document.querySelectorAll('[data-map-return]')) {
     link.hidden = !mapMode;
-    link.textContent = '回到台灣選擇縣市 ↑';
+    link.textContent = '回全台重選縣市 ↑';
   }
   state.countyMapView?.update({county: state.county, type: state.type, typeId, zone: state.zone, level: state.level, loading, error});
-  state.villageMapView?.update({county: state.county, typeId, level: state.level, districtId: state.district?.id,
+  state.mapReady = state.villageMapView?.update({county: state.county, typeId, level: state.level, districtId: state.district?.id,
     districtName: state.district?.name, zoneId: state.zone?.id, selectedVillageId: state.mapVillage?.id,
     councilVillageIds: family === 'council' && state.zone && state.councilMapLinks ? Object.entries(state.councilMapLinks.byVillageZoneId).filter(([, link]) => link.councilZoneIds.includes(state.zone.id)).map(([id]) => id) : []});
   renderMapCouncilOptions();
   syncCouncilDisplay();
+  renderQueryNavigation();
 }
 function syncCouncilDisplay() {
   const active = Boolean(state.villageMapView && state.type && state.county && !state.loading && !state.error
@@ -273,6 +281,76 @@ function syncCouncilDisplay() {
   if (focused?.dataset?.councilDisplay === 'both' && !wide) {
     document.querySelector(`[data-council-display="${mode}"]`)?.focus({preventScroll: true});
   }
+}
+function captureQuery() {
+  if (!state.county || !state.type || state.loading || state.error) return null;
+  return {county: state.county.id, countyName: state.county.name, type: state.type.id, typeLabel: state.type.label,
+    district: state.district?.id || null, districtName: state.district?.name || '',
+    zone: state.zone?.id || null, zoneName: state.zone ? shortZoneName(state.zone) : '', view: state.level};
+}
+function queryKey(query) { return `${query.county}|${query.type}`; }
+function rememberQuery() {
+  const query = captureQuery();
+  if (query) { state.recentQueries ||= new Map(); state.recentQueries.set(queryKey(query), query); }
+}
+function queryNavigationIsCompact() {
+  return typeof window !== 'undefined' && Boolean(window.matchMedia?.('(max-width: 900px)').matches);
+}
+function syncQueryNavigationOffset() {
+  const navigation = $('query-navigation');
+  if (!navigation) return;
+  const height = navigation.hidden ? 0 : navigation.getBoundingClientRect().height;
+  document.documentElement.style.setProperty('--query-nav-offset', `${Math.ceil(height) + 24}px`);
+}
+function queryLabel(query, compact = false) {
+  const shortType = {mayor: '縣市長', council: '議員', village: '村里長'}[mapElectionFamily(query.type)];
+  return [query.countyName, compact && shortType || query.typeLabel, query.districtName, query.zoneName].filter(Boolean).join(' · ');
+}
+function parentQueryLabel() {
+  const family = mapElectionFamily(state.type?.id || state.selectionTypeId);
+  if (!family) return '回到選區列表';
+  if (state.level === 'taiwan' || state.level === 'county' || family === 'mayor') return '重新選擇縣市';
+  if (family === 'village' && state.level === 'result') return `回到${state.district?.name || ''}選擇村里`;
+  if (family === 'village') return `回到${state.county?.name || ''}行政區`;
+  return `回到${state.county?.name || ''}議員選區`;
+}
+function renderQueryNavigation() {
+  const nav = $('query-navigation'); if (!nav) return;
+  nav.hidden = !state.county;
+  const query = captureQuery();
+  $('query-context').textContent = query ? queryLabel(query, queryNavigationIsCompact()) : `${state.county?.name || ''} · 正在載入查詢`;
+  const previous = state.previousOfficeQuery;
+  const same = query && previous && query.county === previous.county && query.type === previous.type
+    && query.district === previous.district && query.zone === previous.zone && query.view === previous.view;
+  const back = $('query-previous-office');
+  back.hidden = !previous || same; back.disabled = state.loading;
+  if (previous) back.textContent = `回到剛才：${queryLabel(previous)}`;
+  for (const button of document.querySelectorAll('[data-region-back]')) button.textContent = parentQueryLabel();
+  for (const button of document.querySelectorAll('[data-taiwan-return]')) button.textContent = '回全台重選縣市';
+}
+async function switchElectionType(type) {
+  if (!type || !state.county || state.loading) return;
+  if (type.id === state.type?.id) { focusLevel(state.sequence, state.zone ? 'candidate-heading' : 'region-level-heading'); return; }
+  const current = captureQuery(); rememberQuery();
+  if (current) state.previousOfficeQuery = current;
+  const saved = state.recentQueries?.get(`${state.county.id}|${type.id}`);
+  state.navigationMode = 'user'; clearRouteHash();
+  await selectType(type, {...(saved || {}), scrollToCandidates: true, scrollTarget: saved?.zone ? 'candidate-heading' : 'region-level-heading'});
+}
+function switchElectionFamily(family) {
+  if (state.county && state.countyData && !state.loading) {
+    return switchElectionType(resolveElectionType(state.countyData.types, family));
+  }
+  if (!state.loading) { state.navigationMode = 'user'; clearRouteHash(); showTaiwan(family, true); }
+}
+async function returnToPreviousOffice() {
+  const destination = state.previousOfficeQuery;
+  if (!destination || state.loading) return;
+  const current = captureQuery(); rememberQuery();
+  state.previousOfficeQuery = current;
+  state.navigationMode = 'user'; clearRouteHash();
+  await selectCounty(destination.county, {...destination, scrollToCandidates: true,
+    scrollTarget: destination.zone ? 'candidate-heading' : 'region-level-heading'});
 }
 async function readCouncilMapLinks(countyId) {
   const key = `council-map-links/${countyId}`;
@@ -303,6 +381,7 @@ function mapDistrictSelected(feature) {
   if (mapElectionFamily(state.type?.id) !== 'village') return;
   const district = state.type.districts.find(item => item.id === feature.id || item.name === feature.name);
   if (!district) { $('local-map-routing-status').textContent = '此行政區尚未對應選舉資料，請從清單核對。'; return; }
+  state.villageListPreference = null;
   state.navigationMode = 'user'; state.mapVillage = null; $('local-map-routing-status').textContent = ''; clearRouteHash();
   selectDistrict(district, undefined, undefined, true, 'region-level-heading');
 }
@@ -314,6 +393,24 @@ function mapCouncilSelected(feature) {
   state.navigationMode = 'user'; state.mapVillage = null; clearRouteHash();
   $('local-map-routing-status').textContent = '';
   selectZone(zone, true);
+}
+function openVillageList() {
+  if (mapElectionFamily(state.type?.id) !== 'village' || !state.district) return;
+  state.villageListPreference = {countyId: state.county.id, districtId: state.district.id};
+  if (state.level === 'result') goUp();
+  else { $('region-list-fallback').open = true; focusLevel(state.sequence, 'region-level-heading'); }
+}
+function showUnmatchedVillageNotice(feature) {
+  const notice = $('local-map-routing-status');
+  notice.textContent = `${feature.districtName}${feature.name}尚未精確對應本次選舉資料，請從清單核對。`;
+  if (state.zone) notice.append(document.createTextNode(' 目前候選人名單仍是原先選取的區域，尚未切換。'));
+  if (mapElectionFamily(state.type?.id) === 'village' && state.district) {
+    const button = document.createElement('button');
+    button.type = 'button'; button.className = 'map-routing-recovery'; button.textContent = '前往村里清單核對';
+    button.addEventListener('click', openVillageList);
+    notice.append(button);
+  }
+  focusLevel(state.sequence, 'local-map-routing-status');
 }
 async function mapVillageSelected(feature) {
   const family = mapElectionFamily(state.type?.id);
@@ -336,9 +433,10 @@ async function mapVillageSelected(feature) {
     $('local-map-routing-status').textContent = '議員選區資料載入中，請稍候再點選村里。';
     return;
   }
-  if (!feature.zoneId) { $('local-map-routing-status').textContent = `${feature.districtName}${feature.name}尚未精確對應本次選舉資料，請從清單核對。`; return; }
+  if (!feature.zoneId) { showUnmatchedVillageNotice(feature); return; }
   state.navigationMode = 'user'; clearRouteHash(); state.mapVillage = feature; $('local-map-routing-status').textContent = '';
   if (family === 'village') {
+    state.villageListPreference = null;
     const district = state.type.districts.find(item => item.id === feature.districtId);
     if (!district) return;
     if (state.district?.id === district.id && state.districtData) {
@@ -361,6 +459,7 @@ async function mapVillageSelected(feature) {
   }
 }
 function clearZoneState() {
+  $('local-map-routing-status').textContent = '';
   resetPartyHistory();
   state.zone = null; state.zoneData = null; state.historyData = null;
   $('candidate-list').replaceChildren(); $('history-content').replaceChildren();
@@ -373,9 +472,15 @@ function focusLevel(sequence, id) {
     if (sequence !== state.sequence) return;
     if ($('candidate-panel')?.hidden) return;
     if (document.activeElement !== previousFocus && document.activeElement !== document.body) return;
-    const target = id === 'region-level-heading' && !$('local-map-section').hidden ? $('local-map-section') : $(id);
+    const displayControls = $('council-display-controls');
+    const councilOverview = id === 'region-level-heading' && displayControls && !displayControls.hidden;
+    const target = councilOverview ? displayControls.querySelector('[aria-pressed="true"]') :
+      id === 'region-level-heading' && !$('local-map-section').hidden && !prefersVillageList() ? $('local-map-section') :
+      id === 'candidate-heading' ? $('result-title') : $(id);
+    if (!target) return;
+    syncQueryNavigationOffset();
     target.focus({preventScroll: true});
-    target.scrollIntoView({behavior: 'auto', block: 'start'});
+    (councilOverview ? displayControls : target).scrollIntoView({behavior: 'auto', block: 'start'});
   });
 }
 function clearRouteHash() {
@@ -405,7 +510,8 @@ function renderDistricts() {
 function goUp() {
   state.navigationMode = 'user'; clearRouteHash();
   const family = mapElectionFamily(state.type?.id || state.selectionTypeId);
-  if (!family || state.level === 'taiwan') return;
+  if (state.level === 'taiwan') return;
+  if (!family) { focusLevel(state.sequence, 'zone-heading'); return; }
   if (state.level === 'county' || family === 'mayor') { showTaiwan(family, true); return; }
   const district = state.district?.id;
   selectType(state.type, {district: state.level === 'result' && family === 'village' ? district : undefined,
@@ -445,7 +551,11 @@ function shortZoneName(zone) {
 function renderZones() {
   const zones = allZones();
   const query = $('zone-search').value.trim().toLocaleLowerCase('zh-TW');
-  const filtered = zones.filter((zone) => searchMatches(`${zone.name} ${zone.geography?.coverage || ''} ${zone.geography?.shortLabel || ''} ${zone.searchNames.join(' ')}`, query));
+  const council = mapElectionFamily(state.type?.id) === 'council';
+  const filtered = zones.filter((zone) => {
+    const displayedName = council ? window.TaiwanVillageMap?.councilDisplayName?.(zone) || '' : '';
+    return searchMatches(`${zone.name} ${displayedName} ${zone.geography?.coverage || ''} ${zone.geography?.shortLabel || ''} ${zone.searchNames.join(' ')}`, query);
+  });
   $('clear-zone-search').hidden = !query;
   $('zone-search-scope').textContent = `搜尋範圍：${state.county?.name || ''} · ${state.district?.name || state.type?.label || ''}`;
   $('zone-count').textContent = `${filtered.length} / ${zones.length}`;
@@ -466,7 +576,13 @@ function renderZones() {
     button.dataset.zoneId = zone.id;
     button.innerHTML = state.level !== 'result' && mapElectionFamily(state.type?.id) === 'council' ?
       `<span><strong>${escapeHtml(zone.name)}</strong><p class="zone-coverage">${escapeHtml(zone.geography?.coverage || '選區範圍待確認')}</p></span><small>應選 ${zone.seats ?? '待確認'} 席 · 登記 ${zone.candidateCount} 人</small>` : `<span>${escapeHtml(title)}</span>${village ? '' : `<small>${escapeHtml(count)}</small>`}`;
-    button.addEventListener('click', () => { state.navigationMode='user'; clearRouteHash(); selectZone(zone, true); });
+    button.addEventListener('click', () => {
+      if (mapElectionFamily(state.type?.id) === 'village') {
+        state.villageListPreference = {countyId: state.county.id, districtId: state.district.id};
+      }
+      $('local-map-routing-status').textContent = '';
+      state.navigationMode='user'; clearRouteHash(); selectZone(zone, true);
+    });
     $('zone-list').append(button);
   }
   if (!filtered.length) $('zone-list').innerHTML = '<p class="no-results">找不到符合的選區或候選人</p>';
@@ -624,7 +740,7 @@ async function selectZone(zone, scrollToCandidates = false, scrollTarget = 'cand
     syncCountyMap();
     updateUrl(true);
     const historyReady = loadHistory(sequence);
-    loadPartyHistory(sequence, historyReady);
+    state.resultReady = Promise.allSettled([historyReady, loadPartyHistory(sequence, historyReady), state.mapReady]);
     if (scrollToCandidates) focusLevel(sequence, scrollTarget === 'zone-heading' ? 'zone-heading' : 'candidate-heading');
   } catch (error) {
     if (sequence === state.sequence) {
@@ -643,6 +759,13 @@ function renderResult() {
   const secondRegistration = zone.electionEvent?.status === 'second_registration_announced';
   $('data-stage').textContent = stopped ? '已停止選舉' : secondRegistration ? '第 2 次登記已公告' : '2026 登記資料';
   $('data-stage').classList.toggle('stopped', stopped || secondRegistration);
+  const stageNote = $('candidate-stage-note');
+  if (stageNote) {
+    stageNote.hidden = false;
+    stageNote.textContent = stopped
+      ? '本選區已停止選舉，以下登記資料僅供查考；排列順序不是候選人號次。'
+      : '本頁為已收錄的登記資料，正式名單以中選會審定公告為準；未提供 2026 正式號次，排列順序不代表號次。';
+  }
   $('result-parent').textContent = `${state.county.name} · ${state.type.label}${state.district ? ` · ${state.district.name}` : ''}`;
   $('result-title').textContent = shortZoneName(zone);
   $('candidate-zone-label').textContent = `· ${shortZoneName(zone)}`;
@@ -883,6 +1006,27 @@ async function loadHistory(sequence) {
     $('history-content').querySelector('button').addEventListener('click', () => loadHistory(sequence));
   }
 }
+function shouldPositionInitialResult() {
+  const query = new URLSearchParams(location.search);
+  const navigationType = window.performance?.getEntriesByType?.('navigation')?.[0]?.type || 'navigate';
+  const resultRoute = query.get('view') === 'result' || (!query.has('view') && query.has('zone'));
+  return Boolean(query.get('county') && resultRoute && query.get('tab') !== 'voting' && !location.hash
+    && ['navigate', 'reload'].includes(navigationType));
+}
+async function positionInitialResult() {
+  const sequence = state.sequence;
+  await state.resultReady;
+  if (document.readyState !== 'complete') {
+    await new Promise(resolve => window.addEventListener('load', resolve, {once: true}));
+  }
+  if (sequence !== state.sequence || state.level !== 'result' || state.error || $('candidate-panel')?.hidden) return;
+  const active = document.activeElement;
+  if (active && active !== document.body && active !== document.documentElement && active.id !== 'result-title') return;
+  await new Promise(resolve => requestAnimationFrame(() => {
+    focusLevel(sequence, 'candidate-heading');
+    requestAnimationFrame(resolve);
+  }));
+}
 async function init() {
   if (location.protocol === 'file:') {
     $('coverage').textContent = '請使用 localhost';
@@ -892,13 +1036,33 @@ async function init() {
     $('empty-state').insertAdjacentHTML('beforeend', '<p><a href="http://127.0.0.1:8765/">開啟本機查詢網站 ↗</a></p>');
     return;
   }
+  $('query-previous-office').addEventListener('click', returnToPreviousOffice);
+  const queryMenu = $('query-action-menu');
+  const compactNavigation = window.matchMedia('(max-width: 900px)');
+  const syncQueryMenu = () => { queryMenu.open = !compactNavigation.matches; renderQueryNavigation(); };
+  compactNavigation.addEventListener('change', syncQueryMenu);
+  syncQueryMenu();
+  queryMenu.addEventListener('click', event => {
+    if (compactNavigation.matches && event.target.closest('button,a')) queryMenu.open = false;
+  });
+  queryMenu.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && compactNavigation.matches && queryMenu.open) {
+      event.preventDefault(); queryMenu.open = false; queryMenu.querySelector('summary').focus();
+    }
+  });
+  document.addEventListener('pointerdown', event => {
+    if (compactNavigation.matches && queryMenu.open && !queryMenu.contains(event.target)) queryMenu.open = false;
+  });
+  if (window.ResizeObserver) {
+    new ResizeObserver(syncQueryNavigationOffset).observe($('query-navigation'));
+  }
   $('district-select').addEventListener('change', (event) => { state.navigationMode='user'; selectDistrict(state.type.districts.find((district) => district.id === event.target.value), undefined, undefined, true); });
   for (const button of document.querySelectorAll('[data-map-family]')) {
     button.addEventListener('click', () => {
       if (!state.manifest) return;
       const family = button.dataset.mapFamily;
       state.navigationMode = 'user';
-      clearRouteHash(); showTaiwan(family, true);
+      switchElectionFamily(family);
     });
   }
   for (const button of document.querySelectorAll('[data-region-back]')) button.addEventListener('click', goUp);
@@ -934,9 +1098,19 @@ async function init() {
   $('candidate-columns').innerHTML = tableHeaders(candidateColumns);
   attachTableSorting('candidate-table', 'candidate');
   message('正在載入資料', '請稍候…', '⋯');
+  const positionResult = shouldPositionInitialResult();
+  const previousScrollRestoration = history.scrollRestoration;
   try {
+    if (positionResult) history.scrollRestoration = 'manual';
     state.manifest = await readJson('counties.json');
     if (window.TaiwanVillageMap) state.villageMapView = window.TaiwanVillageMap.create($('village-map'), {
+      matchesSearch: searchMatches, onVillageListRequest: openVillageList,
+      getViewportTopInset: () => {
+        const navigation = $('query-navigation');
+        if (!navigation || navigation.hidden) return 0;
+        const rect = navigation.getBoundingClientRect();
+        return rect.bottom > 0 && rect.top < window.innerHeight ? rect.bottom : 0;
+      },
       onDistrictSelect: mapDistrictSelected, onVillageSelect: mapVillageSelected,
       onCouncilSelect: mapCouncilSelected,
     });
@@ -954,6 +1128,8 @@ async function init() {
       `全台 ${available.length} 縣市的 2026 登記資料可查；請選擇縣市、選舉種類與選區。` :
       `已建立 ${state.manifest.counties.length} 縣市入口，目前可查 ${available.length} 縣市。`;
     await restoreRoute();
+    if (positionResult) await positionInitialResult();
   } catch (error) { message('網站資料載入失敗', `請重新整理頁面後再試；若仍無法載入，請稍後再開啟網站。${error.message}`, '!'); }
+  finally { if (positionResult) history.scrollRestoration = previousScrollRestoration || 'auto'; }
 }
 init();

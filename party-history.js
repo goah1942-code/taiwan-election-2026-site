@@ -237,6 +237,11 @@
     container.setAttribute('aria-labelledby', title.id);
     container.append(heading);
     container.append(element('p', 'ph-intro', '縣市長與總統選舉的歷史得票比例，依當年推薦政黨歸類；並非民調或 2026 年支持度。'));
+    const checkedOn = typeof data.checkedOn === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(data.checkedOn) ? data.checkedOn : '未取得';
+    const sourceDate = element('p', 'ph-source-date');
+    sourceDate.append(element('strong', '', `本站歷史資料核對日：${checkedOn}`),
+      element('span', '', '此為本站核對紀錄，不代表原檔取得日或官方更新日；後兩項日期目前未取得。本站非即時同步，選舉年份另列於圖表。'));
+    container.append(sourceDate);
 
     const modeControls = element('div', 'ph-mode-controls');
     modeControls.setAttribute('role', 'group');

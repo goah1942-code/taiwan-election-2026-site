@@ -111,6 +111,19 @@
     content = dialog.querySelector('.bnh-content');
     context = dialog.querySelector('#bnh-context');
     dialog.querySelector('.bnh-close').addEventListener('click', reset);
+    // Keep the modal's keyboard endpoints explicit across browser focus behavior.
+    dialog.addEventListener('keydown', event => {
+      if (!dialog.open || event.defaultPrevented || event.key !== 'Tab' || event.altKey || event.ctrlKey || event.metaKey) return;
+      const stops = [...dialog.querySelectorAll('button, a[href], [tabindex]')]
+        .filter(node => !node.disabled && node.tabIndex >= 0 && node.getClientRects().length);
+      const first = stops[0], last = stops[stops.length - 1];
+      if (!first) return;
+      const active = document.activeElement;
+      if (active === dialog || (event.shiftKey ? active === first : active === last)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      }
+    });
     dialog.addEventListener('cancel', () => { sequence += 1; });
     dialog.addEventListener('close', () => {
       if (dialog.open) return;

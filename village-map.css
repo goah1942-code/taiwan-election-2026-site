@@ -88,3 +88,5 @@
 .village-map-retry:focus-visible{outline:2px solid #168e80;outline-offset:2px}
 @media(max-width:680px){.village-map{margin-top:18px;padding-top:18px}.village-map-title{font-size:18px}.village-map-header{gap:8px}.village-map-count{font-size:10px;padding:6px 7px}.village-map-description{font-size:12px}.village-map-search{gap:7px}.village-map-search>label{font-size:11px}.village-map-search>input{font-size:12px;padding:9px}.village-map-canvas,.village-map-canvas>svg{max-height:520px}.village-map-toolbar{right:6px;bottom:6px}.village-map-tooltip{padding:7px 10px}.village-map-inspection{font-size:11px}.village-map-legend{gap:7px 10px}.village-map-district-labels text{font-size:17px;stroke-width:5}}
 @media(prefers-reduced-motion:reduce){.village-map-village>path{transition:none}}
+
+.village-map-coverage-notice{margin:12px 0;padding:12px 14px;border-left:3px solid #beb875;background:#faf8ec;color:#534e2c;font-size:14px;line-height:1.7}.village-map-coverage-notice p{margin:0}.village-map-coverage-notice[hidden]{display:none}

@@ -6,8 +6,12 @@
     plain_indigenous: {label: '平地原住民選民', key: 'plainIndigenousCouncilZoneIds'},
     mountain_indigenous: {label: '山地原住民選民', key: 'mountainIndigenousCouncilZoneIds'},
   };
+  const CANDIDATE_TAG_HELP = '姓名小標只依 2022 同職務、同選區紀錄比對：上屆當選＝爭取連任；上屆參選但未當選＝再次參選。未標示表示未比對到或資料未知，不代表從未參選；這不是現職身分的即時查核。';
+  const PROFILE_LINK_HELP = 'WIKI（中文維基百科）／VOTETW（台灣選舉維基百科）為外部人物介紹，點選另開分頁。沒有連結表示本站目前沒有已核實的對應介紹，不代表外站一定沒有資料。';
   const SCHEDULE_URL = 'https://www.cec.gov.tw/central/article/61722';
   const REFERENDUM_URL = 'https://web.cec.gov.tw/referendum/article/64315';
+  const ELECTION_LAW_URL = 'https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=D0020010';
+  const REFERENDUM_LAW_URL = 'https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=D0020050';
   const WULAI_REP_SOURCE = 'https://web.cec.gov.tw/api/file/c4b572bd-102f-4e02-8870-407aa22ba63d.pdf';
   // 115 年烏來區民代表選區公告，第 1 頁。Official village coverage,
   // independent of the voter's general / plains / mountain council identity.
@@ -206,7 +210,7 @@
     if (item.status === 'pending') return `<p class="bn-pending-reason">${escape(item.reason)}</p>`;
     if (item.candidateError) return `<p class="bn-pending-reason">${escape(item.candidateError)}</p>`;
     if (!item.candidates?.length) return `<p class="bn-pending-reason">${item.incomplete ? '第 2 次登記已公告，最新名單尚待補入。' : '目前沒有已收錄的登記候選人，請核對官方公告。'}</p>`;
-    return `<p class="bn-candidates-label">目前登記 ${item.candidates.length} 人 · 不含候選人號次</p><ul class="bn-candidates">${item.candidates.map(candidate => {
+    return `<p class="bn-candidates-label">目前登記 ${item.candidates.length} 人 · 不含候選人號次</p><details class="bn-candidate-tag-help"><summary>姓名小標與人物介紹說明</summary><p>${escape(CANDIDATE_TAG_HELP)}</p><p>${escape(PROFILE_LINK_HELP)}</p></details><ul class="bn-candidates">${item.candidates.map(candidate => {
       const party = candidate.party === '無' ? '無政黨推薦' : candidate.party || '推薦政黨未載';
       const partyClass = candidate.party === '中國國民黨' ? 'bn-party-kmt' : candidate.party === '民主進步黨' ? 'bn-party-dpp' : 'bn-party-other';
       const notes = [candidate.note, candidate.statusNote].filter(Boolean);
@@ -261,7 +265,7 @@
 
   function resultHtml(result) {
     const {resolved, plan} = result;
-    if (!plan) return `<div class="bn-address-message" role="status"><strong>${escape(addressStatus(resolved))}</strong><p>例如：新北市樹林區中山路一段1號。不用輸入里名或鄰別；請保留段、巷、弄、號與之號。</p>${(resolved.warnings || []).map(warning => `<p>${escape(warning)}</p>`).join('')}</div>`;
+    if (!plan) return `<div class="bn-address-message" role="status"><strong>${escape(addressStatus(resolved))}</strong><p>例如：新北市樹林區中山路一段1號。不用輸入里名或鄰別；請保留段、巷、弄、號與之號。</p>${(resolved.warnings || []).map(warning => `<p>${escape(warning)}</p>`).join('')}<button type="button" class="bn-recover-address" data-bn-edit-address>回到地址欄修改</button></div>`;
     const exact = resolved.status === 'resolved' && Boolean(resolved.villageZoneId);
     const villageLabel = exact ? resolved.villageName : resolved.status === 'village_unlinked' && (resolved.rawVillageName || resolved.villageName) ? `${resolved.rawVillageName || resolved.villageName}（里名待核對）` : '村里待確認';
     const region = [plan.countyName, resolved.districtName, villageLabel].filter(Boolean).join(' · ');
@@ -274,12 +278,12 @@
       <div class="bn-notice-top"><div><span class="bn-kicker">2026 · 我的選舉資料</span><h3 tabindex="-1" id="bn-result-heading">${partial ? '先看已能確認的選舉' : '你的投票資料預覽'}</h3><p>依輸入戶籍地址與選民身分整理</p></div><div class="bn-unofficial-stamp">查詢預覽<br><small>非正式通知單</small></div></div>
       <div class="bn-notice-details"><div><span>戶籍地址</span><strong>${escape(resolved.normalizedAddress || '')}</strong><small class="bn-address-match ${exact ? 'is-exact' : ''}">${escape(addressStatus(resolved))}</small></div><div><span>行政區與村里</span><strong>${escape(region)}</strong><small>${escape(plan.identityLabel)} · 依戶籍登記身分選擇</small></div><div><span>投票日</span><strong>2026 年 11 月 28 日</strong><small>星期六 · 08:00–16:00</small></div><div><span>投票所與編號</span><strong class="bn-unknown">以正式選舉通知單為準</strong><small>本站未提供個人選舉人名冊／投票所資料</small></div></div>
       <div class="bn-count-line"><div><strong>${plan.localBallotCount}</strong><span>種地方選舉票</span></div><p>${partial ? `已確認 ${plan.matchedCount} 種選區${plan.pendingCount ? `，${plan.pendingCount} 種仍待確認` : ''}` : '各種選舉各領一張，各圈選一人'}${plan.stoppedCount ? `；${plan.stoppedCount} 種已停止選舉` : ''}${plan.districtOfficeUncertain ? '；山地原住民區職務另待行政區確認' : ''}<br>同日另有 1 案全國性公投，領票資格另計。</p></div>
-      <p class="bn-eligibility">地方選舉須符合中華民國國民、年滿 20 歲、在該選舉區繼續居住 4 個月等資格；實際領票以選舉人名冊與官方公告為準。原住民議員依戶籍登記身分對應一種議員票。</p>
+      <p class="bn-eligibility">地方選舉須符合中華民國國民、年滿 20 歲、在該選舉區繼續居住 4 個月等資格；實際領票以選舉人名冊與官方公告為準。原住民議員依戶籍登記身分對應一種議員票。 <a class="bn-legal-source" href="${ELECTION_LAW_URL}" target="_blank" rel="noopener noreferrer" aria-label="地方選舉資格法條（另開分頁）" title="公職人員選舉罷免法第4、14至16條">地方選舉資格法條 ↗</a></p>
       ${!exact ? `<div class="bn-partial-alert"><strong>尚未完成門牌 → 村里對應</strong><p>先列出能由縣市／行政區確認的選舉。請檢查地址；村里長與跨村里分區不會用推測值填入。</p></div>` : ''}
       <div class="bn-ballots">${plan.ballots.map(ballotHtml).join('')}</div>
-      <section class="bn-referendum" aria-labelledby="bn-referendum-heading"><div class="bn-referendum-heading"><div><span class="bn-kicker">同日 · 全國性公投</span><h4 id="bn-referendum-heading">第 22 案</h4></div><span class="bn-match-status">資格另計</span></div><p class="bn-referendum-question">你是否支持政府使用「核電」振興經濟，以廢除「非核家園」的能源政策？</p><div class="bn-referendum-options" aria-label="公投票有兩種選項"><span>同意</span><span>不同意</span><small>擇一圈選 · 沒有候選人</small></div><p class="bn-referendum-eligibility">公投投票資格：中華民國國民年滿 18 歲、未受監護宣告，且在中華民國繼續居住 6 個月以上；資格以投票日前一日計算。18–19 歲符合條件者可領公投票，尚未具地方選舉投票年齡。</p><div class="bn-referendum-footer"><span>2026.11.28 · 08:00–16:00</span><a href="${REFERENDUM_URL}" target="_blank" rel="noopener noreferrer">中選會第 22 案投票公告 ↗</a></div></section>
+      <section class="bn-referendum" aria-labelledby="bn-referendum-heading"><div class="bn-referendum-heading"><div><span class="bn-kicker">同日 · 全國性公投</span><h4 id="bn-referendum-heading">第 22 案</h4></div><span class="bn-match-status">資格另計</span></div><p class="bn-referendum-question">你是否支持政府使用「核電」振興經濟，以廢除「非核家園」的能源政策？</p><div class="bn-referendum-options" aria-label="公投票有兩種選項"><span>同意</span><span>不同意</span><small>擇一圈選 · 沒有候選人</small></div><p class="bn-referendum-eligibility">公投投票資格：中華民國國民年滿 18 歲、未受監護宣告，且在中華民國繼續居住 6 個月以上；資格以投票日前一日計算。18–19 歲符合條件者可領公投票，尚未具地方選舉投票年齡。 <a class="bn-legal-source" href="${REFERENDUM_LAW_URL}" target="_blank" rel="noopener noreferrer" aria-label="公投資格法條（另開分頁）" title="公民投票法第7、8條">公投資格法條 ↗</a></p><div class="bn-referendum-footer"><span>2026.11.28 · 08:00–16:00</span><a href="${REFERENDUM_URL}" target="_blank" rel="noopener noreferrer">中選會第 22 案投票公告 ↗</a></div></section>
       <div class="bn-registration-note"><strong>目前為 2026 登記資料</strong><span>名單須以後續中選會審定公告為準。本頁依來源順序呈現，沒有候選人號次；應選席次不代表這張票可圈選多人。</span></div>
-      <details class="bn-sources"><summary>地址、選區與日期的資料來源</summary><div>${source ? `<p>門牌與村里：<a href="${escape(source)}" target="_blank" rel="noopener noreferrer">${escape(sourceTitle)} ↗</a>${period ? `（資料期別 ${escape(period)}）` : ''}</p>` : '<p>這個地址尚未取得可核對的官方門牌與村里對照。</p>'}<p>議員選區：各票種下方顯示官方範圍；村里與議員選區僅使用官方範圍明確對應。</p><p>姓名標籤以 2022 同職務、同選區紀錄比對：上屆未當選＝再次參選，上屆當選＝爭取連任。未比對到或資料未知時不標示，不能解讀為從未參選。</p><p>投票日期：<a href="${SCHEDULE_URL}" target="_blank" rel="noopener noreferrer">中選會 115 年地方公職人員選舉工作進行程序表 ↗</a></p>${warnings.map(warning => `<p>${escape(warning)}</p>`).join('')}</div></details>
+      <details class="bn-sources"><summary>資料來源與姓名小標說明</summary><div>${source ? `<p>門牌與村里：<a href="${escape(source)}" target="_blank" rel="noopener noreferrer">${escape(sourceTitle)} ↗</a>${period ? `（資料期別 ${escape(period)}）` : ''}</p>` : '<p>這個地址尚未取得可核對的官方門牌與村里對照。</p>'}<p>議員選區：各票種下方顯示官方範圍；村里與議員選區僅使用官方範圍明確對應。</p><p>${escape(CANDIDATE_TAG_HELP)}</p><p>${escape(PROFILE_LINK_HELP)}</p><p>投票日期：<a href="${SCHEDULE_URL}" target="_blank" rel="noopener noreferrer">中選會 115 年地方公職人員選舉工作進行程序表 ↗</a></p>${warnings.map(warning => `<p>${escape(warning)}</p>`).join('')}</div></details>
       <div class="bn-notice-actions"><button type="button" id="bn-print">列印這份查詢</button><button type="button" id="bn-edit">修改地址／身分 ↑</button><small>地址只保留在這個頁面，不寫入網址或儲存紀錄。</small></div>
     </div>`;
   }
@@ -288,9 +292,10 @@
     const host = document.getElementById('ballot-notice');
     if (!host) return;
     host.classList.add('ballot-notice');
-    host.innerHTML = `<div class="bn-entry-heading"><div><span class="bn-kicker">從地址查我的票</span><h2 id="ballot-notice-heading">不用知道鄰里，也能找自己的選區。</h2><p>輸入戶籍地址，一起看這次的選舉種類、選區和候選人。</p></div><span class="bn-entry-badge">2026 九合一</span></div>
-      <form class="bn-form" id="bn-form"><div class="bn-address-field"><label for="bn-address">戶籍地址 <span>不用填里名、鄰別</span></label><input id="bn-address" name="household-address" type="text" autocomplete="off" spellcheck="false" required maxlength="180" placeholder="例如：新北市樹林區中山路一段1號" aria-describedby="bn-address-help"><p id="bn-address-help">保留縣市、區／鄉鎮市、路段、巷弄與門牌號。請輸入戶籍地址。</p></div><div class="bn-identity-field"><label for="bn-identity">選民身分</label><select id="bn-identity">${Object.entries(IDENTITY).map(([value, item]) => `<option value="${value}">${item.label}</option>`).join('')}</select><p>原住民身分以戶籍登記為準。</p></div><button class="bn-submit" type="submit" id="bn-submit">查我的選票 <span aria-hidden="true">→</span></button></form>
-      <div class="bn-entry-bottom"><p>地址留在瀏覽器內，不需姓名或身分證字號。<span>目前新北市可由完整門牌查村里；其他縣市先查可確認的選區。</span></p><div class="bn-examples"><span>試看</span><button type="button" data-bn-example="新北市樹林區中山路一段1號">樹林</button><button type="button" data-bn-example="新北市板橋區文化路一段1號">板橋</button></div></div>
+    host.innerHTML = `<div class="bn-entry-heading"><div><span class="bn-kicker">從地址查我的票</span><h2 id="ballot-notice-heading">輸入戶籍地址</h2></div><span class="bn-entry-badge">2026 九合一</span></div>
+      <div class="bn-input-guide"><p id="bn-address-scope"><strong>新北市可由完整門牌查村里。</strong>其他縣市先查已確認的選區。</p><p id="bn-address-privacy">地址只在瀏覽器比對，不會儲存；不用填姓名或身分證字號。</p></div>
+      <form class="bn-form" id="bn-form"><div class="bn-address-field"><label for="bn-address">戶籍地址 <span>不用填里名、鄰別</span></label><input id="bn-address" name="household-address" type="text" autocomplete="off" spellcheck="false" required maxlength="180" placeholder="例如：新北市樹林區中山路一段1號" aria-describedby="bn-address-scope bn-address-privacy bn-address-help"><p id="bn-address-help">保留縣市、區／鄉鎮市、路段、巷弄與門牌號。請輸入戶籍地址。</p></div><div class="bn-identity-field"><label for="bn-identity">選民身分</label><select id="bn-identity">${Object.entries(IDENTITY).map(([value, item]) => `<option value="${value}">${item.label}</option>`).join('')}</select><p>原住民身分以戶籍登記為準。</p></div><button class="bn-submit" type="submit" id="bn-submit">查我的選票 <span aria-hidden="true">→</span></button></form>
+      <div class="bn-entry-bottom"><div class="bn-examples"><span>試看範例</span><button type="button" data-bn-example="新北市樹林區中山路一段1號">樹林</button><button type="button" data-bn-example="新北市板橋區文化路一段1號">板橋</button></div></div>
       <p id="bn-progress" class="bn-progress" role="status" aria-live="polite"></p><div id="bn-output" class="bn-output" aria-live="polite"></div>`;
     const form = host.querySelector('#bn-form');
     const input = host.querySelector('#bn-address');
@@ -299,7 +304,28 @@
     const output = host.querySelector('#bn-output');
     const progress = host.querySelector('#bn-progress');
     let sequence = 0;
+    const baseInputDescription = input.getAttribute('aria-describedby') || '';
+    function clearInputFeedback() {
+      input.removeAttribute('aria-invalid');
+      input.setAttribute('aria-describedby', baseInputDescription);
+    }
+    function connectInputFeedback(resolved) {
+      const title = output.querySelector('.bn-address-message strong');
+      if (!title) return;
+      title.id = 'bn-address-feedback';
+      input.setAttribute('aria-describedby', `bn-address-feedback ${baseInputDescription}`.trim());
+      if (resolved.status === 'invalid') input.setAttribute('aria-invalid', 'true');
+      const recover = output.querySelector('[data-bn-edit-address]');
+      if (recover) {
+        recover.textContent = resolved.status === 'invalid' ? '回到地址欄補正' : '回到查詢表單';
+        recover.addEventListener('click', () => {
+          input.focus({preventScroll: true});
+          input.scrollIntoView({block: 'center', behavior: 'auto'});
+        });
+      }
+    }
     function invalidate() {
+      clearInputFeedback();
       window.ElectionBallotHistory?.reset();
       sequence += 1;
       button.disabled = false;
@@ -318,6 +344,7 @@
     }
     async function submit() {
       if (!input.reportValidity()) return;
+      clearInputFeedback();
       window.ElectionBallotHistory?.reset();
       const current = ++sequence;
       const address = input.value.trim();
@@ -331,6 +358,7 @@
         const result = await query(address, identity);
         if (current !== sequence) return;
         output.innerHTML = resultHtml(result);
+        connectInputFeedback(result.resolved);
         for (const trigger of output.querySelectorAll('[data-bn-history]')) {
           trigger.addEventListener('click', () => {
             if (current !== sequence || !window.ElectionBallotHistory) return;
