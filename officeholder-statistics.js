@@ -27,6 +27,15 @@ window.OfficeholderStatistics=(()=>{
   function distributionRow(party,value,share){
     return `<tr><th scope="row">${escape(partyLabel(party))}</th><td>${number(value)}</td><td><div class="inc-stat-share"><span>${escape(percent(share))}</span><div class="inc-stat-track" aria-hidden="true"><i style="width:${share||0}%"></i></div></div></td></tr>`;
   }
+  function renderChoices(id,items,selected){
+    const group=$(id),buttons=[...group.children];
+    if(buttons.length!==items.length||buttons.some((button,i)=>button.value!==items[i].value||button.textContent!==items[i].label)){
+      group.replaceChildren(...items.map(item=>{
+        const button=document.createElement('button');button.type='button';button.value=item.value;button.textContent=item.label;return button;
+      }));
+    }
+    for(const button of group.children)button.setAttribute('aria-pressed',String(button.value===selected));
+  }
   async function loadVotes(retry=false){
     if(voteData||pending||(voteError&&!retry))return;
     voteError=false;
@@ -41,7 +50,7 @@ window.OfficeholderStatistics=(()=>{
     const hasPeople=office!=='president',hasVotes=office!=='village';
     root.hidden=!rows.length;
     $('inc-statistics-heading').textContent=`${scope||'全台'}${labels[office]}統計`;
-    $('inc-stat-scope').value=scope;
+    renderChoices('inc-stat-scope',[{value:'',label:'全台'},...counties.map(c=>({value:c.name,label:c.name}))],scope);
     $('inc-stat-brief').textContent={president:'2024總統候選人票，依推薦政黨加總。',mayor:'人數依現任名冊；票數為2022選舉，含嘉義市重行選舉。',legislator:'人數依現任名冊，縣市僅計區域立委；票種只影響票數。',council:'人數依現任名冊；票數為2022議員選舉，含全部議員類別。',village:'以名冊任職紀錄計人次；代理包括職稱或姓名的明確註記。'}[office];
     $('inc-statistics-scope').textContent=`統計範圍：${scope||'全台'}。現任名冊：${index.checkedAt} 快照（非即時）。`;
     $('inc-stats-total-card').hidden=!hasPeople;$('inc-stats-total').textContent=number(counts.total);
@@ -62,7 +71,7 @@ window.OfficeholderStatistics=(()=>{
     const variants=voteData?.elections?.[office]||[];
     if(variants.length&&!variants.some(e=>e.id===ballot))ballot=office==='legislator'?'party-2024':variants[0].id;
     $('inc-ballot-wrap').hidden=office!=='legislator';
-    const selector=$('inc-ballot');selector.replaceChildren(...variants.map(e=>new Option(e.label,e.id)));selector.value=ballot;selector.disabled=!variants.length;
+    renderChoices('inc-ballot',office==='legislator'?variants.map(e=>({value:e.id,label:e.label})):[],ballot);
     const votes=ballotTotals(voteData,office,ballot,scope),total=votes?.totals?.validVotes;
     $('inc-stats-valid').textContent=number(total);
     $('inc-stats-valid-label').textContent=votes?`${votes.event.year} 年有效票`:'選舉有效票';
@@ -105,12 +114,11 @@ window.OfficeholderStatistics=(()=>{
     if(changed)scope=next.counties.some(c=>normalize(c.name)===normalize(next.county))?next.counties.find(c=>normalize(c.name)===normalize(next.county)).name:'';
     if(officeChanged)ballot='';
     context=next;
-    const selector=$('inc-stat-scope');selector.replaceChildren(new Option('全台',''),...next.counties.map(c=>new Option(c.name,c.name)));
     render();if(next.office!=='village')loadVotes();
   }
   if(root){
-    $('inc-stat-scope').addEventListener('change',()=>{scope=$('inc-stat-scope').value;render();});
-    $('inc-ballot').addEventListener('change',()=>{ballot=$('inc-ballot').value;render();});
+    $('inc-stat-scope').addEventListener('click',event=>{const button=event.target.closest('button');if(button){scope=button.value;render();}});
+    $('inc-ballot').addEventListener('click',event=>{const button=event.target.closest('button');if(button){ballot=button.value;render();}});
     $('inc-votes-retry').addEventListener('click',()=>loadVotes(true));
   }
   function reset(){context=null;if(root)root.hidden=true;}
