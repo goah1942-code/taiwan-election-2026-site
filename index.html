@@ -23,9 +23,9 @@
   <script src="./county-map.js?v=20261015-ui50-final" defer></script>
   <script src="./village-basemap.js?v=20261015-ui50-final" defer></script>
   <script src="./village-map.js?v=20261016-council-candidates-v1" defer></script>
-  <script src="./app.js?v=20261018-incumbents-v1" defer></script>
-  <link rel="stylesheet" href="./incumbents.css?v=20261018-incumbents-v1">
-  <script src="./incumbents.js?v=20261018-incumbents-v1" defer></script>
+  <script src="./app.js?v=20261018-incumbents-navigation-v1" defer></script>
+  <link rel="stylesheet" href="./incumbents.css?v=20261018-incumbents-navigation-v1">
+  <script src="./incumbents.js?v=20261018-incumbents-navigation-v1" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至主要內容</a>
@@ -224,19 +224,35 @@
         <button type="button" data-inc-office="village" aria-pressed="false"><strong>里長</strong><small>含村長、代理</small></button>
       </div>
       <section id="inc-directory" class="inc-directory" aria-labelledby="inc-result-heading" aria-busy="false">
-        <h2 id="inc-result-heading" tabindex="-1">總統名冊</h2>
+        <div class="inc-directory-heading"><h2 id="inc-result-heading" tabindex="-1">總統名冊</h2></div>
         <div class="inc-data-note"><strong id="inc-checked">正在讀取資料日期…</strong><p id="inc-source-note"></p><p id="inc-stale" class="inc-stale" hidden>這份快照已超過 30 天，最新任職情形請核對官方來源。</p></div>
-        <fieldset id="inc-filters" class="inc-filters" disabled><legend>縮小查詢範圍</legend>
-          <label id="inc-county-wrap" hidden><span id="inc-county-label">縣市</span><select id="inc-county"><option value="">全部縣市</option></select></label>
-          <label id="inc-district-wrap" hidden>鄉鎮市區<select id="inc-district"><option value="">全部鄉鎮市區</option></select></label>
-          <label class="inc-search-wrap">搜尋姓名或地區<input id="inc-search" type="search" placeholder="例如：姓名、新北市、板橋區" autocomplete="off"></label>
-          <button id="inc-clear" type="button" hidden>清除篩選</button>
+        <fieldset id="inc-filters" class="inc-filters" disabled><legend class="sr-only">搜尋名冊</legend>
+          <label class="inc-search-wrap"><span id="inc-search-label">搜尋姓名或地區</span><input id="inc-search" type="search" placeholder="輸入姓名或地區" autocomplete="off"></label>
+          <button id="inc-clear" type="button" hidden>清除搜尋</button>
         </fieldset>
-        <p id="inc-status" class="inc-status" role="status" aria-live="polite">選擇職務，查看名冊。</p>
         <div id="inc-error" class="inc-error" hidden><button type="button" id="inc-retry">重新載入名冊</button></div>
-        <div id="inc-results" class="inc-results"></div>
-        <nav id="inc-pagination" class="inc-pagination" aria-label="現任者名冊分頁" hidden><button type="button" id="inc-prev">上一頁</button><span id="inc-page"></span><button type="button" id="inc-next">下一頁</button></nav>
-        <details class="inc-source-details"><summary>資料來源與收錄說明</summary><p>依官方名冊順序呈現，無支持度或推薦排名。名冊可能有更新落差，最新任免及代理情形以主管機關公告為準。搜尋不到不代表該地區沒有現任者。</p><ul id="inc-sources"></ul></details>
+        <section id="inc-county-browser" aria-label="選擇縣市" hidden>
+          <div class="inc-view-controls" role="group" aria-label="縣市顯示方式"><button type="button" data-inc-view="list" aria-pressed="true">列表顯示</button><button type="button" data-inc-view="map" aria-pressed="false">地圖顯示</button></div>
+          <p id="inc-county-status" class="inc-status" role="status"></p>
+          <div id="inc-county-list" class="inc-county-list" role="group" aria-label="全部縣市列表"></div>
+          <figure id="inc-county-map" class="inc-county-map" hidden><div id="inc-map-canvas"></div><figcaption id="inc-map-source"></figcaption></figure>
+          <section id="inc-national-options" class="inc-national-options" aria-labelledby="inc-national-heading" hidden><h3 id="inc-national-heading">不依縣市劃分的立委</h3><div id="inc-national-list"></div></section>
+        </section>
+        <div id="inc-workspace" class="inc-workspace">
+          <aside id="inc-zone-sidebar" class="inc-zone-sidebar" aria-labelledby="inc-zone-heading" hidden>
+            <div class="inc-sidebar-context"><strong id="inc-sidebar-county"></strong><button type="button" id="inc-return-counties" hidden>重選縣市</button></div>
+            <h3 id="inc-zone-heading" tabindex="-1">選區列表</h3>
+            <label id="inc-district-wrap" hidden>鄉鎮市區<select id="inc-district"><option value="">全部鄉鎮市區</option></select></label>
+            <p id="inc-zone-count"></p><div id="inc-zone-list" class="inc-zone-list" role="group" aria-label="選擇選區"></div>
+          </aside>
+          <section id="inc-result-pane" class="inc-result-pane" aria-labelledby="inc-selected-heading">
+            <button type="button" id="inc-change-zone" hidden>更換選區 ↑</button><h3 id="inc-selected-heading" tabindex="-1">現任總統</h3><p id="inc-selected-context" class="inc-selected-context"></p>
+            <p id="inc-status" class="inc-status" role="status" aria-live="polite">選擇職務，查看名冊。</p>
+            <ul id="inc-results" class="inc-results"></ul>
+            <nav id="inc-pagination" class="inc-pagination" aria-label="現任者名冊分頁" hidden><button type="button" id="inc-prev">上一頁</button><span id="inc-page"></span><button type="button" id="inc-next">下一頁</button></nav>
+          </section>
+        </div>
+        <details class="inc-source-details"><summary>資料來源與收錄說明</summary><p>名單依官方名冊順序呈現，無支持度或推薦排名。名冊可能有更新落差，最新任免及代理情形以主管機關公告為準。搜尋不到不代表該地區沒有現任者。</p><ul id="inc-sources"></ul></details>
       </section>
     </div>
   </main>

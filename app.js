@@ -109,7 +109,7 @@ function updateUrl(commit = false) {
   if (!commit) return;
   const query = new URLSearchParams();
   const existingQuery = new URLSearchParams(location.search);
-  for (const key of ['tab', 'office', 'incCounty', 'incDistrict']) {
+  for (const key of ['tab', 'office', 'incCounty', 'incDistrict', 'incArea', 'incView']) {
     if (existingQuery.has(key)) query.set(key, existingQuery.get(key));
   }
   if (state.county) query.set('county', state.county.id);
@@ -1137,7 +1137,7 @@ async function init() {
   addEventListener('popstate', async () => {
     const candidateRoute = (value) => {
       const url = new URL(value, location.href);
-      for (const key of ['tab', 'office', 'incCounty', 'incDistrict']) url.searchParams.delete(key);
+      for (const key of ['tab', 'office', 'incCounty', 'incDistrict', 'incArea', 'incView']) url.searchParams.delete(key);
       return `${url.pathname}?${url.searchParams}`;
     };
     if (!state.manifest || (!state.loading && state.routeUrl && candidateRoute(location.href) === candidateRoute(state.routeUrl))) return;
