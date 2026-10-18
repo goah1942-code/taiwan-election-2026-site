@@ -13,8 +13,8 @@
   <link rel="stylesheet" href="./village-map.css?v=20261015-ui50-final">
   <link rel="stylesheet" href="./ballot-notice.css?v=20261015-ui50-final">
   <link rel="stylesheet" href="./ballot-history.css?v=20261015-ui50-final">
-  <link rel="stylesheet" href="./page-tabs.css?v=20261015-ui50-final">
-  <script src="./page-tabs.js?v=20261015-ui50-final" defer></script>
+  <link rel="stylesheet" href="./page-tabs.css?v=20261018-incumbents-v1">
+  <script src="./page-tabs.js?v=20261018-incumbents-v1" defer></script>
   <script src="./candidate-matching.js?v=20261015-ui50-final" defer></script>
   <script src="./address-resolver.js?v=20261015-ui50-final" defer></script>
   <script src="./ballot-history.js?v=20261015-ui50-final" defer></script>
@@ -23,7 +23,9 @@
   <script src="./county-map.js?v=20261015-ui50-final" defer></script>
   <script src="./village-basemap.js?v=20261015-ui50-final" defer></script>
   <script src="./village-map.js?v=20261016-council-candidates-v1" defer></script>
-  <script src="./app.js?v=20261016-council-candidates-v1" defer></script>
+  <script src="./app.js?v=20261018-incumbents-v1" defer></script>
+  <link rel="stylesheet" href="./incumbents.css?v=20261018-incumbents-v1">
+  <script src="./incumbents.js?v=20261018-incumbents-v1" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至主要內容</a>
@@ -33,7 +35,7 @@
         <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
         <div><strong>台灣選舉資料室</strong><small>2026 九合一選舉候選人查詢</small></div>
       </div>
-      <div class="header-right"><span class="date-dot"></span> 2026.11.28 投票 <span class="header-divider"></span> 資料階段：候選人登記</div>
+      <div class="header-right"><span class="date-dot"></span> 2026.11.28 投票 <span class="header-divider"></span> <span id="site-data-phase">資料階段：候選人登記</span></div>
     </div>
   </header>
 
@@ -41,6 +43,7 @@
     <nav class="page-tabs" role="tablist" aria-label="查詢分頁">
       <button type="button" id="candidates-tab" class="page-tab" role="tab" aria-selected="true" aria-controls="candidate-panel" data-page-tab="candidates"><strong>看候選人</strong><span>地圖、參選名單與上屆結果</span></button>
       <button type="button" id="voting-tab" class="page-tab" role="tab" aria-selected="false" aria-controls="voting-panel" tabindex="-1" data-page-tab="voting"><strong>查我的投票區域</strong><span>輸入地址，查看自己的選區與選票</span></button>
+      <button type="button" id="incumbents-tab" class="page-tab" role="tab" aria-selected="false" aria-controls="incumbents-panel" tabindex="-1" data-page-tab="incumbents"><strong>現任者</strong><span>總統、縣市長、立委、議員與里長</span></button>
     </nav>
 
     <div id="candidate-panel" class="page-tab-panel" role="tabpanel" aria-labelledby="candidates-tab">
@@ -206,6 +209,35 @@
         <p>輸入戶籍地址，不用知道里名或鄰別，整理這次的選區、選票種類與候選人。</p>
       </section>
       <section id="ballot-notice" class="ballot-notice" aria-labelledby="ballot-notice-heading"></section>
+    </div>
+    <div id="incumbents-panel" class="page-tab-panel" role="tabpanel" aria-labelledby="incumbents-tab" hidden>
+      <section class="intro" aria-labelledby="incumbents-page-title">
+        <div class="eyebrow"><span class="eyebrow-line"></span> CURRENT OFFICEHOLDERS</div>
+        <h1 id="incumbents-page-title">現任者<span class="title-dot">.</span></h1>
+        <p>從總統到村里長，查詢目前官方名冊中的公職人員與任職地區。</p>
+      </section>
+      <div class="inc-offices" role="group" aria-label="現任者職務">
+        <button type="button" data-inc-office="president" aria-pressed="true"><strong>總統</strong><small>全國</small></button>
+        <button type="button" data-inc-office="mayor" aria-pressed="false"><strong>縣市長</strong><small>22 縣市</small></button>
+        <button type="button" data-inc-office="legislator" aria-pressed="false"><strong>立委</strong><small>本屆委員</small></button>
+        <button type="button" data-inc-office="council" aria-pressed="false"><strong>議員</strong><small>各縣市議會</small></button>
+        <button type="button" data-inc-office="village" aria-pressed="false"><strong>里長</strong><small>含村長、代理</small></button>
+      </div>
+      <section id="inc-directory" class="inc-directory" aria-labelledby="inc-result-heading" aria-busy="false">
+        <h2 id="inc-result-heading" tabindex="-1">總統名冊</h2>
+        <div class="inc-data-note"><strong id="inc-checked">正在讀取資料日期…</strong><p id="inc-source-note"></p><p id="inc-stale" class="inc-stale" hidden>這份快照已超過 30 天，最新任職情形請核對官方來源。</p></div>
+        <fieldset id="inc-filters" class="inc-filters" disabled><legend>縮小查詢範圍</legend>
+          <label id="inc-county-wrap" hidden><span id="inc-county-label">縣市</span><select id="inc-county"><option value="">全部縣市</option></select></label>
+          <label id="inc-district-wrap" hidden>鄉鎮市區<select id="inc-district"><option value="">全部鄉鎮市區</option></select></label>
+          <label class="inc-search-wrap">搜尋姓名或地區<input id="inc-search" type="search" placeholder="例如：姓名、新北市、板橋區" autocomplete="off"></label>
+          <button id="inc-clear" type="button" hidden>清除篩選</button>
+        </fieldset>
+        <p id="inc-status" class="inc-status" role="status" aria-live="polite">選擇職務，查看名冊。</p>
+        <div id="inc-error" class="inc-error" hidden><button type="button" id="inc-retry">重新載入名冊</button></div>
+        <div id="inc-results" class="inc-results"></div>
+        <nav id="inc-pagination" class="inc-pagination" aria-label="現任者名冊分頁" hidden><button type="button" id="inc-prev">上一頁</button><span id="inc-page"></span><button type="button" id="inc-next">下一頁</button></nav>
+        <details class="inc-source-details"><summary>資料來源與收錄說明</summary><p>依官方名冊順序呈現，無支持度或推薦排名。名冊可能有更新落差，最新任免及代理情形以主管機關公告為準。搜尋不到不代表該地區沒有現任者。</p><ul id="inc-sources"></ul></details>
+      </section>
     </div>
   </main>
 </body>

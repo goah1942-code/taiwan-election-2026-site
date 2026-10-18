@@ -1,0 +1,98 @@
+{
+  "checkedAt": "2026-10-18",
+  "sources": {
+    "president": {
+      "label": "總統府現任總統介紹",
+      "url": "https://www.president.gov.tw/Page/694",
+      "checkedAt": "2026-10-18",
+      "sha256": "d276bee419d31ac24494248ad07560f08786315a39aa893e1466a540a26462b7"
+    },
+    "legislators": {
+      "label": "立法院第11屆委員資料",
+      "url": "https://data.ly.gov.tw/odw/ID16Action.action?term=11&fileType=json",
+      "checkedAt": "2026-10-18",
+      "sha256": "768e86d80f6fc7bf970d84a507d5d2be9802050e6bf18e7773b99d98dc999b99"
+    },
+    "metro-mayors": {
+      "label": "內政部直轄市長名冊",
+      "url": "https://www.moi.gov.tw/LocalOfficial.aspx?TYP=KND0004&n=578",
+      "checkedAt": "2026-10-18",
+      "sha256": "4cb7a6d03a7b7010ac155317fc77878b64175912c1ef8d7cd5d55a4de1921d74"
+    },
+    "county-mayors": {
+      "label": "內政部縣市長名冊",
+      "url": "https://www.moi.gov.tw/LocalOfficial.aspx?TYP=KND0005&n=579",
+      "checkedAt": "2026-10-18",
+      "sha256": "8d445a4ac7ff2d2f951906eb019711d13d32ad66f6d57622c3df173de71d0647"
+    },
+    "metro-council": {
+      "label": "內政部直轄市議員名冊",
+      "url": "https://www.moi.gov.tw/LocalOfficial.aspx?TYP=KND0001&n=573",
+      "checkedAt": "2026-10-18",
+      "sha256": "c71c577eb9502b2326bc2f4f4fc3bc84583b2781bd4b300e72e75658304ce951"
+    },
+    "county-council": {
+      "label": "內政部縣市議員名冊",
+      "url": "https://www.moi.gov.tw/LocalOfficial.aspx?TYP=KND0002&n=574",
+      "checkedAt": "2026-10-18",
+      "sha256": "caf93342f943bd120441a0c8c335e4b69f6529e71b2b0201e89c31e8950ede5f"
+    },
+    "villages": {
+      "label": "內政部村里長名冊",
+      "url": "https://www.moi.gov.tw/LocalOfficial.aspx?TYP=KND0007&n=577",
+      "checkedAt": "2026-10-18",
+      "sha256": "741efe6ec269f0aa644e06481c45798f36aeddc915e4786c2dae693c7442e87a"
+    },
+    "yilan": {
+      "label": "宜蘭縣政府代理縣長介紹",
+      "url": "https://www.e-land.gov.tw/cp.aspx?n=2700",
+      "checkedAt": "2026-10-18",
+      "sha256": "0b4fd3a80502917c0d4e7fb0cf0d0d10e0c8f218d881ed7de6a6e9c890486fd6",
+      "sourceUpdatedAt": "2025-01-02"
+    },
+    "penghu": {
+      "label": "澎湖縣政府代理縣長報導",
+      "url": "https://www.penghu.gov.tw/ch/home.jsp?act=view&dataserno=11506090011&id=10088",
+      "checkedAt": "2026-10-18",
+      "sha256": "145b2509d98ec4fe14bde6a1d18b6f6b3e638b028733730ea2c3aae64635c616",
+      "sourceUpdatedAt": "2026-06-09"
+    }
+  },
+  "offices": [
+    {
+      "id": "president",
+      "label": "總統",
+      "count": 1,
+      "path": "./incumbents-data/president.json",
+      "sha256": "6b6deca55a9aa4766be15c7286d2e8bf831af88691c11884a0349527c89e63d5"
+    },
+    {
+      "id": "mayor",
+      "label": "縣市長",
+      "count": 22,
+      "path": "./incumbents-data/mayor.json",
+      "sha256": "ebd941a6e9d3281b3891a0b9dc1a6c59b2f9d5c07d5215919732998e51c8d9b8"
+    },
+    {
+      "id": "legislator",
+      "label": "立委",
+      "count": 113,
+      "path": "./incumbents-data/legislator.json",
+      "sha256": "0eac7ae42fdd1f5c28dc515d68cd2881c49994dec42dbe0178d8eed72b0c6ab8"
+    },
+    {
+      "id": "council",
+      "label": "議員",
+      "count": 872,
+      "path": "./incumbents-data/council.json",
+      "sha256": "03bf230fd355de2a2d9dedd9287dad642195ec4acb34becbaebf7deb6ea87ebc"
+    },
+    {
+      "id": "village",
+      "label": "里長",
+      "count": 7738,
+      "path": "./incumbents-data/village.json",
+      "sha256": "f9f18b4b780994cbc937a57e1e7e9a763d8fca21602db2380435ba170ffb6d09"
+    }
+  ]
+}

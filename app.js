@@ -108,7 +108,10 @@ function profileLinksHtml(candidate) {
 function updateUrl(commit = false) {
   if (!commit) return;
   const query = new URLSearchParams();
-  if (new URLSearchParams(location.search).get('tab') === 'voting') query.set('tab', 'voting');
+  const existingQuery = new URLSearchParams(location.search);
+  for (const key of ['tab', 'office', 'incCounty', 'incDistrict']) {
+    if (existingQuery.has(key)) query.set(key, existingQuery.get(key));
+  }
   if (state.county) query.set('county', state.county.id);
   if (state.type || state.selectionTypeId) query.set('type', state.type?.id || state.selectionTypeId);
   if (state.district) query.set('district', state.district.id);
@@ -1063,7 +1066,7 @@ function shouldPositionInitialResult() {
   const query = new URLSearchParams(location.search);
   const navigationType = window.performance?.getEntriesByType?.('navigation')?.[0]?.type || 'navigate';
   const resultRoute = query.get('view') === 'result' || (!query.has('view') && query.has('zone'));
-  return Boolean(query.get('county') && resultRoute && query.get('tab') !== 'voting' && !location.hash
+  return Boolean(query.get('county') && resultRoute && !['voting', 'incumbents'].includes(query.get('tab')) && !location.hash
     && ['navigate', 'reload'].includes(navigationType));
 }
 async function positionInitialResult() {
@@ -1134,7 +1137,7 @@ async function init() {
   addEventListener('popstate', async () => {
     const candidateRoute = (value) => {
       const url = new URL(value, location.href);
-      url.searchParams.delete('tab');
+      for (const key of ['tab', 'office', 'incCounty', 'incDistrict']) url.searchParams.delete(key);
       return `${url.pathname}?${url.searchParams}`;
     };
     if (!state.manifest || (!state.loading && state.routeUrl && candidateRoute(location.href) === candidateRoute(state.routeUrl))) return;
