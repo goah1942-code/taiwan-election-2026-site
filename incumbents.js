@@ -13,7 +13,7 @@
       if (normalize(row.county) !== normalize(county) || (district && row.district !== district)) continue;
       const key = JSON.stringify([row.district, row.area]);
       if (!groups.has(key)) groups.set(key, {key, district:row.district, area:row.area,
-        label:office === 'village' ? [row.district,row.area].filter(Boolean).join(' · ') : (/^第/.test(row.area.replace(county,'')) ? row.area.replace(county,'') : row.area),
+        label:office === 'village' ? [row.district,(!row.area||normalize(row.area)===normalize(row.county))?'村里待確認':row.area].filter(Boolean).join(' · ') : (/^第/.test(row.area.replace(county,'')) ? row.area.replace(county,'') : row.area),
         rows:[]});
       groups.get(key).rows.push(row);
     }
@@ -62,9 +62,18 @@
     const query=$('inc-search').value;
     return groupRows(rows,office,county,district).filter(g=>g.rows.some(r=>matches(r,query)));
   }
-  function chooseCounty(name) {
+  function chooseCounty(name, focusStats=false) {
     county=name;district='';area='';page=1;$('inc-search').value='';
-    configureDistrict();render();updateUrl();focusHeading('inc-selected-heading');
+    configureDistrict();render();updateUrl();focusHeading(focusStats?'inc-statistics-heading':office==='village'?'inc-zone-heading':'inc-selected-heading');
+  }
+  function renderStatistics() {
+    $('inc-show-stats').hidden=!rows.length;$('inc-village-steps').hidden=office!=='village';
+    const step=!county?1:!area?2:3;
+    for(const item of root.querySelectorAll('[data-village-step]')){
+      const current=Number(item.dataset.villageStep)===step;item.classList.toggle('is-current',current);
+      if(current)item.setAttribute('aria-current','step');else item.removeAttribute('aria-current');
+    }
+    window.OfficeholderStatistics?.update({office,county,rows,index,counties});
   }
   function renderCountyList() {
     const query=normalize($('inc-search').value);
@@ -159,15 +168,17 @@
     $('inc-filters').hidden=office==='president';$('inc-search-label').textContent=browsing?'搜尋縣市':selected?'搜尋本縣市姓名或選區':'搜尋縣市長姓名或縣市';
     $('inc-search').placeholder=browsing?'例如：新北市、澎湖縣':selected?'輸入姓名、選區或村里名':'例如：臺北市、姓名';
     $('inc-clear').hidden=!query;
+    renderStatistics();
     if(browsing){renderCountyList();return;}
     $('inc-workspace').classList.toggle('has-sidebar',selected);$('inc-change-zone').hidden=!selected;
     if(selected){
       $('inc-sidebar-county').textContent=county;
       const list=$('inc-zone-list'),oldScroll=list.scrollTop;
-      const available=groups();if(!available.some(g=>g.key===area))area=available[0]?.key||'';
+      const available=groups();if(!available.some(g=>g.key===area))area=office==='village'?'':available[0]?.key||'';
       const current=available.find(g=>g.key===area);
       $('inc-zone-heading').textContent=office==='village'?'村里選區列表':'選區列表';
-      $('inc-zone-count').textContent=`${available.length} 個${office==='village'?'村里':'選區'}${query?'符合搜尋':''}`;
+      const unknown=office==='village'?available.filter(g=>!g.area||normalize(g.area)===normalize(county)).length:0;
+      $('inc-zone-count').textContent=`${available.length-unknown} 個${office==='village'?'村里':'選區'}${query?'符合搜尋':''}${unknown?' · '+unknown+'項村里待確認':''}`;
       list.replaceChildren(...available.map(group=>{
         const button=document.createElement('button');button.type='button';button.dataset.incArea=group.key;button.setAttribute('aria-pressed',String(group.key===area));
         button.innerHTML=`<strong>${escape(group.label)}</strong><small>收錄 ${group.rows.length} 人${group.key===area?' · 目前':''}</small>`;
@@ -178,10 +189,15 @@
         if(activeButton.offsetTop<list.scrollTop)list.scrollTop=activeButton.offsetTop;
         else if(activeButton.offsetTop+activeButton.offsetHeight>list.scrollTop+list.clientHeight)list.scrollTop=activeButton.offsetTop+activeButton.offsetHeight-list.clientHeight;
       }
-      $('inc-selected-heading').textContent=current?`${current.label} · 現任${labels[office]}`:'沒有符合條件的選區';
+      $('inc-selected-heading').textContent=current?`${current.label} · 現任${labels[office]}`:office==='village'&&available.length?'請選擇村里':'沒有符合條件的選區';
+      $('inc-result-pane').classList.toggle('is-awaiting-village',office==='village'&&!current&&available.length>0);
       $('inc-selected-context').textContent=current?`${county}${office==='village'?' · 村里依行政區分開列出':' · 選區名稱依現任名冊列載'}`:'請調整搜尋或行政區。';
       renderResults(current?current.rows.filter(r=>matches(r,query)):[],current?.rows.length||0);
+      if(office==='village'&&!current&&available.length){$('inc-selected-context').textContent=`已選擇${county}，請從村里列表點選要查詢的村里。`;$('inc-status').textContent='選定村里後，這裡才會顯示該里的名冊。';}
+      if(office==='village'&&current&&current.rows.length>1)$('inc-selected-context').textContent+=' · 此區有多筆名冊紀錄，任職情形請核對官方來源。';
+      if(office==='village')renderStatistics();
     }else{
+      $('inc-result-pane').classList.remove('is-awaiting-village');
       $('inc-selected-heading').textContent=office==='mayor'?'全台縣市長條列名單':'現任總統';
       $('inc-selected-context').textContent='';renderResults(rows.filter(r=>matches(r,query)));
     }
@@ -189,6 +205,7 @@
   async function fetchJson(path) {const response=await fetch(path);if(!response.ok)throw Error('讀取失敗');return response.json();}
   async function load(next,writeRoute=false) {
     const request=++sequence;office=next.office;county=next.county||'';district=next.district||'';area=next.area||'';view=next.view||view;page=1;rows=[];
+    window.OfficeholderStatistics?.reset();$('inc-office-statistics').hidden=true;$('inc-show-stats').hidden=true;$('inc-village-steps').hidden=true;
     $('inc-search').value='';$('inc-directory').setAttribute('aria-busy','true');$('inc-filters').disabled=true;
     $('inc-county-browser').hidden=true;$('inc-workspace').hidden=false;$('inc-workspace').classList.remove('has-sidebar');$('inc-zone-sidebar').hidden=true;$('inc-return-counties').hidden=true;
     $('inc-results').replaceChildren();$('inc-pagination').hidden=true;$('inc-error').hidden=true;$('inc-status').textContent='正在載入官方名冊…';$('inc-selected-heading').textContent=`${labels[office]}名冊`;
@@ -210,7 +227,7 @@
     }catch{if(request!==sequence)return;rows=[];$('inc-status').textContent='名冊暫時無法載入，請重新載入。';$('inc-error').hidden=false;}
     finally{if(request===sequence){$('inc-filters').disabled=!rows.length;$('inc-directory').setAttribute('aria-busy','false');}}
   }
-  for(const button of root.querySelectorAll('[data-inc-office]'))button.addEventListener('click',()=>{const next=button.dataset.incOffice;if(next===office&&rows.length)return;load({office:next,view},true);});
+  for(const button of root.querySelectorAll('[data-inc-office]'))button.addEventListener('click',()=>{const next=button.dataset.incOffice;if(next===office&&rows.length&&next!=='village')return;load({office:next,view:next==='village'?'list':view},true);});
   for(const button of root.querySelectorAll('[data-inc-view]'))button.addEventListener('click',()=>{view=button.dataset.incView;$('inc-search').value='';render();updateUrl();});
   $('inc-return-counties').addEventListener('click',()=>{county='';district='';area='';page=1;$('inc-search').value='';render();updateUrl();focusHeading('inc-result-heading');});
   $('inc-change-zone').addEventListener('click',()=>focusHeading('inc-zone-heading'));
@@ -218,6 +235,8 @@
   $('inc-search').addEventListener('input',()=>{page=1;render();if(county)updateUrl(true);});
   $('inc-clear').addEventListener('click',()=>{$('inc-search').value='';page=1;render();if(county)updateUrl(true);$('inc-search').focus();});
   for(const [id,delta] of [['inc-prev',-1],['inc-next',1]])$(id).addEventListener('click',()=>{page+=delta;render();focusHeading('inc-selected-heading');});
+  $('inc-show-stats').addEventListener('click',()=>focusHeading('inc-statistics-heading'));
+  $('inc-stats-return').addEventListener('click',()=>focusHeading(county?'inc-zone-heading':'inc-result-heading'));
   $('inc-retry').addEventListener('click',()=>load({office,county,district,area,view}));
   let opened=false;function open(){if(!root.hidden&&!opened){opened=true;load(route());}}
   addEventListener('page-tab-change',open);addEventListener('popstate',()=>{if(!root.hidden){opened=true;load(route());}});open();
