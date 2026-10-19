@@ -8,25 +8,26 @@
   <title>2026 九合一選舉｜候選人查詢</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=20261015-council-sidebar-v2">
-  <link rel="stylesheet" href="./party-history.css?v=20261015-ui50-final">
+  <link rel="stylesheet" href="./party-history.css?v=20261019-whole-site-ux03">
   <link rel="stylesheet" href="./county-map.css?v=20261016-council-candidates-v1">
-  <link rel="stylesheet" href="./village-map.css?v=20261015-ui50-final">
-  <link rel="stylesheet" href="./ballot-notice.css?v=20261015-ui50-final">
+  <link rel="stylesheet" href="./village-map.css?v=20261019-whole-site-ux05">
+  <link rel="stylesheet" href="./ballot-notice.css?v=20261019-whole-site-ux04">
   <link rel="stylesheet" href="./ballot-history.css?v=20261015-ui50-final">
-  <link rel="stylesheet" href="./page-tabs.css?v=20261018-incumbents-v1">
-  <script src="./page-tabs.js?v=20261018-incumbents-v1" defer></script>
+  <link rel="stylesheet" href="./page-tabs.css?v=20261019-whole-site-ux02">
+  <script src="./page-tabs.js?v=20261019-whole-site-ux02" defer></script>
   <script src="./candidate-matching.js?v=20261015-ui50-final" defer></script>
   <script src="./address-resolver.js?v=20261015-ui50-final" defer></script>
   <script src="./ballot-history.js?v=20261015-ui50-final" defer></script>
-  <script src="./ballot-notice.js?v=20261015-ui50-final" defer></script>
-  <script src="./party-history.js?v=20261015-ui50-final" defer></script>
+  <script src="./ballot-notice.js?v=20261019-whole-site-ux04" defer></script>
+  <script src="./party-history.js?v=20261019-whole-site-ux03" defer></script>
   <script src="./county-map.js?v=20261015-ui50-final" defer></script>
   <script src="./village-basemap.js?v=20261015-ui50-final" defer></script>
-  <script src="./village-map.js?v=20261016-council-candidates-v1" defer></script>
-  <script src="./app.js?v=20261018-incumbents-navigation-v1" defer></script>
-  <link rel="stylesheet" href="./incumbents.css?v=20261018-statistics-controls-v1">
-  <script src="./officeholder-statistics.js?v=20261018-statistics-controls-v1" defer></script>
-  <script src="./incumbents.js?v=20261018-office-statistics-v1" defer></script>
+  <script src="./village-map.js?v=20261019-whole-site-ux05" defer></script>
+  <script src="./app.js?v=20261019-whole-site-ux04" defer></script>
+  <link rel="stylesheet" href="./incumbents.css?v=20261018-five-minute-r07">
+  <script src="./incumbent-history.js?v=20261018-five-minute-r08" defer></script>
+  <script src="./officeholder-statistics.js?v=20261019-whole-site-ux04" defer></script>
+  <script src="./incumbents.js?v=20261019-whole-site-ux05b" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至主要內容</a>
@@ -36,7 +37,7 @@
         <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
         <div><strong>台灣選舉資料室</strong><small>2026 九合一選舉候選人查詢</small></div>
       </div>
-      <div class="header-right"><span class="date-dot"></span> 2026.11.28 投票 <span class="header-divider"></span> <span id="site-data-phase">資料階段：候選人登記</span></div>
+      <div class="header-right"><span class="date-dot"></span> 2026 九合一投票：11.28 <span class="header-divider"></span> <span id="site-data-phase">資料階段：候選人登記</span></div>
     </div>
   </header>
 
@@ -196,8 +197,8 @@
       <p class="reading-note" id="reelection-help" tabindex="-1">「追求連任」依 2022 同類、同選區紀錄顯示：上屆當選＝是，參選但未當選＝再次參選。空白表示沒有可匹配的同區紀錄或缺少可比資料，不表示這個人從未參選。</p>
       <p class="reading-note">「參選備註」保留同選區的「2026 有參選」；經姓名與完整生日確認的 2024 當選人會標示「2024立委當選」，點擊可查看中選會當選公告。</p>
       <p class="profile-note">兩年表格姓名旁的 WIKI（中文維基百科）／VOTETW（台灣選舉維基百科）為外部人物介紹，點選另開分頁。沒有連結表示目前沒有已核實的對應介紹，不代表外站一定沒有資料。</p>
-      <p class="reading-note" id="party-history-help" tabindex="-1">政黨選項：國民黨、民進黨固定列出；其他政黨在該縣市已收錄的任一次歷史選舉曾超過 5% 即列入，後來低於 5% 的比例也保留。「占全部有效票」模式可點政黨名稱顯示或隱藏折線及表格欄位，分母包含無政黨推薦等全部候選人有效票；折線只在第一次到最後一次參選之間顯示。切換「只看藍綠（合計100%）」時，固定顯示中國國民黨與民主進步黨，依兩黨原始票數合計重算比例，兩者合計 100%，其他政黨不列入分母。兩黨合計 0 票或資料未知時顯示「—」。切回原模式會恢復原本政黨選擇。2022 上屆候選人表、歷史圖表、提示與歷年表格同步切換，原始票數及當選結果保留。各次總統與縣市長選舉保留年份及種類。<a href="#party-history">返回圖表 ↑</a></p>
-      <p class="reading-note">滑鼠移到折線資料點，圖內立即顯示年份、選舉種類、目前各顯示政黨的票數、比例與分母；手機可點資料點查看。鍵盤移到資料點也可查看，按 Esc 關閉提示。</p>
+      <p class="reading-note" id="party-history-help" tabindex="-1">歷史圖預設列出全部來源政黨、無黨籍與連署等分類，不設得票門檻；「無」顯示為「無黨籍（來源：無）」，不同來源名稱分別保留。「占全部有效票」模式可點政黨名稱顯示或隱藏折線及表格欄位，分母包含無政黨推薦等全部候選人有效票；折線只在第一次到最後一次參選之間顯示。「所選政黨合計100%」包含目前開啟的政黨及來源分類，以其原始票數合計重算圖表、提示與歷史表格；全關、合計0票或票數未知時顯示「—」，2022候選人表仍維持占全部有效票。切換「只看藍綠（合計100%）」時，固定顯示中國國民黨與民主進步黨，依兩黨原始票數合計重算比例，兩者合計 100%，其他政黨不列入分母。兩黨合計 0 票或資料未知時顯示「—」。切回原模式會恢復原本政黨選擇。2022 上屆候選人表、歷史圖表、提示與歷年表格同步切換，原始票數及當選結果保留。各次總統與縣市長選舉保留年份及種類。<a href="#party-history">返回圖表 ↑</a></p>
+      <p class="reading-note">滑鼠移到折線資料點，圖框下方立即列出年份、選舉種類、目前顯示分類的票數、比例與分母；窄版可點資料點查看。鍵盤移到資料點也可查看，按 Esc 關閉提示。</p>
       <ol><li>在地圖上方選「縣市長」「議員」或「里長」，再點縣市範圍。縣市長直接看名單；里長依序點行政區地圖、村里地圖，最後查看自己的村里。議員先從縣市地圖選議員選區，再直接查看候選人名單；電腦版可從左側「列表選區」直接換區。區域、平地原住民、山地原住民分開切換，需依選民資格選擇。</li><li>地圖可以拖曳、按加減縮放，也能搜尋行政區或村里名稱放大定位。「底圖＋里界」可對照道路與地名；「顯示全部里名」會在里界內顯示名稱，字也會隨地圖一起縮放。「使用縣市名稱選擇」及「也可以從清單選擇」提供文字入口；議員分區卡列出完整官方範圍、應選席次與登記人數。</li><li>名單旁的政黨選單可篩選，選「全部政黨」即可取消；2022 結果與參選備註不受篩選影響。</li><li>2022 結果自動顯示；手機可在歷史表格內左右滑動。</li><li>「回到上層」依序返回村里地圖、行政區地圖或縣市；「回到台灣選擇縣市」直接回台灣地圖並保留職務。瀏覽器上一頁／下一頁與網址重載也會恢復當時層級。</li></ol>
       <a class="help-return" href="#candidate-heading">返回候選人名單 ↑</a>
     </section>
@@ -218,26 +219,38 @@
         <p>從總統到村里長，查詢目前官方名冊中的公職人員與任職地區。</p>
       </section>
       <div class="inc-offices" role="group" aria-label="現任者職務">
-        <button type="button" data-inc-office="president" aria-pressed="true"><strong>總統</strong><small>全國</small></button>
-        <button type="button" data-inc-office="mayor" aria-pressed="false"><strong>縣市長</strong><small>22 縣市</small></button>
-        <button type="button" data-inc-office="legislator" aria-pressed="false"><strong>立委</strong><small>本屆委員</small></button>
-        <button type="button" data-inc-office="council" aria-pressed="false"><strong>議員</strong><small>各縣市議會</small></button>
-        <button type="button" data-inc-office="village" aria-pressed="false"><strong>里長</strong><small>含村長、代理</small></button>
+        <button type="button" data-inc-office="president" aria-pressed="true"><strong>總統</strong><span class="inc-role-purpose">國家元首</span><small>全國</small></button>
+        <button type="button" data-inc-office="mayor" aria-pressed="false"><strong>縣市長</strong><span class="inc-role-purpose">縣市行政首長</span><small>22 縣市</small></button>
+        <button type="button" data-inc-office="legislator" aria-pressed="false"><strong>立委</strong><span class="inc-role-purpose">中央民意代表</span><small>本屆委員</small></button>
+        <button type="button" data-inc-office="council" aria-pressed="false"><strong>議員</strong><span class="inc-role-purpose">地方民意代表</span><small>各縣市議會</small></button>
+        <button type="button" data-inc-office="village" aria-pressed="false"><strong>里長</strong><span class="inc-role-purpose">村里公共事務</span><small>含村長、代理</small></button>
       </div>
+      <section class="inc-role-guide" aria-labelledby="inc-role-heading">
+        <h2 id="inc-role-heading">總統 · 國家元首</h2><p id="inc-role-description">代表國家，依憲法行使總統職權。</p>
+        <p id="inc-role-next" class="inc-role-next">直接看現任總統，或查看全台政黨票數與歷年變化。</p><a id="inc-role-source" href="https://www.president.gov.tw/POP/286" target="_blank" rel="noopener noreferrer">總統府：總統職權 ↗</a>
+      </section>
       <section id="inc-directory" class="inc-directory" aria-labelledby="inc-result-heading" aria-busy="false">
-        <div class="inc-directory-heading"><h2 id="inc-result-heading" tabindex="-1">總統名冊</h2><button type="button" id="inc-show-stats" hidden>查看統計 ↓</button></div>
+        <div class="inc-directory-heading"><h2 id="inc-result-heading" tabindex="-1">總統名冊</h2><nav class="inc-reading-actions" aria-label="現任者閱讀捷徑"><button type="button" id="inc-show-stats" hidden>看政黨分布 ↓</button><button type="button" id="inc-show-history" hidden>看總統／縣市長歷年票 ↓</button></nav></div>
         <ol id="inc-village-steps" class="inc-village-steps" aria-label="現任村里長查詢步驟" hidden><li data-village-step="1">1 選縣市</li><li data-village-step="2">2 選村里</li><li data-village-step="3">3 看現任者</li></ol>
+        <p id="inc-route-note" class="inc-status inc-route-note" role="status" tabindex="-1" hidden></p>
         <div class="inc-data-note"><strong id="inc-checked">正在讀取資料日期…</strong><p id="inc-source-note"></p><p id="inc-stale" class="inc-stale" hidden>這份快照已超過 30 天，最新任職情形請核對官方來源。</p></div>
         <fieldset id="inc-filters" class="inc-filters" disabled><legend class="sr-only">搜尋名冊</legend>
           <label class="inc-search-wrap"><span id="inc-search-label">搜尋姓名或地區</span><input id="inc-search" type="search" placeholder="輸入姓名或地區" autocomplete="off"></label>
           <button id="inc-clear" type="button" hidden>清除搜尋</button>
         </fieldset>
+        <p id="inc-search-hint" class="inc-status" hidden></p>
         <div id="inc-error" class="inc-error" hidden><button type="button" id="inc-retry">重新載入名冊</button></div>
         <section id="inc-county-browser" aria-label="選擇縣市" hidden>
           <div class="inc-view-controls" role="group" aria-label="縣市顯示方式"><button type="button" data-inc-view="list" aria-pressed="true">列表顯示</button><button type="button" data-inc-view="map" aria-pressed="false">地圖顯示</button></div>
           <p id="inc-county-status" class="inc-status" role="status"></p>
           <div id="inc-county-list" class="inc-county-list" role="group" aria-label="全部縣市列表"></div>
-          <figure id="inc-county-map" class="inc-county-map" hidden><div id="inc-map-canvas"></div><figcaption id="inc-map-source"></figcaption></figure>
+          <figure id="inc-county-map" class="inc-county-map" hidden>
+            <div class="inc-map-toolbar" role="group" aria-label="地圖閱讀大小"><button type="button" data-inc-map-view="readable" aria-pressed="false" disabled>放大閱讀</button><button type="button" data-inc-map-view="overview" aria-pressed="false" disabled>全圖總覽</button></div>
+            <div class="inc-map-positions" role="group" aria-label="移動地圖到"><button type="button" data-inc-map-region="mainland" aria-label="移至台灣本島地圖" disabled>本島</button><button type="button" data-inc-map-region="penghu" aria-label="移至澎湖地圖" disabled>澎湖</button><button type="button" data-inc-map-region="kinmen" aria-label="移至金門地圖" disabled>金門</button><button type="button" data-inc-map-region="lienchiang" aria-label="移至連江地圖" disabled>連江</button></div>
+            <p id="inc-map-help" class="inc-map-help"></p>
+            <div id="inc-map-viewport" class="inc-map-viewport" tabindex="0" role="region" aria-label="縣市地圖，可上下左右捲動" aria-describedby="inc-map-help"><div id="inc-map-canvas"></div></div>
+            <figcaption id="inc-map-source"></figcaption>
+          </figure>
           <section id="inc-national-options" class="inc-national-options" aria-labelledby="inc-national-heading" hidden><h3 id="inc-national-heading">不依縣市劃分的立委</h3><div id="inc-national-list"></div></section>
         </section>
         <div id="inc-workspace" class="inc-workspace">
@@ -249,6 +262,7 @@
           </aside>
           <section id="inc-result-pane" class="inc-result-pane" aria-labelledby="inc-selected-heading">
             <button type="button" id="inc-change-zone" hidden>更換選區 ↑</button><h3 id="inc-selected-heading" tabindex="-1">現任總統</h3><p id="inc-selected-context" class="inc-selected-context"></p>
+            <details id="inc-selected-geography" class="inc-geography" hidden><summary id="inc-geography-title">查看此屆官方選區範圍</summary><p id="inc-selected-scope"></p><a id="inc-geography-source" target="_blank" rel="noopener noreferrer">核對官方來源 ↗</a><p>地理範圍不判定個人選民資格。</p></details>
             <p id="inc-status" class="inc-status" role="status" aria-live="polite">選擇職務，查看名冊。</p>
             <ul id="inc-results" class="inc-results"></ul>
             <nav id="inc-pagination" class="inc-pagination" aria-label="現任者名冊分頁" hidden><button type="button" id="inc-prev">上一頁</button><span id="inc-page"></span><button type="button" id="inc-next">下一頁</button></nav>
@@ -256,6 +270,9 @@
         </div>
         <section id="inc-office-statistics" class="inc-office-statistics" aria-labelledby="inc-statistics-heading" hidden>
           <div class="inc-statistics-heading"><h3 id="inc-statistics-heading" tabindex="-1">全台統計</h3><button type="button" id="inc-stats-return">返回名冊查詢 ↑</button></div>
+          <p id="inc-stat-quick-summary" class="inc-stat-brief"></p>
+          <nav class="inc-reading-actions" aria-label="統計閱讀捷徑"><button type="button" data-inc-stat-jump="parties">直接看政黨比例 ↓</button><button type="button" data-inc-stat-jump="history">看總統／縣市長歷年票 ↓</button></nav>
+          <p id="inc-stat-route-note" class="inc-status" role="status" hidden></p>
           <div class="inc-stat-controls">
             <div class="inc-stat-control-group"><h4 id="inc-stat-scope-label">統計範圍</h4><div id="inc-stat-scope" class="inc-stat-choices inc-stat-counties" role="group" aria-labelledby="inc-stat-scope-label"></div></div>
             <div id="inc-ballot-wrap" class="inc-stat-control-group" hidden><h4 id="inc-ballot-label">立委票種</h4><div id="inc-ballot" class="inc-stat-choices inc-stat-ballots" role="group" aria-labelledby="inc-ballot-label"></div></div>
@@ -274,12 +291,26 @@
           <p class="inc-stat-definition">所有政黨及無黨籍均列入分母。比例四捨五入至小數1位；非零且小於0.1%者標示「&lt;0.1%」。合計可能不等於100%；人數比例與得票比例分別計算，不代表支持度或預測。</p>
             <p class="inc-stat-definition">統計範圍可獨立切換，不受上方姓名搜尋、行政區或單一村里影響。</p>
           </details>
-          <div id="inc-stat-columns" class="inc-stat-columns">
-            <section id="inc-count-statistics" aria-labelledby="inc-count-stat-heading"><h4 id="inc-count-stat-heading">現任名冊：政黨人數與比例</h4><p id="inc-count-denominator" class="inc-stat-denominator"></p><div class="inc-stat-table-wrap"><table class="inc-stat-table"><caption class="sr-only">所選統計範圍的來源政黨人數分布</caption><thead><tr><th scope="col">來源所列政黨</th><th scope="col">人數</th><th scope="col">人數比例</th></tr></thead><tbody id="inc-stats-parties"></tbody><tfoot><tr><th scope="row">合計</th><td id="inc-stats-party-total"></td><td id="inc-stats-party-percent"></td></tr></tfoot></table></div></section>
+          <div id="inc-stat-columns" class="inc-stat-columns" tabindex="-1">
+            <section id="inc-count-statistics" aria-labelledby="inc-count-stat-heading"><h4 id="inc-count-stat-heading">現任名冊：政黨人數與比例</h4><p id="inc-count-context" class="inc-stat-table-context"></p><p id="inc-count-denominator" class="inc-stat-denominator"></p><div class="inc-stat-table-wrap"><table class="inc-stat-table"><caption class="sr-only">所選統計範圍的來源政黨人數分布</caption><thead><tr><th scope="col">來源所列政黨</th><th scope="col" id="inc-count-unit-heading">人數</th><th scope="col" id="inc-count-share-heading">人數比例</th></tr></thead><tbody id="inc-stats-parties"></tbody><tfoot><tr><th scope="row">合計</th><td id="inc-stats-party-total"></td><td id="inc-stats-party-percent"></td></tr></tfoot></table></div></section>
             <section id="inc-vote-statistics" aria-labelledby="inc-vote-stat-heading"><h4 id="inc-vote-stat-heading">政黨票數與比例</h4><p id="inc-vote-denominator" class="inc-stat-denominator"></p><div id="inc-vote-error" class="inc-error" hidden><button type="button" id="inc-votes-retry">重新載入票數</button></div><div class="inc-stat-table-wrap"><table class="inc-stat-table"><caption class="sr-only">所選統計範圍及票種的政黨得票分布</caption><thead><tr><th scope="col">選舉資料政黨</th><th scope="col">票數</th><th scope="col">得票比例</th></tr></thead><tbody id="inc-stats-votes"></tbody><tfoot id="inc-vote-tfoot" hidden><tr><th scope="row">合計有效票</th><td id="inc-votes-total"></td><td id="inc-votes-percent"></td></tr></tfoot></table></div><p id="inc-vote-source" class="inc-stat-source"></p></section>
           </div>
           <p class="inc-stat-source">名冊來源：<span id="inc-stat-source"></span></p>
           <details class="inc-stat-counties-details"><summary>各縣市總覽 · 點縣市看政黨比例</summary><div class="inc-stat-table-wrap"><table class="inc-stat-table"><caption id="inc-county-stat-caption">各縣市統計</caption><thead><tr><th scope="col">縣市</th><th id="inc-stat-county-people-header" scope="col">現任名冊人數</th><th id="inc-stat-county-acting-header" scope="col" hidden>代理人次</th><th id="inc-stat-county-votes-header" scope="col">有效票</th></tr></thead><tbody id="inc-stats-counties"></tbody><tfoot><tr><th scope="row">全台合計</th><td id="inc-stats-counties-total"></td><td id="inc-stats-counties-acting" hidden></td><td id="inc-stats-counties-votes"></td></tr></tfoot></table></div></details>
+          <section id="inc-history" class="inc-history" aria-labelledby="inc-history-heading" hidden>
+            <div class="inc-statistics-heading"><h3 id="inc-history-heading" tabindex="-1">歷年政治分布</h3><button type="button" data-inc-stat-jump="parties">返回政黨分布 ↑</button></div>
+            <p id="inc-history-route-note" class="inc-status inc-route-note" role="status" hidden></p><p id="inc-history-status" class="inc-stat-brief" role="status"></p><p id="inc-history-note" class="inc-stat-denominator"></p>
+            <button id="inc-history-retry" type="button" hidden>重新載入歷史資料</button>
+            <div id="inc-history-content" hidden>
+              <div class="inc-reading-actions" role="group" aria-label="歷史選舉種類"><button type="button" data-inc-history-type="president" aria-pressed="true">總統票</button><button type="button" data-inc-history-type="mayor" aria-pressed="false">縣市長票</button></div>
+              <div id="inc-history-years" class="inc-history-years" role="group" aria-label="選擇歷史年份"></div>
+              <div id="inc-history-bar" class="inc-history-bar" aria-hidden="true"></div>
+              <p id="inc-history-denominator" class="inc-stat-denominator"></p>
+              <p class="inc-history-scroll-hint">小螢幕可在表格內左右滑動；政黨名稱固定在左側，方便對照票數與前次變化。</p>
+              <div class="inc-stat-table-wrap" tabindex="0" role="region" aria-label="歷史完整政黨票數表，可左右捲動"><table class="inc-stat-table inc-history-table"><caption id="inc-history-caption"></caption><thead><tr><th scope="col">政黨／來源分類</th><th scope="col">票數</th><th scope="col">比例</th><th scope="col" id="inc-history-change-heading">前次比較</th></tr></thead><tbody id="inc-history-rows"></tbody><tfoot><tr><th scope="row">本次有效票</th><td id="inc-history-total"></td><td>100%</td><td>各年分母不同</td></tr></tfoot></table></div>
+              <p class="inc-stat-source"><a id="inc-history-source" target="_blank" rel="noopener noreferrer">中選會來源 ↗</a></p><p id="inc-history-coverage" class="inc-stat-denominator"></p>
+            </div>
+          </section>
         </section>
         <details class="inc-source-details"><summary>資料來源與收錄說明</summary><p>名單依官方名冊順序呈現，無支持度或推薦排名。名冊可能有更新落差，最新任免及代理情形以主管機關公告為準。搜尋不到不代表該地區沒有現任者。</p><ul id="inc-sources"></ul></details>
       </section>

@@ -81,3 +81,20 @@
 
 .ph-source-date{font-size:13px;line-height:1.7;margin:0 0 15px;padding:10px 12px;border-left:3px solid #8da59b;background:#f4f9f6;color:#405b62}
 .ph-source-date strong{display:block;margin-bottom:3px}
+
+/* Full source-category details use available page height, not a clipped overlay. */
+.ph-chart-frame{display:grid;grid-template-columns:44px minmax(0,1fr)}
+.ph-chart-tooltip{position:static;grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 20px;width:auto;max-width:none;padding:16px;border:0;border-top:1px solid #ceded6;border-radius:0;box-shadow:none;pointer-events:auto;font-size:16px}
+.ph-tooltip-election,.ph-tooltip-denominator{grid-column:1/-1;font-size:14px;margin:0}
+.ph-tooltip-election{font-size:16px}.ph-tooltip-value+.ph-tooltip-value{margin-top:0}
+.ph-party-button,.ph-selection-button,.ph-mode-button{font:inherit;font-size:16px;min-height:44px}
+.ph-selection-button{padding:8px 11px;border:1px solid #cbdcd5;border-radius:8px;background:#fff;color:#315c58;cursor:pointer}
+.ph-selection-button:focus-visible{outline:2px solid #168e80;outline-offset:3px}
+.ph-table{font-size:16px}.ph-vote-count{font-size:13px}.ph-mode-note,.ph-intro,.ph-reading-note,.ph-coverage-note,.ph-scroll-hint{font-size:14px}
+@media(max-width:680px){.ph-chart-tooltip{grid-template-columns:minmax(0,1fr);padding:12px}.ph-table .ph-event-column{min-width:90px;width:90px}.ph-table .ph-share-column{min-width:110px}}
+
+/* Keep source-participation status next to the number on every reading surface. */
+.ph-participation-status{display:block;margin-top:2px;color:#49634f;font-size:14px;font-weight:500;line-height:1.5;white-space:normal}
+.ph-detail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 20px;font-size:16px}.ph-detail>strong{grid-column:1/-1;font-size:16px}.ph-detail-denominator{grid-column:1/-1;font-size:14px}
+.ph-detail-value{max-width:100%;align-items:flex-start}.ph-detail-reading{min-width:0;overflow-wrap:anywhere}.ph-detail-value>.ph-detail-dot{margin-top:8px}
+@media(max-width:680px){.ph-detail{grid-template-columns:minmax(0,1fr)}}

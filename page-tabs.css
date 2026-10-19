@@ -9,3 +9,19 @@
 @media print{.page-tabs{display:none!important}}
 
 @media(max-width:680px){.header-right{display:block}.header-right #site-data-phase{display:block}}
+
+.page-context-notice{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:0 0 20px;padding:16px 18px;background:#eef7f3;border:1px solid #bcd9cc;border-radius:10px;color:#274e43;scroll-margin-top:20px}
+.page-context-notice p{flex:1 1 340px;margin:0;font-size:16px;line-height:1.8}
+.page-context-notice button{min-height:44px;padding:10px 14px;font:inherit;font-size:16px;border:1px solid #5b8f7d;border-radius:7px;background:#fff;color:#28594b;cursor:pointer}
+.page-context-notice:focus,.page-context-notice button:focus-visible{outline:2px solid #168377;outline-offset:3px}
+.page-context-notice .page-context-carry{background:#24765e;border-color:#24765e;color:white;font-weight:700}
+
+/* Keep the return route after district selection, table reading and reload. */
+.page-context-back{min-height:44px;padding:10px 14px;font:inherit;font-size:16px;line-height:1.5;border:1px solid #287c6d;border-radius:7px;background:#287c6d;color:#fff;cursor:pointer;text-align:left}
+.page-context-back:focus-visible{outline:3px solid #168377;outline-offset:3px}
+.page-context-return{position:sticky;top:8px;z-index:7;display:flex;margin:0 0 18px;padding:10px 14px;border:1px solid #b9d8ca;border-radius:10px;background:#f5fbf7f5;box-shadow:0 4px 16px #173e3612}
+.query-navigation.has-context-return{flex-wrap:wrap}.query-navigation.has-context-return>.query-context{flex:1 1 240px}
+#incumbents-panel.has-context-return [tabindex="-1"]{scroll-margin-top:112px}
+@media(max-width:900px){.query-navigation.has-context-return{display:grid;grid-template-columns:minmax(0,1fr) auto}.query-navigation.has-context-return>.page-context-back{grid-column:1/-1;grid-row:1;justify-self:start}.query-navigation.has-context-return>.query-context{grid-column:1;grid-row:2}.query-navigation.has-context-return>.query-action-menu{grid-column:2;grid-row:2}}
+
+#candidate-panel.has-context-return [tabindex="-1"]{scroll-margin-top:112px}

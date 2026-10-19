@@ -1,0 +1,1991 @@
+{
+  "schemaVersion": 1,
+  "electionYear": 2022,
+  "sourceDate": "2022-08-18",
+  "sourceURL": "https://web.cec.gov.tw/api/file/72529fa8-25c6-4260-bcbc-7de268017766.pdf",
+  "sourceSha256": "becab69e962574306eb572633e72a820d9f1bbf58b33d66fdc03c0d40aaa3bfb",
+  "matchingRule": "Exact county plus constituency number; Arabic/Chinese numbers and 選區/選舉區 spelling normalized. Any explicit county prefix must match the roster county. No geographic inference and no 2026 geography used.",
+  "areas": {
+    "臺北市": {
+      "臺北市第1選舉區": {
+        "officialArea": "臺北市第1選舉區",
+        "county": "臺北市",
+        "scope": "北投區、士林區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 12
+      },
+      "臺北市第6選舉區": {
+        "officialArea": "臺北市第6選舉區",
+        "county": "臺北市",
+        "scope": "大安區、文山區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 13
+      },
+      "臺北市第5選舉區": {
+        "officialArea": "臺北市第5選舉區",
+        "county": "臺北市",
+        "scope": "中正區、萬華區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 8
+      },
+      "臺北市第4選舉區": {
+        "officialArea": "臺北市第4選舉區",
+        "county": "臺北市",
+        "scope": "中山區、大同區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 8
+      },
+      "臺北市第3選舉區": {
+        "officialArea": "臺北市第3選舉區",
+        "county": "臺北市",
+        "scope": "松山區、信義區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 9
+      },
+      "臺北市第2選舉區": {
+        "officialArea": "臺北市第2選舉區",
+        "county": "臺北市",
+        "scope": "內湖區、南港區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 9
+      },
+      "臺北市第8選舉區": {
+        "officialArea": "臺北市第8選舉區",
+        "county": "臺北市",
+        "scope": "臺北市之山地原住民",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 1
+      },
+      "臺北市第7選舉區": {
+        "officialArea": "臺北市第7選舉區",
+        "county": "臺北市",
+        "scope": "臺北市之平地原住民",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 1
+      }
+    },
+    "高雄市": {
+      "高雄市第6選區": {
+        "officialArea": "高雄市第6選舉區",
+        "county": "高雄市",
+        "scope": "鼓山區、鹽埕區、旗津區",
+        "sourcePages": [
+          6
+        ],
+        "electionSeats2022": 4
+      },
+      "高雄市第13選區": {
+        "officialArea": "高雄市第13選舉區",
+        "county": "高雄市",
+        "scope": "那瑪夏區及甲仙區、杉林區、內門區、旗山區、茄萣區、湖內區、路竹區、永安區、彌陀區、梓官區、楠梓區、左營區、三民區之山地原住民",
+        "sourcePages": [
+          6
+        ],
+        "electionSeats2022": 1
+      },
+      "高雄市第4選區": {
+        "officialArea": "高雄市第4選舉區",
+        "county": "高雄市",
+        "scope": "楠梓區、左營區",
+        "sourcePages": [
+          6
+        ],
+        "electionSeats2022": 9
+      },
+      "高雄市第7選區": {
+        "officialArea": "高雄市第7選舉區",
+        "county": "高雄市",
+        "scope": "三民區",
+        "sourcePages": [
+          6
+        ],
+        "electionSeats2022": 7
+      },
+      "高雄市第8選區": {
+        "officialArea": "高雄市第8選舉區",
+        "county": "高雄市",
+        "scope": "前金區、新興區、苓雅區",
+        "sourcePages": [
+          6
+        ],
+        "electionSeats2022": 5
+      },
+      "高雄市第12選區": {
+        "officialArea": "高雄市第12選舉區",
+        "county": "高雄市",
+        "scope": "高雄市之平地原住民",
+        "sourcePages": [
+          6
+        ],
+        "electionSeats2022": 1
+      },
+      "高雄市第10選區": {
+        "officialArea": "高雄市第10選舉區",
+        "county": "高雄市",
+        "scope": "前鎮區、小港區",
+        "sourcePages": [
+          6
+        ],
+        "electionSeats2022": 8
+      },
+      "高雄市第9選區": {
+        "officialArea": "高雄市第9選舉區",
+        "county": "高雄市",
+        "scope": "鳳山區",
+        "sourcePages": [
+          6
+        ],
+        "electionSeats2022": 8
+      },
+      "高雄市第11選區": {
+        "officialArea": "高雄市第11選舉區",
+        "county": "高雄市",
+        "scope": "大寮區、林園區",
+        "sourcePages": [
+          6
+        ],
+        "electionSeats2022": 4
+      },
+      "高雄市第15選區": {
+        "officialArea": "高雄市第15選舉區",
+        "county": "高雄市",
+        "scope": "茂林區及大社區、大樹區、仁武區、鳥松區、鳳山區、大寮區、旗津區、苓雅區、前鎮區、小港區、林園區之山地原住民",
+        "sourcePages": [
+          7
+        ],
+        "electionSeats2022": 1
+      },
+      "高雄市第5選區": {
+        "officialArea": "高雄市第5選舉區",
+        "county": "高雄市",
+        "scope": "大社區、仁武區、鳥松區、大樹區",
+        "sourcePages": [
+          6
+        ],
+        "electionSeats2022": 5
+      },
+      "高雄市第3選區": {
+        "officialArea": "高雄市第3選舉區",
+        "county": "高雄市",
+        "scope": "永安區、岡山區、燕巢區、彌陀區、梓官區、橋頭區",
+        "sourcePages": [
+          6
+        ],
+        "electionSeats2022": 5
+      },
+      "高雄市第2選區": {
+        "officialArea": "高雄市第2選舉區",
+        "county": "高雄市",
+        "scope": "茄萣區、湖內區、路竹區、阿蓮區、田寮區",
+        "sourcePages": [
+          6
+        ],
+        "electionSeats2022": 3
+      },
+      "高雄市第1選區": {
+        "officialArea": "高雄市第1選舉區",
+        "county": "高雄市",
+        "scope": "桃源區、那瑪夏區、甲仙區、六龜區、杉林區、內門區、旗山區、美濃區、茂林區",
+        "sourcePages": [
+          6
+        ],
+        "electionSeats2022": 3
+      },
+      "高雄市第14選區": {
+        "officialArea": "高雄市第14選舉區",
+        "county": "高雄市",
+        "scope": "桃源區及六龜區、美濃區、阿蓮區、田寮區、岡山區、燕巢區、橋頭區、鼓山區、鹽埕區、前金區、新興區之山地原住民",
+        "sourcePages": [
+          6
+        ],
+        "electionSeats2022": 1
+      }
+    },
+    "新北市": {
+      "新北市第5選區": {
+        "officialArea": "新北市第5選舉區",
+        "county": "新北市",
+        "scope": "板橋區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 9
+      },
+      "新北市第13選區": {
+        "officialArea": "新北市第13選舉區",
+        "county": "新北市",
+        "scope": "新北市之山地原住民",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 1
+      },
+      "新北市第4選區": {
+        "officialArea": "新北市第4選舉區",
+        "county": "新北市",
+        "scope": "蘆洲區、三重區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 9
+      },
+      "新北市第6選區": {
+        "officialArea": "新北市第6選舉區",
+        "county": "新北市",
+        "scope": "中和區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 6
+      },
+      "新北市第7選區": {
+        "officialArea": "新北市第7選舉區",
+        "county": "新北市",
+        "scope": "永和區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 3
+      },
+      "新北市第3選區": {
+        "officialArea": "新北市第3選舉區",
+        "county": "新北市",
+        "scope": "新莊區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 7
+      },
+      "新北市第12選區": {
+        "officialArea": "新北市第12選舉區",
+        "county": "新北市",
+        "scope": "新北市之平地原住民",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 3
+      },
+      "新北市第9選區": {
+        "officialArea": "新北市第9選舉區",
+        "county": "新北市",
+        "scope": "新店區、深坑區、石碇區、坪林區、烏來區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 5
+      },
+      "新北市第8選區": {
+        "officialArea": "新北市第8選舉區",
+        "county": "新北市",
+        "scope": "樹林區、鶯歌區、土城區、三峽區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 10
+      },
+      "新北市第1選區": {
+        "officialArea": "新北市第1選舉區",
+        "county": "新北市",
+        "scope": "石門區、三芝區、淡水區、八里區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 4
+      },
+      "新北市第11選區": {
+        "officialArea": "新北市第11選舉區",
+        "county": "新北市",
+        "scope": "金山區、萬里區、汐止區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 4
+      },
+      "新北市第10選區": {
+        "officialArea": "新北市第10選舉區",
+        "county": "新北市",
+        "scope": "平溪區、瑞芳區、雙溪區、貢寮區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 1
+      },
+      "新北市第2選區": {
+        "officialArea": "新北市第2選舉區",
+        "county": "新北市",
+        "scope": "林口區、五股區、泰山區",
+        "sourcePages": [
+          3
+        ],
+        "electionSeats2022": 4
+      }
+    },
+    "臺中市": {
+      "臺中市第1選區": {
+        "officialArea": "臺中市第1選舉區",
+        "county": "臺中市",
+        "scope": "大甲區、大安區、外埔區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 3
+      },
+      "臺中市第2選區": {
+        "officialArea": "臺中市第2選舉區",
+        "county": "臺中市",
+        "scope": "清水區、梧棲區、沙鹿區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 5
+      },
+      "臺中市第15選區": {
+        "officialArea": "臺中市第15選舉區",
+        "county": "臺中市",
+        "scope": "臺中市之平地原住民",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 1
+      },
+      "臺中市第11選區": {
+        "officialArea": "臺中市第11選舉區",
+        "county": "臺中市",
+        "scope": "東區、南區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 5
+      },
+      "臺中市第12選區": {
+        "officialArea": "臺中市第12選舉區",
+        "county": "臺中市",
+        "scope": "太平區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 4
+      },
+      "臺中市第13選區": {
+        "officialArea": "臺中市第13選舉區",
+        "county": "臺中市",
+        "scope": "大里區、霧峰區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 6
+      },
+      "臺中市第14選區": {
+        "officialArea": "臺中市第14選舉區",
+        "county": "臺中市",
+        "scope": "東勢區、石岡區、新社區、和平區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 2
+      },
+      "臺中市第16選區": {
+        "officialArea": "臺中市第16選舉區",
+        "county": "臺中市",
+        "scope": "和平區及大甲區、大安區、外埔區、清水區、后里區、豐原區、神岡區、大雅區、潭子區、東勢區、石岡區、新社區之山地原住民",
+        "sourcePages": [
+          5
+        ],
+        "electionSeats2022": 1
+      },
+      "臺中市第5選區": {
+        "officialArea": "臺中市第5選舉區",
+        "county": "臺中市",
+        "scope": "神岡區、大雅區、潭子區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 6
+      },
+      "臺中市第6選區": {
+        "officialArea": "臺中市第6選舉區",
+        "county": "臺中市",
+        "scope": "西屯區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 5
+      },
+      "臺中市第7選區": {
+        "officialArea": "臺中市第7選舉區",
+        "county": "臺中市",
+        "scope": "南屯區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 4
+      },
+      "臺中市第8選區": {
+        "officialArea": "臺中市第8選舉區",
+        "county": "臺中市",
+        "scope": "北屯區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 6
+      },
+      "臺中市第9選區": {
+        "officialArea": "臺中市第9選舉區",
+        "county": "臺中市",
+        "scope": "北區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 3
+      },
+      "臺中市第17選區": {
+        "officialArea": "臺中市第17選舉區",
+        "county": "臺中市",
+        "scope": "梧棲區、沙鹿區、龍井區、大肚區、烏日區、西屯區、南屯區、北屯區、北區、中區、西區、東區、南區、太平區、大里區、霧峰區之山地原住民",
+        "sourcePages": [
+          5
+        ],
+        "electionSeats2022": 1
+      },
+      "臺中市第3選區": {
+        "officialArea": "臺中市第3選舉區",
+        "county": "臺中市",
+        "scope": "龍井區、大肚區、烏日區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 5
+      },
+      "臺中市第4選區": {
+        "officialArea": "臺中市第4選舉區",
+        "county": "臺中市",
+        "scope": "后里區、豐原區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 5
+      },
+      "臺中市第10選區": {
+        "officialArea": "臺中市第10選舉區",
+        "county": "臺中市",
+        "scope": "中區、西區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 3
+      }
+    },
+    "臺南市": {
+      "臺南市第1選區": {
+        "officialArea": "臺南市第1選舉區",
+        "county": "臺南市",
+        "scope": "後壁區、白河區、東山區、鹽水區、新營區、柳營區",
+        "sourcePages": [
+          5
+        ],
+        "electionSeats2022": 6
+      },
+      "臺南市第3選區": {
+        "officialArea": "臺南市第3選舉區",
+        "county": "臺南市",
+        "scope": "下營區、六甲區、麻豆區、官田區、大內區",
+        "sourcePages": [
+          5
+        ],
+        "electionSeats2022": 3
+      },
+      "臺南市第2選區": {
+        "officialArea": "臺南市第2選舉區",
+        "county": "臺南市",
+        "scope": "北門區、學甲區、將軍區、七股區、佳里區、西港區",
+        "sourcePages": [
+          5
+        ],
+        "electionSeats2022": 5
+      },
+      "臺南市第5選區": {
+        "officialArea": "臺南市第5選舉區",
+        "county": "臺南市",
+        "scope": "善化區、安定區、新市區、山上區、新化區",
+        "sourcePages": [
+          5
+        ],
+        "electionSeats2022": 5
+      },
+      "臺南市第4選區": {
+        "officialArea": "臺南市第4選舉區",
+        "county": "臺南市",
+        "scope": "楠西區、南化區、玉井區、左鎮區",
+        "sourcePages": [
+          5
+        ],
+        "electionSeats2022": 1
+      },
+      "臺南市第11選區": {
+        "officialArea": "臺南市第11選舉區",
+        "county": "臺南市",
+        "scope": "仁德區、歸仁區、關廟區、龍崎區",
+        "sourcePages": [
+          5
+        ],
+        "electionSeats2022": 5
+      },
+      "臺南市第7選區": {
+        "officialArea": "臺南市第7選舉區",
+        "county": "臺南市",
+        "scope": "永康區",
+        "sourcePages": [
+          5
+        ],
+        "electionSeats2022": 7
+      },
+      "臺南市第13選區": {
+        "officialArea": "臺南市第13選舉區",
+        "county": "臺南市",
+        "scope": "臺南市之山地原住民",
+        "sourcePages": [
+          5
+        ],
+        "electionSeats2022": 1
+      },
+      "臺南市第10選區": {
+        "officialArea": "臺南市第10選舉區",
+        "county": "臺南市",
+        "scope": "東區",
+        "sourcePages": [
+          5
+        ],
+        "electionSeats2022": 5
+      },
+      "臺南市第9選區": {
+        "officialArea": "臺南市第9選舉區",
+        "county": "臺南市",
+        "scope": "安平區、南區",
+        "sourcePages": [
+          5
+        ],
+        "electionSeats2022": 6
+      },
+      "臺南市第8選區": {
+        "officialArea": "臺南市第8選舉區",
+        "county": "臺南市",
+        "scope": "北區、中西區",
+        "sourcePages": [
+          5
+        ],
+        "electionSeats2022": 6
+      },
+      "臺南市第12選區": {
+        "officialArea": "臺南市第12選舉區",
+        "county": "臺南市",
+        "scope": "臺南市之平地原住民",
+        "sourcePages": [
+          5
+        ],
+        "electionSeats2022": 1
+      },
+      "臺南市第6選區": {
+        "officialArea": "臺南市第6選舉區",
+        "county": "臺南市",
+        "scope": "安南區",
+        "sourcePages": [
+          5
+        ],
+        "electionSeats2022": 6
+      }
+    },
+    "桃園市": {
+      "桃園市第1選區": {
+        "officialArea": "桃園市第1選舉區",
+        "county": "桃園市",
+        "scope": "桃園區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 12
+      },
+      "桃園市第7選區": {
+        "officialArea": "桃園市第7選舉區",
+        "county": "桃園市",
+        "scope": "中壢區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 11
+      },
+      "桃園市第13選區": {
+        "officialArea": "桃園市第13選舉區",
+        "county": "桃園市",
+        "scope": "桃園市之平地原住民",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 4
+      },
+      "桃園市第6選區": {
+        "officialArea": "桃園市第6選舉區",
+        "county": "桃園市",
+        "scope": "大溪區、復興區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 2
+      },
+      "桃園市第14選區": {
+        "officialArea": "桃園市第14選舉區",
+        "county": "桃園市",
+        "scope": "桃園市之山地原住民",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 3
+      },
+      "桃園市第9選區": {
+        "officialArea": "桃園市第9選舉區",
+        "county": "桃園市",
+        "scope": "楊梅區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 4
+      },
+      "桃園市第4選區": {
+        "officialArea": "桃園市第4選舉區",
+        "county": "桃園市",
+        "scope": "蘆竹區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 4
+      },
+      "桃園市第5選區": {
+        "officialArea": "桃園市第5選舉區",
+        "county": "桃園市",
+        "scope": "大園區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 2
+      },
+      "桃園市第2選區": {
+        "officialArea": "桃園市第2選舉區",
+        "county": "桃園市",
+        "scope": "龜山區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 4
+      },
+      "桃園市第3選區": {
+        "officialArea": "桃園市第3選舉區",
+        "county": "桃園市",
+        "scope": "八德區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 5
+      },
+      "桃園市第10選區": {
+        "officialArea": "桃園市第10選舉區",
+        "county": "桃園市",
+        "scope": "龍潭區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 3
+      },
+      "桃園市第8選區": {
+        "officialArea": "桃園市第8選舉區",
+        "county": "桃園市",
+        "scope": "平鎮區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 6
+      },
+      "桃園市第11選區": {
+        "officialArea": "桃園市第11選舉區",
+        "county": "桃園市",
+        "scope": "新屋區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 1
+      },
+      "桃園市第12選區": {
+        "officialArea": "桃園市第12選舉區",
+        "county": "桃園市",
+        "scope": "觀音區",
+        "sourcePages": [
+          4
+        ],
+        "electionSeats2022": 2
+      }
+    },
+    "宜蘭縣": {
+      "宜蘭縣第1選區": {
+        "officialArea": "宜蘭縣第1選舉區",
+        "county": "宜蘭縣",
+        "scope": "宜蘭市",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 7
+      },
+      "宜蘭縣第3選區": {
+        "officialArea": "宜蘭縣第3選舉區",
+        "county": "宜蘭縣",
+        "scope": "礁溪鄉",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 2
+      },
+      "宜蘭縣第13選區": {
+        "officialArea": "宜蘭縣第13選舉區",
+        "county": "宜蘭縣",
+        "scope": "南澳鄉及羅東鎮、五結鄉、冬山鄉、蘇澳鎮之山地原住民",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 1
+      },
+      "宜蘭縣第6選區": {
+        "officialArea": "宜蘭縣第6選舉區",
+        "county": "宜蘭縣",
+        "scope": "羅東鎮",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 5
+      },
+      "宜蘭縣第7選區": {
+        "officialArea": "宜蘭縣第7選舉區",
+        "county": "宜蘭縣",
+        "scope": "五結鄉",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 3
+      },
+      "宜蘭縣第8選區": {
+        "officialArea": "宜蘭縣第8選舉區",
+        "county": "宜蘭縣",
+        "scope": "冬山鄉",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 4
+      },
+      "宜蘭縣第10選區": {
+        "officialArea": "宜蘭縣第10選舉區",
+        "county": "宜蘭縣",
+        "scope": "蘇澳鎮、南澳鄉",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 3
+      },
+      "宜蘭縣第12選區": {
+        "officialArea": "宜蘭縣第12選舉區",
+        "county": "宜蘭縣",
+        "scope": "大同鄉及宜蘭市、頭城鎮、礁溪鄉、員山鄉、壯圍鄉、三星鄉之山地原住民",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 1
+      },
+      "宜蘭縣第9選區": {
+        "officialArea": "宜蘭縣第9選舉區",
+        "county": "宜蘭縣",
+        "scope": "三星鄉、大同鄉",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 1
+      },
+      "宜蘭縣第11選區": {
+        "officialArea": "宜蘭縣第11選舉區",
+        "county": "宜蘭縣",
+        "scope": "宜蘭縣之平地原住民",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 1
+      },
+      "宜蘭縣第2選區": {
+        "officialArea": "宜蘭縣第2選舉區",
+        "county": "宜蘭縣",
+        "scope": "頭城鎮",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 2
+      },
+      "宜蘭縣第4選區": {
+        "officialArea": "宜蘭縣第4選舉區",
+        "county": "宜蘭縣",
+        "scope": "員山鄉",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 2
+      },
+      "宜蘭縣第5選區": {
+        "officialArea": "宜蘭縣第5選舉區",
+        "county": "宜蘭縣",
+        "scope": "壯圍鄉",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 2
+      }
+    },
+    "新竹縣": {
+      "新竹縣第1選區": {
+        "officialArea": "新竹縣第1選舉區",
+        "county": "新竹縣",
+        "scope": "竹北市",
+        "sourcePages": [
+          7
+        ],
+        "electionSeats2022": 12
+      },
+      "新竹縣第2選區": {
+        "officialArea": "新竹縣第2選舉區",
+        "county": "新竹縣",
+        "scope": "湖口鄉",
+        "sourcePages": [
+          7
+        ],
+        "electionSeats2022": 5
+      },
+      "新竹縣第7選區": {
+        "officialArea": "新竹縣第7選舉區",
+        "county": "新竹縣",
+        "scope": "芎林鄉",
+        "sourcePages": [
+          7
+        ],
+        "electionSeats2022": 1
+      },
+      "新竹縣第9選區": {
+        "officialArea": "新竹縣第9選舉區",
+        "county": "新竹縣",
+        "scope": "寶山鄉",
+        "sourcePages": [
+          7
+        ],
+        "electionSeats2022": 1
+      },
+      "新竹縣第10選區": {
+        "officialArea": "新竹縣第10選舉區",
+        "county": "新竹縣",
+        "scope": "北埔鄉、峨眉鄉",
+        "sourcePages": [
+          7
+        ],
+        "electionSeats2022": 1
+      },
+      "新竹縣第11選區": {
+        "officialArea": "新竹縣第11選舉區",
+        "county": "新竹縣",
+        "scope": "新竹縣之平地原住民",
+        "sourcePages": [
+          7
+        ],
+        "electionSeats2022": 1
+      },
+      "新竹縣第12選區": {
+        "officialArea": "新竹縣第12選舉區",
+        "county": "新竹縣",
+        "scope": "尖石鄉及竹北市、湖口鄉、新豐鄉、關西鎮、新埔鎮、橫山鄉之山地原住民",
+        "sourcePages": [
+          7
+        ],
+        "electionSeats2022": 1
+      },
+      "新竹縣第13選區": {
+        "officialArea": "新竹縣第13選舉區",
+        "county": "新竹縣",
+        "scope": "五峰鄉及芎林鄉、竹東鎮、寶山鄉、北埔鄉、峨眉鄉之山地原住民",
+        "sourcePages": [
+          7
+        ],
+        "electionSeats2022": 1
+      },
+      "新竹縣第8選區": {
+        "officialArea": "新竹縣第8選舉區",
+        "county": "新竹縣",
+        "scope": "竹東鎮、五峰鄉",
+        "sourcePages": [
+          7
+        ],
+        "electionSeats2022": 6
+      },
+      "新竹縣第3選區": {
+        "officialArea": "新竹縣第3選舉區",
+        "county": "新竹縣",
+        "scope": "新豐鄉",
+        "sourcePages": [
+          7
+        ],
+        "electionSeats2022": 3
+      },
+      "新竹縣第4選區": {
+        "officialArea": "新竹縣第4選舉區",
+        "county": "新竹縣",
+        "scope": "關西鎮",
+        "sourcePages": [
+          7
+        ],
+        "electionSeats2022": 2
+      },
+      "新竹縣第5選區": {
+        "officialArea": "新竹縣第5選舉區",
+        "county": "新竹縣",
+        "scope": "新埔鎮",
+        "sourcePages": [
+          7
+        ],
+        "electionSeats2022": 2
+      },
+      "新竹縣第6選區": {
+        "officialArea": "新竹縣第6選舉區",
+        "county": "新竹縣",
+        "scope": "橫山鄉、尖石鄉",
+        "sourcePages": [
+          7
+        ],
+        "electionSeats2022": 1
+      }
+    },
+    "苗栗縣": {
+      "苗栗縣第5選區": {
+        "officialArea": "苗栗縣第5選舉區",
+        "county": "苗栗縣",
+        "scope": "頭份市、三灣鄉、南庄鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 8
+      },
+      "苗栗縣第1選區": {
+        "officialArea": "苗栗縣第1選舉區",
+        "county": "苗栗縣",
+        "scope": "苗栗市、公館鄉、頭屋鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 9
+      },
+      "苗栗縣第3選區": {
+        "officialArea": "苗栗縣第3選舉區",
+        "county": "苗栗縣",
+        "scope": "通霄鎮、苑裡鎮",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 5
+      },
+      "苗栗縣第4選區": {
+        "officialArea": "苗栗縣第4選舉區",
+        "county": "苗栗縣",
+        "scope": "後龍鎮、造橋鄉、竹南鎮",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 9
+      },
+      "苗栗縣第6選區": {
+        "officialArea": "苗栗縣第6選舉區",
+        "county": "苗栗縣",
+        "scope": "大湖鄉、獅潭鄉、卓蘭鎮、泰安鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 2
+      },
+      "苗栗縣第2選區": {
+        "officialArea": "苗栗縣第2選舉區",
+        "county": "苗栗縣",
+        "scope": "銅鑼鄉、三義鄉、西湖鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 3
+      },
+      "苗栗縣第7選區": {
+        "officialArea": "苗栗縣第7選舉區",
+        "county": "苗栗縣",
+        "scope": "苗栗縣之平地原住民",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 1
+      },
+      "苗栗縣第8選區": {
+        "officialArea": "苗栗縣第8選舉區",
+        "county": "苗栗縣",
+        "scope": "苗栗縣之山地原住民",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 1
+      }
+    },
+    "彰化縣": {
+      "彰化縣第1選區": {
+        "officialArea": "彰化縣第1選舉區",
+        "county": "彰化縣",
+        "scope": "彰化市、花壇鄉、芬園鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 13
+      },
+      "彰化縣第2選區": {
+        "officialArea": "彰化縣第2選舉區",
+        "county": "彰化縣",
+        "scope": "鹿港鎮、福興鄉、秀水鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 7
+      },
+      "彰化縣第3選區": {
+        "officialArea": "彰化縣第3選舉區",
+        "county": "彰化縣",
+        "scope": "和美鎮、伸港鄉、線西鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 6
+      },
+      "彰化縣第9選區": {
+        "officialArea": "彰化縣第9選舉區",
+        "county": "彰化縣",
+        "scope": "彰化縣之平地原住民",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 1
+      },
+      "彰化縣第4選區": {
+        "officialArea": "彰化縣第4選舉區",
+        "county": "彰化縣",
+        "scope": "員林市、大村鄉、永靖鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 8
+      },
+      "彰化縣第5選區": {
+        "officialArea": "彰化縣第5選舉區",
+        "county": "彰化縣",
+        "scope": "溪湖鎮、埔鹽鄉、埔心鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 5
+      },
+      "彰化縣第6選區": {
+        "officialArea": "彰化縣第6選舉區",
+        "county": "彰化縣",
+        "scope": "田中鎮、社頭鄉、二水鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 4
+      },
+      "彰化縣第7選區": {
+        "officialArea": "彰化縣第7選舉區",
+        "county": "彰化縣",
+        "scope": "北斗鎮、田尾鄉、埤頭鄉、溪州鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 5
+      },
+      "彰化縣第8選區": {
+        "officialArea": "彰化縣第8選舉區",
+        "county": "彰化縣",
+        "scope": "二林鎮、大城鄉、芳苑鄉、竹塘鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 5
+      }
+    },
+    "南投縣": {
+      "南投縣第1選區": {
+        "officialArea": "南投縣第1選舉區",
+        "county": "南投縣",
+        "scope": "南投市、名間鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 10
+      },
+      "南投縣第2選區": {
+        "officialArea": "南投縣第2選舉區",
+        "county": "南投縣",
+        "scope": "草屯鎮、中寮鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 8
+      },
+      "南投縣第4選區": {
+        "officialArea": "南投縣第4選舉區",
+        "county": "南投縣",
+        "scope": "竹山鎮、鹿谷鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 5
+      },
+      "南投縣第5選區": {
+        "officialArea": "南投縣第5選舉區",
+        "county": "南投縣",
+        "scope": "埔里鎮、國姓鄉、仁愛鄉",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 7
+      },
+      "南投縣第8選區": {
+        "officialArea": "南投縣第8選舉區",
+        "county": "南投縣",
+        "scope": "仁愛鄉及草屯鎮、中寮鄉、魚池鄉、國姓鄉、埔里鎮之山地原住民",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 1
+      },
+      "南投縣第3選區": {
+        "officialArea": "南投縣第3選舉區",
+        "county": "南投縣",
+        "scope": "集集鎮、水里鄉、魚池鄉、信義鄉",
+        "sourcePages": [
+          8
+        ],
+        "electionSeats2022": 4
+      },
+      "南投縣第7選區": {
+        "officialArea": "南投縣第7選舉區",
+        "county": "南投縣",
+        "scope": "信義鄉及南投市、竹山鎮、集集鎮、名間鄉、鹿谷鄉、水里鄉之山地原住民",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 1
+      },
+      "南投縣第6選區": {
+        "officialArea": "南投縣第6選舉區",
+        "county": "南投縣",
+        "scope": "南投縣之平地原住民",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 1
+      }
+    },
+    "雲林縣": {
+      "雲林縣第1選區": {
+        "officialArea": "雲林縣第1選舉區",
+        "county": "雲林縣",
+        "scope": "斗六市、莿桐鄉、林內鄉",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 10
+      },
+      "雲林縣第2選區": {
+        "officialArea": "雲林縣第2選舉區",
+        "county": "雲林縣",
+        "scope": "斗南鎮、古坑鄉、大埤鄉",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 6
+      },
+      "雲林縣第3選區": {
+        "officialArea": "雲林縣第3選舉區",
+        "county": "雲林縣",
+        "scope": "虎尾鎮、土庫鎮、褒忠鄉、元長鄉",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 9
+      },
+      "雲林縣第4選區": {
+        "officialArea": "雲林縣第4選舉區",
+        "county": "雲林縣",
+        "scope": "西螺鎮、二崙鄉、崙背鄉",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 6
+      },
+      "雲林縣第6選區": {
+        "officialArea": "雲林縣第6選舉區",
+        "county": "雲林縣",
+        "scope": "北港鎮、口湖鄉、水林鄉",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 5
+      },
+      "雲林縣第5選區": {
+        "officialArea": "雲林縣第5選舉區",
+        "county": "雲林縣",
+        "scope": "臺西鄉、麥寮鄉、東勢鄉、四湖鄉",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 7
+      }
+    },
+    "嘉義縣": {
+      "嘉義縣第1選區": {
+        "officialArea": "嘉義縣第1選舉區",
+        "county": "嘉義縣",
+        "scope": "鹿草鄉、太保市、水上鄉",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 8
+      },
+      "嘉義縣第7選區": {
+        "officialArea": "嘉義縣第7選舉區",
+        "county": "嘉義縣",
+        "scope": "嘉義縣之山地原住民",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 1
+      },
+      "嘉義縣第6選區": {
+        "officialArea": "嘉義縣第6選舉區",
+        "county": "嘉義縣",
+        "scope": "中埔鄉、竹崎鄉、番路鄉、大埔鄉、阿里山鄉",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 7
+      },
+      "嘉義縣第4選區": {
+        "officialArea": "嘉義縣第4選舉區",
+        "county": "嘉義縣",
+        "scope": "朴子市、六腳鄉、東石鄉",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 6
+      },
+      "嘉義縣第5選區": {
+        "officialArea": "嘉義縣第5選舉區",
+        "county": "嘉義縣",
+        "scope": "布袋鎮、義竹鄉",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 3
+      },
+      "嘉義縣第3選區": {
+        "officialArea": "嘉義縣第3選舉區",
+        "county": "嘉義縣",
+        "scope": "大林鎮、溪口鄉、梅山鄉",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 5
+      },
+      "嘉義縣第2選區": {
+        "officialArea": "嘉義縣第2選舉區",
+        "county": "嘉義縣",
+        "scope": "民雄鄉、新港鄉",
+        "sourcePages": [
+          9
+        ],
+        "electionSeats2022": 7
+      }
+    },
+    "屏東縣": {
+      "屏東縣第一選區": {
+        "officialArea": "屏東縣第1選舉區",
+        "county": "屏東縣",
+        "scope": "屏東市",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 12
+      },
+      "屏東縣第二選區": {
+        "officialArea": "屏東縣第2選舉區",
+        "county": "屏東縣",
+        "scope": "長治鄉、麟洛鄉、九如鄉、里港鄉、鹽埔鄉、高樹鄉、三地門鄉、霧臺鄉、瑪家鄉",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 8
+      },
+      "屏東縣第八選區": {
+        "officialArea": "屏東縣第8選舉區",
+        "county": "屏東縣",
+        "scope": "屏東縣之平地原住民",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 1
+      },
+      "屏東縣第十一選區": {
+        "officialArea": "屏東縣第11選舉區",
+        "county": "屏東縣",
+        "scope": "泰武鄉及萬丹鄉、萬巒鄉、竹田鄉之山地原住民",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 1
+      },
+      "屏東縣第三選區": {
+        "officialArea": "屏東縣第3選舉區",
+        "county": "屏東縣",
+        "scope": "潮州鎮、萬巒鄉、內埔鄉、竹田鄉、新埤鄉、枋寮鄉、泰武鄉、來義鄉、春日鄉",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 10
+      },
+      "屏東縣第四選區": {
+        "officialArea": "屏東縣第4選舉區",
+        "county": "屏東縣",
+        "scope": "東港鎮、新園鄉、萬丹鄉",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 8
+      },
+      "屏東縣第六選區": {
+        "officialArea": "屏東縣第6選舉區",
+        "county": "屏東縣",
+        "scope": "恆春鎮、車城鄉、滿州鄉、枋山鄉、獅子鄉、牡丹鄉",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 3
+      },
+      "屏東縣第五選區": {
+        "officialArea": "屏東縣第5選舉區",
+        "county": "屏東縣",
+        "scope": "崁頂鄉、林邊鄉、南州鄉、佳冬鄉",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 4
+      },
+      "屏東縣第七選區": {
+        "officialArea": "屏東縣第7選舉區",
+        "county": "屏東縣",
+        "scope": "琉球鄉",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 1
+      },
+      "屏東縣第九選區": {
+        "officialArea": "屏東縣第9選舉區",
+        "county": "屏東縣",
+        "scope": "三地門鄉及九如鄉、里港鄉、鹽埔鄉、高樹鄉之山地原住民",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 1
+      },
+      "屏東縣第十六選區": {
+        "officialArea": "屏東縣第16選舉區",
+        "county": "屏東縣",
+        "scope": "霧臺鄉之山地原住民",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 1
+      },
+      "屏東縣第十選區": {
+        "officialArea": "屏東縣第10選舉區",
+        "county": "屏東縣",
+        "scope": "瑪家鄉及屏東市、長治鄉、麟洛鄉、內埔鄉之山地原住民",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 1
+      },
+      "屏東縣第十二選區": {
+        "officialArea": "屏東縣第12選舉區",
+        "county": "屏東縣",
+        "scope": "來義鄉及潮州鎮、新埤鄉、新園鄉、崁頂鄉、南州鄉之山地原住民",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 1
+      },
+      "屏東縣第十三選區": {
+        "officialArea": "屏東縣第13選舉區",
+        "county": "屏東縣",
+        "scope": "春日鄉及東港鎮、枋寮鄉、林邊鄉、佳冬鄉、琉球鄉之山地原住民",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 1
+      },
+      "屏東縣第十四選區": {
+        "officialArea": "屏東縣第14選舉區",
+        "county": "屏東縣",
+        "scope": "獅子鄉及枋山鄉之山地原住民",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 1
+      },
+      "屏東縣第十五選區": {
+        "officialArea": "屏東縣第15選舉區",
+        "county": "屏東縣",
+        "scope": "牡丹鄉及恆春鎮、車城鄉、滿州鄉之山地原住民",
+        "sourcePages": [
+          10
+        ],
+        "electionSeats2022": 1
+      }
+    },
+    "臺東縣": {
+      "臺東縣第1選區": {
+        "officialArea": "臺東縣第1選舉區",
+        "county": "臺東縣",
+        "scope": "臺東市、蘭嶼鄉",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 10
+      },
+      "臺東縣第7選區": {
+        "officialArea": "臺東縣第7選舉區",
+        "county": "臺東縣",
+        "scope": "臺東市之平地原住民",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 3
+      },
+      "臺東縣第9選區": {
+        "officialArea": "臺東縣第9選舉區",
+        "county": "臺東縣",
+        "scope": "太麻里鄉、金峰鄉、達仁鄉、大武鄉之平地原住民",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 1
+      },
+      "臺東縣第3選區": {
+        "officialArea": "臺東縣第3選舉區",
+        "county": "臺東縣",
+        "scope": "東河鄉、成功鎮、長濱鄉",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 2
+      },
+      "臺東縣第11選區": {
+        "officialArea": "臺東縣第11選舉區",
+        "county": "臺東縣",
+        "scope": "東河鄉、綠島鄉、成功鎮、長濱鄉之平地原住民",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 2
+      },
+      "臺東縣第10選區": {
+        "officialArea": "臺東縣第10選舉區",
+        "county": "臺東縣",
+        "scope": "鹿野鄉、延平鄉、關山鎮、海端鄉、池上鄉之平地原住民",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 1
+      },
+      "臺東縣第4選區": {
+        "officialArea": "臺東縣第4選舉區",
+        "county": "臺東縣",
+        "scope": "鹿野鄉、關山鎮、海端鄉、池上鄉",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 2
+      },
+      "臺東縣第2選區": {
+        "officialArea": "臺東縣第2選舉區",
+        "county": "臺東縣",
+        "scope": "卑南鄉、延平鄉",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 1
+      },
+      "臺東縣第8選區": {
+        "officialArea": "臺東縣第8選舉區",
+        "county": "臺東縣",
+        "scope": "卑南鄉、蘭嶼鄉之平地原住民",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 1
+      },
+      "臺東縣第5選區": {
+        "officialArea": "臺東縣第5選舉區",
+        "county": "臺東縣",
+        "scope": "太麻里鄉、金峰鄉、達仁鄉、大武鄉",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 1
+      },
+      "臺東縣第6選區": {
+        "officialArea": "臺東縣第6選舉區",
+        "county": "臺東縣",
+        "scope": "綠島鄉",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 1
+      },
+      "臺東縣第13選區": {
+        "officialArea": "臺東縣第13選舉區",
+        "county": "臺東縣",
+        "scope": "海端鄉及鹿野鄉、關山鎮、池上鄉之山地原住民",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 1
+      },
+      "臺東縣第12選區": {
+        "officialArea": "臺東縣第12選舉區",
+        "county": "臺東縣",
+        "scope": "延平鄉及卑南鄉、東河鄉、成功鎮、長濱鄉之山地原住民",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 1
+      },
+      "臺東縣第14選區": {
+        "officialArea": "臺東縣第14選舉區",
+        "county": "臺東縣",
+        "scope": "金峰鄉及太麻里鄉、臺東市、綠島鄉之山地原住民",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 1
+      },
+      "臺東縣第15選區": {
+        "officialArea": "臺東縣第15選舉區",
+        "county": "臺東縣",
+        "scope": "達仁鄉及大武鄉之山地原住民",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 1
+      },
+      "臺東縣第16選區": {
+        "officialArea": "臺東縣第16選舉區",
+        "county": "臺東縣",
+        "scope": "蘭嶼鄉之山地原住民",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 1
+      }
+    },
+    "花蓮縣": {
+      "花蓮縣第1選區": {
+        "officialArea": "花蓮縣第1選舉區",
+        "county": "花蓮縣",
+        "scope": "花蓮市",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 9
+      },
+      "花蓮縣第5選區": {
+        "officialArea": "花蓮縣第5選舉區",
+        "county": "花蓮縣",
+        "scope": "花蓮市、新城鄉、秀林鄉、吉安鄉之平地原住民",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 3
+      },
+      "花蓮縣第10選區": {
+        "officialArea": "花蓮縣第10選舉區",
+        "county": "花蓮縣",
+        "scope": "卓溪鄉及玉里鎮、富里鄉之山地原住民",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 1
+      },
+      "花蓮縣第4選區": {
+        "officialArea": "花蓮縣第4選舉區",
+        "county": "花蓮縣",
+        "scope": "瑞穗鄉、玉里鎮、富里鄉、卓溪鄉",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 3
+      },
+      "花蓮縣第2選區": {
+        "officialArea": "花蓮縣第2選舉區",
+        "county": "花蓮縣",
+        "scope": "新城鄉、秀林鄉",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 2
+      },
+      "花蓮縣第3選區": {
+        "officialArea": "花蓮縣第3選舉區",
+        "county": "花蓮縣",
+        "scope": "吉安鄉、壽豐鄉、鳳林鎮、光復鄉、豐濱鄉、萬榮鄉",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 9
+      },
+      "花蓮縣第6選區": {
+        "officialArea": "花蓮縣第6選舉區",
+        "county": "花蓮縣",
+        "scope": "壽豐鄉、鳳林鎮、萬榮鄉、光復鄉、豐濱鄉之平地原住民",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 2
+      },
+      "花蓮縣第7選區": {
+        "officialArea": "花蓮縣第7選舉區",
+        "county": "花蓮縣",
+        "scope": "瑞穗鄉、玉里鎮、富里鄉、卓溪鄉之平地原住民",
+        "sourcePages": [
+          11
+        ],
+        "electionSeats2022": 2
+      },
+      "花蓮縣第8選區": {
+        "officialArea": "花蓮縣第8選舉區",
+        "county": "花蓮縣",
+        "scope": "秀林鄉及花蓮市、新城鄉、吉安鄉、壽豐鄉之山地原住民",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 1
+      },
+      "花蓮縣第9選區": {
+        "officialArea": "花蓮縣第9選舉區",
+        "county": "花蓮縣",
+        "scope": "萬榮鄉及鳳林鎮、光復鄉、豐濱鄉、瑞穗鄉之山地原住民",
+        "sourcePages": [
+          12
+        ],
+        "electionSeats2022": 1
+      }
+    },
+    "澎湖縣": {
+      "澎湖縣第2選區": {
+        "officialArea": "澎湖縣第2選舉區",
+        "county": "澎湖縣",
+        "scope": "湖西鄉",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 3
+      },
+      "澎湖縣第1選區": {
+        "officialArea": "澎湖縣第1選舉區",
+        "county": "澎湖縣",
+        "scope": "馬公市",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 11
+      },
+      "澎湖縣第3選區": {
+        "officialArea": "澎湖縣第3選舉區",
+        "county": "澎湖縣",
+        "scope": "白沙鄉",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 2
+      },
+      "澎湖縣第4選區": {
+        "officialArea": "澎湖縣第4選舉區",
+        "county": "澎湖縣",
+        "scope": "西嶼鄉",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 1
+      },
+      "澎湖縣第6選區": {
+        "officialArea": "澎湖縣第6選舉區",
+        "county": "澎湖縣",
+        "scope": "七美鄉",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 1
+      },
+      "澎湖縣第5選區": {
+        "officialArea": "澎湖縣第5選舉區",
+        "county": "澎湖縣",
+        "scope": "望安鄉",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 1
+      }
+    },
+    "基隆市": {
+      "基隆市第1選區": {
+        "officialArea": "基隆市第1選舉區",
+        "county": "基隆市",
+        "scope": "中正區",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 4
+      },
+      "基隆市第8選區": {
+        "officialArea": "基隆市第8選舉區",
+        "county": "基隆市",
+        "scope": "基隆市之平地原住民",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 1
+      },
+      "基隆市第7選區": {
+        "officialArea": "基隆市第7選舉區",
+        "county": "基隆市",
+        "scope": "七堵區",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 4
+      },
+      "基隆市第6選區": {
+        "officialArea": "基隆市第6選舉區",
+        "county": "基隆市",
+        "scope": "暖暖區",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 3
+      },
+      "基隆市第3選區": {
+        "officialArea": "基隆市第3選舉區",
+        "county": "基隆市",
+        "scope": "仁愛區",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 4
+      },
+      "基隆市第4選區": {
+        "officialArea": "基隆市第4選舉區",
+        "county": "基隆市",
+        "scope": "中山區",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 4
+      },
+      "基隆市第5選區": {
+        "officialArea": "基隆市第5選舉區",
+        "county": "基隆市",
+        "scope": "安樂區",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 7
+      },
+      "基隆市第2選區": {
+        "officialArea": "基隆市第2選舉區",
+        "county": "基隆市",
+        "scope": "信義區",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 4
+      }
+    },
+    "新竹市": {
+      "新竹市第2選區": {
+        "officialArea": "新竹市第2選舉區",
+        "county": "新竹市",
+        "scope": "南門里、關帝里、南市里、福德里、振興里、新興里、竹蓮里、南大里、寺前里、下竹里、頂竹里、光鎮里、高峰里、柴橋里、新光里、湖濱里、明湖里",
+        "sourcePages": [
+          14
+        ],
+        "electionSeats2022": 4
+      },
+      "新竹市第1選區": {
+        "officialArea": "新竹市第1選舉區",
+        "county": "新竹市",
+        "scope": "東門里、榮光里、成功里、育賢里、中正里、親仁里、文華里、復中里、三民里、公園里、東園里、東山里、東勢里、光復里、前溪里、水源里、千甲里、綠水里、埔頂里、仙宮里、龍山里、新莊里、關新里、仙水里、金山里、建功里、光明里、立功里、軍功里、武功里、豐功里、科園里、關東里、建華里、錦華里、復興里",
+        "sourcePages": [
+          13,
+          14
+        ],
+        "electionSeats2022": 12
+      },
+      "新竹市第6選區": {
+        "officialArea": "新竹市第6選舉區",
+        "county": "新竹市",
+        "scope": "新竹市之平地原住民",
+        "sourcePages": [
+          15
+        ],
+        "electionSeats2022": 1
+      },
+      "新竹市第4選區": {
+        "officialArea": "新竹市第4選舉區",
+        "county": "新竹市",
+        "scope": "北門里、中興里、大同里、中山里、長和里、新民里、民富里、水田里、文雅里、光田里、士林里、福林里、古賢里、湳雅里、舊社里、武陵里、南寮里、舊港里、康樂里、港北里、中寮里、海濱里、磐石里、新雅里、光華里、金華里、境福里、金竹里、湳中里、金雅里",
+        "sourcePages": [
+          14
+        ],
+        "electionSeats2022": 9
+      },
+      "新竹市第5選區": {
+        "officialArea": "新竹市第5選舉區",
+        "county": "新竹市",
+        "scope": "頂埔里、中埔里、埔前里、牛埔里、樹下里、浸水里、虎林里、虎山里、港南里、大庄里、美山里、朝山里、東香里、香山里、香村里、海山里、鹽水里、內湖里、南港里、中隘里、南隘里、大湖里、茄苳里、頂福里",
+        "sourcePages": [
+          15
+        ],
+        "electionSeats2022": 6
+      },
+      "新竹市第3選區": {
+        "officialArea": "新竹市第3選舉區",
+        "county": "新竹市",
+        "scope": "客雅里、中雅里、育英里、曲溪里、西雅里、南勢里、大鵬里、西門里、仁德里、潛園里、中央里、崇禮里、石坊里、興南里、台溪里",
+        "sourcePages": [
+          14
+        ],
+        "electionSeats2022": 2
+      }
+    },
+    "嘉義市": {
+      "嘉義市第1選區": {
+        "officialArea": "嘉義市第1選舉區",
+        "county": "嘉義市",
+        "scope": "東區",
+        "sourcePages": [
+          15
+        ],
+        "electionSeats2022": 10
+      },
+      "嘉義市第2選區": {
+        "officialArea": "嘉義市第2選舉區",
+        "county": "嘉義市",
+        "scope": "西區",
+        "sourcePages": [
+          15
+        ],
+        "electionSeats2022": 13
+      }
+    },
+    "連江縣": {
+      "第1選區": {
+        "officialArea": "連江縣第1選舉區",
+        "county": "連江縣",
+        "scope": "南竿鄉",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 5
+      },
+      "第2選區": {
+        "officialArea": "連江縣第2選舉區",
+        "county": "連江縣",
+        "scope": "北竿鄉",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 2
+      },
+      "第3選區": {
+        "officialArea": "連江縣第3選舉區",
+        "county": "連江縣",
+        "scope": "莒光鄉",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 1
+      },
+      "第4選區": {
+        "officialArea": "連江縣第4選舉區",
+        "county": "連江縣",
+        "scope": "東引鄉",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 1
+      }
+    },
+    "金門縣": {
+      "金門縣第1選區": {
+        "officialArea": "金門縣第1選舉區",
+        "county": "金門縣",
+        "scope": "金城鎮、金寧鄉、烏坵鄉",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 10
+      },
+      "金門縣第2選區": {
+        "officialArea": "金門縣第2選舉區",
+        "county": "金門縣",
+        "scope": "金湖鎮、金沙鎮",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 7
+      },
+      "金門縣第3選區": {
+        "officialArea": "金門縣第3選舉區",
+        "county": "金門縣",
+        "scope": "烈嶼鄉",
+        "sourcePages": [
+          13
+        ],
+        "electionSeats2022": 2
+      }
+    }
+  },
+  "unmatchedRosterAreas": []
+}

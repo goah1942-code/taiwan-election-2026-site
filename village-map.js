@@ -406,7 +406,16 @@ window.TaiwanVillageMap = (() => {
         if (!districtMode) button.append(node('span', null, councilMode ? feature.electorateLabel || KIND_LABELS[feature.kind] : feature.districtName));
         button.append(node('strong', null, feature.name), node('small', null, '放大定位 ↗'));
         button.addEventListener('click', event => { searchResults.hidden = true; focusVillage(feature, event); });
-        searchResults.append(button);
+        if (family() === 'village' && !districtMode && feature.zoneId) {
+          // Exact-name lookup need not rely on hitting a small irregular polygon.
+          const row = node('div', 'village-map-search-row');
+          const select = node('button', 'village-map-search-select'); select.type = 'button';
+          select.setAttribute('aria-label', `查看${featureLabel(feature)}村里長候選人`);
+          select.append(node('span', null, feature.districtName), node('strong', null, feature.name), node('small', null, '看候選人 →'));
+          select.addEventListener('click', () => { searchResults.hidden = true; choose(feature); });
+          button.classList.add('village-map-search-zoom'); button.replaceChildren(document.createTextNode('放大定位'));
+          row.append(select, button); searchResults.append(row);
+        } else searchResults.append(button);
       }
       if (matches.length > 8) searchResults.append(node('p', null, `共 ${matches.length} 個結果，請多輸入幾個字縮小範圍。`));
     }

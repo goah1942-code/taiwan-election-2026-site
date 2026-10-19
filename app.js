@@ -109,7 +109,7 @@ function updateUrl(commit = false) {
   if (!commit) return;
   const query = new URLSearchParams();
   const existingQuery = new URLSearchParams(location.search);
-  for (const key of ['tab', 'office', 'incCounty', 'incDistrict', 'incArea', 'incView']) {
+  for (const key of ['tab', 'office', 'incCounty', 'incDistrict', 'incArea', 'incView', 'statCounty', 'statBallot', 'historyType', 'historyYear', 'returnTo']) {
     if (existingQuery.has(key)) query.set(key, existingQuery.get(key));
   }
   if (state.county) query.set('county', state.county.id);
@@ -125,6 +125,7 @@ function updateUrl(commit = false) {
   state.navigationMode = 'user';
   rememberQuery();
   renderQueryNavigation();
+  if (!restoring || !$('candidate-panel').querySelector('.page-context-notice')) window.ElectionPageTabs?.settleContextNotice('candidates');
 }
 function breadcrumb() {
   const familyLabel = {mayor: '縣市長', council: '議員', village: '里長'}[mapElectionFamily(state.selectionTypeId)];
@@ -523,6 +524,8 @@ function clearZoneState() {
   $('party-filter').value = '';
 }
 function focusLevel(sequence, id) {
+  if (sequence !== state.sequence || $('candidate-panel')?.hidden) return;
+  window.ElectionPageTabs?.pinContextReturn('candidates');
   const previousFocus = document.activeElement;
   requestAnimationFrame(() => {
     if (sequence !== state.sequence) return;
@@ -1137,7 +1140,7 @@ async function init() {
   addEventListener('popstate', async () => {
     const candidateRoute = (value) => {
       const url = new URL(value, location.href);
-      for (const key of ['tab', 'office', 'incCounty', 'incDistrict', 'incArea', 'incView']) url.searchParams.delete(key);
+      for (const key of ['tab', 'office', 'incCounty', 'incDistrict', 'incArea', 'incView', 'statCounty', 'statBallot', 'historyType', 'historyYear', 'returnTo']) url.searchParams.delete(key);
       return `${url.pathname}?${url.searchParams}`;
     };
     if (!state.manifest || (!state.loading && state.routeUrl && candidateRoute(location.href) === candidateRoute(state.routeUrl))) return;
@@ -1188,4 +1191,13 @@ async function init() {
   } catch (error) { message('網站資料載入失敗', `請重新整理頁面後再試；若仍無法載入，請稍後再開啟網站。${error.message}`, '!'); }
   finally { if (positionResult) history.scrollRestoration = previousScrollRestoration || 'auto'; }
 }
+window.ElectionCandidateContext = Object.freeze({
+  get() { return {office:mapElectionFamily(state.type?.id || state.selectionTypeId),
+    countyId:state.county?.id || '', countyName:state.county?.name || ''}; }
+});
+addEventListener('page-tab-change', async event => {
+  if (event.detail?.tab !== 'candidates' || !state.manifest) return;
+  if (event.detail.contextChanged || event.detail.restore) { state.navigationMode = 'restore'; await restoreRoute(); }
+  if (event.detail.restore) focusLevel(state.sequence, state.zone ? 'candidate-heading' : state.county ? 'region-level-heading' : !$('county-map').hidden ? 'county-map-heading' : 'select-heading');
+});
 init();

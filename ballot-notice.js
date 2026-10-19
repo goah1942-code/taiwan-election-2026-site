@@ -293,6 +293,7 @@
     if (!host) return;
     host.classList.add('ballot-notice');
     host.innerHTML = `<div class="bn-entry-heading"><div><span class="bn-kicker">從地址查我的票</span><h2 id="ballot-notice-heading">輸入戶籍地址</h2></div><span class="bn-entry-badge">2026 九合一</span></div>
+      <button type="button" id="bn-result-shortcut" class="bn-result-shortcut" aria-controls="bn-output" hidden>查看剛才的查詢結果 ↓</button>
       <div class="bn-input-guide"><p id="bn-address-scope"><strong>新北市可由完整門牌查村里。</strong>其他縣市先查已確認的選區。</p><p id="bn-address-privacy">地址只在瀏覽器比對，不會儲存；不用填姓名或身分證字號。</p></div>
       <form class="bn-form" id="bn-form"><div class="bn-address-field"><label for="bn-address">戶籍地址 <span>不用填里名、鄰別</span></label><input id="bn-address" name="household-address" type="text" autocomplete="off" spellcheck="false" required maxlength="180" placeholder="例如：新北市樹林區中山路一段1號" aria-describedby="bn-address-scope bn-address-privacy bn-address-help"><p id="bn-address-help">保留縣市、區／鄉鎮市、路段、巷弄與門牌號。請輸入戶籍地址。</p></div><div class="bn-identity-field"><label for="bn-identity">選民身分</label><select id="bn-identity">${Object.entries(IDENTITY).map(([value, item]) => `<option value="${value}">${item.label}</option>`).join('')}</select><p>原住民身分以戶籍登記為準。</p></div><button class="bn-submit" type="submit" id="bn-submit">查我的選票 <span aria-hidden="true">→</span></button></form>
       <div class="bn-entry-bottom"><div class="bn-examples"><span>試看範例</span><button type="button" data-bn-example="新北市樹林區中山路一段1號">樹林</button><button type="button" data-bn-example="新北市板橋區文化路一段1號">板橋</button></div></div>
@@ -302,6 +303,7 @@
     const identitySelect = host.querySelector('#bn-identity');
     const button = host.querySelector('#bn-submit');
     const output = host.querySelector('#bn-output');
+    const resultShortcut = host.querySelector('#bn-result-shortcut');
     const progress = host.querySelector('#bn-progress');
     let sequence = 0;
     const baseInputDescription = input.getAttribute('aria-describedby') || '';
@@ -331,6 +333,7 @@
       button.disabled = false;
       button.innerHTML = '查我的選票 <span aria-hidden="true">→</span>';
       output.replaceChildren();
+      resultShortcut.hidden = true;
       output.removeAttribute('aria-busy');
       progress.textContent = '';
     }
@@ -352,12 +355,14 @@
       button.disabled = true;
       button.innerHTML = '正在查詢…';
       output.replaceChildren();
+      resultShortcut.hidden = true;
       output.setAttribute('aria-busy', 'true');
       progress.textContent = '正在比對官方門牌與選區資料…';
       try {
         const result = await query(address, identity);
         if (current !== sequence) return;
         output.innerHTML = resultHtml(result);
+        resultShortcut.hidden = !output.querySelector('#bn-result-heading');
         connectInputFeedback(result.resolved);
         for (const trigger of output.querySelectorAll('[data-bn-history]')) {
           trigger.addEventListener('click', () => {
@@ -383,6 +388,7 @@
         }
       }
     }
+    resultShortcut.addEventListener('click', focusQueryOutput);
     form.addEventListener('submit', event => { event.preventDefault(); submit(); });
     input.addEventListener('input', invalidate);
     for (const sample of host.querySelectorAll('[data-bn-example]')) sample.addEventListener('click', () => { input.value = sample.dataset.bnExample; submit(); });

@@ -27,6 +27,10 @@
     return palette[index % palette.length];
   }
 
+  function partyLabel(party) {
+    return party.name === '無' ? '無黨籍（來源：無）' : party.name || '來源未列黨籍';
+  }
+
   function getShare(election, partyId) {
     if (!Object.prototype.hasOwnProperty.call(election.shares || {}, partyId)) return null;
     const value = election.shares[partyId];
@@ -38,6 +42,20 @@
   function getVotes(election, partyId) {
     const value = election.voteCounts?.[partyId];
     return typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 ? value : null;
+  }
+
+  // A zero aggregate can mean the source did not list this endorsement
+  // category. Do not infer that from zero alone or from party history.
+  function participationStatus(election, partyId) {
+    if (getVotes(election, partyId) !== 0) return '';
+    const listed = election.participatingParties;
+    if (!Array.isArray(listed) || listed.some(id => typeof id !== 'string')) return '參選分類未確認';
+    return listed.includes(partyId) ? '本次有此參選分類' : '本次未列此參選分類';
+  }
+
+  function appendParticipationStatus(node, election, partyId) {
+    const text = participationStatus(election, partyId);
+    if (text) node.append(element('small', 'ph-participation-status', text));
   }
 
   function blueGreenTotals(election, pair) {
@@ -107,7 +125,7 @@
   function normalise(data) {
     const seen = new Set();
     const parties = (data.parties || []).filter(party => {
-      if (!party || party.id == null || !party.name || seen.has(String(party.id))) return false;
+      if (!party || party.id == null || typeof party.name !== 'string' || seen.has(String(party.id))) return false;
       seen.add(String(party.id));
       return true;
     }).map((party, index) => ({...party, id: String(party.id), color: partyColor(party, index)}));
@@ -177,7 +195,7 @@
         const group = svgElement('g', {class: 'ph-data-point', tabindex: '0', role: 'button',
           'data-point-index': points.length, 'data-party-id': party.id, 'data-year': election.year,
           'data-election-type': election.type,
-          'aria-label': `${election.year} 年${electionLabel(election)} · ${party.name} ${percentage(share)}${mode === 'blue-green' ? '（藍綠合計 100%）' : mode === 'selected' ? '（所選政黨合計 100%）' : ''}`});
+          'aria-label': `${election.year} 年${electionLabel(election)} · ${partyLabel(party)} ${percentage(share)}${mode === 'blue-green' ? '（藍綠合計 100%）' : mode === 'selected' ? '（所選政黨合計 100%）' : ''}${participationStatus(election, party.id) ? ' · ' + participationStatus(election, party.id) : ''}`});
         group.append(svgElement('circle', {cx: point.x, cy: point.y, r: 10, class: 'ph-point-hit', 'aria-hidden': 'true'}), marker);
         point.node = group;
         points.push(point);
@@ -265,7 +283,7 @@
 
     const controls = element('div', 'ph-party-controls');
     controls.setAttribute('role', 'group');
-    controls.setAttribute('aria-label', '選擇顯示的政黨；同時切換折線與表格欄位');
+    controls.setAttribute('aria-label', '選擇顯示的政黨與來源分類；同時切換折線與表格欄位');
     const buttons = new Map();
     const chartId = `${id}-chart`;
     const tableId = `${id}-table`;
@@ -280,18 +298,33 @@
       check.setAttribute('aria-hidden', 'true');
       const swatch = element('span', 'ph-party-swatch');
       swatch.setAttribute('aria-hidden', 'true');
-      button.append(check, swatch, element('span', '', party.name));
+      button.append(check, swatch, element('span', '', partyLabel(party)));
       button.addEventListener('click', () => {
         if (active.has(party.id)) active.delete(party.id); else active.add(party.id);
         button.setAttribute('aria-pressed', active.has(party.id) ? 'true' : 'false');
         check.textContent = active.has(party.id) ? '✓' : '+';
         update();
-        status.textContent = `${party.name}已${active.has(party.id) ? '顯示' : '隱藏'}，目前顯示 ${active.size} 個政黨。`;
+        status.textContent = `${partyLabel(party)}已${active.has(party.id) ? '顯示' : '隱藏'}，目前顯示 ${active.size} 個來源分類。`;
       });
       buttons.set(party.id, button);
       controls.append(button);
     });
-    const partyHelp = element('a', 'ph-rule-link', '政黨選項說明');
+    for (const [visible, label] of [[true, '顯示全部分類'], [false, '隱藏全部分類']]) {
+      const button = element('button', 'ph-selection-button', label);
+      button.type = 'button';
+      button.addEventListener('click', () => {
+        active.clear();
+        if (visible) parties.forEach(party => active.add(party.id));
+        buttons.forEach((choice, partyId) => {
+          choice.setAttribute('aria-pressed', String(active.has(partyId)));
+          choice.querySelector('.ph-party-check').textContent = visible ? '✓' : '+';
+        });
+        update();
+        status.textContent = visible ? `已顯示全部 ${active.size} 個來源分類。` : '已隱藏全部分類，請選擇要比較的政黨或分類。';
+      });
+      controls.append(button);
+    }
+    const partyHelp = element('a', 'ph-rule-link', '來源分類說明');
     partyHelp.href = '#party-history-help';
     controls.append(partyHelp);
     container.append(controls);
@@ -303,14 +336,14 @@
     container.append(shapeLegend);
     const pairLegend = element('div', 'ph-blue-green-legend');
     blueGreen.forEach(party => {
-      const label = element('span', '', party.name);
+      const label = element('span', '', partyLabel(party));
       const swatch = element('i', 'ph-detail-dot');
       swatch.style.backgroundColor = party.color;
       label.prepend(swatch);
       pairLegend.append(label);
     });
     container.append(pairLegend);
-    container.append(element('p', 'ph-scroll-hint', '滑鼠移到或點資料點看當次各黨票數與比例；點年份展開數據。左右滑動看其他年份。'));
+    container.append(element('p', 'ph-scroll-hint', '滑鼠移到、點選或用鍵盤移到資料點，圖框下方會列出目前顯示分類的票數、比例與分母；按 Esc 關閉。點年份也可展開數據，左右滑動看其他年份。'));
     const chartFrame = element('div', 'ph-chart-frame');
     const fixedAxis = svgElement('svg', {viewBox: '0 0 44 330', class: 'ph-fixed-axis', 'aria-hidden': 'true'});
     for (let share = 0; share <= 100; share += 20) {
@@ -360,8 +393,9 @@
           const row = element('div', 'ph-tooltip-value');
           const swatch = element('span', 'ph-tooltip-swatch');
           swatch.style.backgroundColor = party.color;
-          const label = element('span', 'ph-tooltip-party', party.name);
+          const label = element('span', 'ph-tooltip-party', partyLabel(party));
           label.append(element('small', 'ph-vote-count', voteText(getVotes(point.election, party.id))));
+          appendParticipationStatus(label, point.election, party.id);
           row.append(swatch, label, element('b', '', percentage(valueFor(point.election, party.id))));
           tooltip.append(row);
         });
@@ -369,17 +403,8 @@
       }
       tooltipDismissed = false;
       tooltip.hidden = false;
-      const matrix = chartSvg.getScreenCTM();
-      if (!matrix) { hideTooltip(); return; }
-      const anchor = new DOMPoint(point.x, point.y).matrixTransform(matrix);
-      const frame = chartFrame.getBoundingClientRect();
-      const box = tooltip.getBoundingClientRect();
-      const maxLeft = Math.max(8, chartFrame.clientWidth - box.width - 8);
-      const maxTop = Math.max(8, chartFrame.clientHeight - box.height - 8);
-      let top = anchor.y - frame.top - box.height - 12;
-      if (top < 8) top = anchor.y - frame.top + 12;
-      tooltip.style.left = `${Math.min(maxLeft, Math.max(8, anchor.x - frame.left + 12))}px`;
-      tooltip.style.top = `${Math.min(maxTop, Math.max(8, top))}px`;
+      // The detail stays within the chart card, below the plot. All source
+      // categories remain readable without clipping a tall floating tooltip.
       chartPoints.forEach(other => other.node.removeAttribute('aria-describedby'));
       point.node.setAttribute('aria-describedby', tooltip.id);
     }
@@ -412,7 +437,8 @@
     const eventOptions = {signal: tooltipEvents.signal};
     chartScroll.addEventListener('pointerover', pointerMove, eventOptions);
     chartScroll.addEventListener('pointermove', pointerMove, eventOptions);
-    chartScroll.addEventListener('pointerleave', () => {
+    chartScroll.addEventListener('pointerleave', event => {
+      if (event.relatedTarget instanceof Element && tooltip.contains(event.relatedTarget)) return;
       hoveredPoint = null;
       if (focusedPoint && !tooltipDismissed) showTooltip(focusedPoint, false);
       else if (tappedPoint && !tooltipDismissed) showTooltip(tappedPoint, true);
@@ -437,6 +463,7 @@
       else hideTooltip();
     }, eventOptions);
     chartFrame.addEventListener('click', event => {
+      if (tooltip.contains(event.target)) return;
       const point = pointFromTarget(event.target) && (nearestPoint(event) || pointFromTarget(event.target));
       if (point) {
         // Overlapping hit circles can focus the last painted party; keep focus on the nearest actual point.
@@ -467,7 +494,7 @@
     const frameObserver = new ResizeObserver(() => {
       if (!chartFrame.isConnected) return;
       const size = {width: chartFrame.clientWidth, height: chartFrame.clientHeight};
-      if (previousFrameSize && (size.width !== previousFrameSize.width || size.height !== previousFrameSize.height)) {
+      if (previousFrameSize && size.width !== previousFrameSize.width) {
         const pointed = hoveredPoint || focusedPoint || tappedPoint;
         const showingLatest = !tooltip.hidden && pointed?.index === elections.length - 1;
         const alignLatest = followLatest || showingLatest;
@@ -525,10 +552,10 @@
       modeButtons.forEach((button, mode) => button.setAttribute('aria-pressed', mode === shareMode ? 'true' : 'false'));
       controls.hidden = blueMode;
       pairLegend.hidden = !blueMode;
-      modeNote.textContent = blueMode ? '藍綠＝中國國民黨＋民主進步黨。每黨比例＝該黨票數 ÷ 兩黨合計票數；兩者合計 100%。與 2022 上屆結果同步切換。' : selectedMode ? '比例＝該黨原始票數 ÷ 已開啟政黨的票數合計。點政黨名稱可重新選擇，圖表、提示與本表一起重算；2022 上屆結果維持占全部有效票。' : '比例＝各黨票數 ÷ 當次全部有效票。可點政黨名稱切換圖表與表格欄位；與 2022 上屆結果同步切換。';
+      modeNote.textContent = blueMode ? '藍綠＝中國國民黨＋民主進步黨。每黨比例＝該黨票數 ÷ 兩黨合計票數；兩者合計 100%。與 2022 上屆結果同步切換。' : selectedMode ? '比例＝該分類原始票數 ÷ 已開啟政黨與分類的票數合計。點政黨名稱可重新選擇，圖表、提示與本表一起重算；2022 上屆結果維持占全部有效票。' : '比例＝各來源分類票數 ÷ 當次全部有效票。預設顯示全部政黨、無黨籍與連署等分類，可點名稱切換圖表、提示與表格；與 2022 上屆結果同步切換。';
       denominatorLegend.textContent = blueMode ? '分母：國民黨＋民進黨票數' : selectedMode ? '占所選政黨得票' : '占當次全部有效票';
-      totalLegend.textContent = blueMode ? '藍綠合計 100%' : selectedMode ? '所選合計 100%' : '所選政黨不一定合計 100%';
-      note.textContent = blueMode ? '保留兩黨原始票數；已確認未參選的政黨顯示 0 票、0%。兩黨合計 0 票或票數未知時，比例顯示「—」且不畫資料點。百分比顯示至小數兩位，兩者合計 100.00%。' : selectedMode ? '折線保留第一次到最後一次參選的範圍。所選政黨任一票數未知，或合計為 0 票時，該次比例顯示「—」且不畫資料點。比例按原始票數計算；顯示至小數兩位，加總可能有微小四捨五入差異。' : '折線只顯示第一次到最後一次參選之間；表格無參選為 0%，未知資料顯示「—」。比例以當次全部有效票計算，顯示的政黨不一定合計為 100%。';
+      totalLegend.textContent = blueMode ? '藍綠合計 100%' : selectedMode ? '所選合計 100%' : '隱藏分類後不一定合計 100%';
+      note.textContent = blueMode ? '保留兩黨原始票數；零票旁標示當次來源的參選分類狀態。兩黨合計 0 票或票數未知時，比例顯示「—」且不畫資料點。百分比顯示至小數兩位，兩者合計 100.00%。' : selectedMode ? '折線保留第一次到最後一次參選的範圍。所選政黨任一票數未知，或合計為 0 票時，該次比例顯示「—」且不畫資料點。比例按原始票數計算；顯示至小數兩位，加總可能有微小四捨五入差異。' : '折線只顯示第一次到最後一次參選之間；零票旁標示當次來源的參選分類狀態，未知票數不當作 0。比例以當次全部有效票計算，全部分類包含全部有效票；隱藏部分分類後，顯示比例不一定合計為 100%。「無」標示為「無黨籍（來源：無）」，其他來源名稱原樣保留。';
       coverageNote.textContent = blueMode ? (data.coverageNote || '').replace('無黨籍與連署票保留於分母，不列為政黨選項。', '藍綠模式只以兩黨票數為分母。') : selectedMode ? (data.coverageNote || '').replace('無黨籍與連署票保留於分母，不列為政黨選項。', '此模式只以已開啟政黨的票數為分母。') : data.coverageNote || '';
       const chart = makeChart(parties, elections, new Set(selectedParties.map(party => party.id)), selectedIndex, selectElection, id, valueFor, shareMode);
       chartSvg = chart.svg;
@@ -549,7 +576,10 @@
         const election = elections[selectedIndex];
         detail.append(element('strong', '', `${election.year} 年${electionLabel(election)}`));
         selectedParties.forEach(party => {
-          const value = element('span', 'ph-detail-value', `${party.name} ${voteText(getVotes(election, party.id))} · ${percentage(valueFor(election, party.id))}`);
+          const value = element('span', 'ph-detail-value');
+          const reading = element('span', 'ph-detail-reading', `${partyLabel(party)} ${voteText(getVotes(election, party.id))} · ${percentage(valueFor(election, party.id))}`);
+          appendParticipationStatus(reading, election, party.id);
+          value.append(reading);
           const dot = element('i', 'ph-detail-dot');
           dot.style.backgroundColor = party.color;
           value.prepend(dot);
@@ -567,7 +597,7 @@
       eventHeading.scope = 'col';
       header.append(eventHeading);
       selectedParties.forEach(party => {
-        const th = element('th', 'ph-share-column', party.name);
+        const th = element('th', 'ph-share-column', partyLabel(party));
         th.scope = 'col';
         const swatch = element('span', 'ph-table-swatch');
         swatch.style.backgroundColor = party.color;
@@ -590,7 +620,8 @@
           const share = valueFor(election, party.id);
           const cell = element('td', 'ph-share-column', percentage(share));
           cell.append(element('small', 'ph-vote-count', voteText(getVotes(election, party.id))));
-          if (share == null) cell.setAttribute('aria-label', `${party.name}比例無法計算；${denominatorText(election)}`);
+          appendParticipationStatus(cell, election, party.id);
+          if (share == null) cell.setAttribute('aria-label', `${partyLabel(party)}比例無法計算；${voteText(getVotes(election, party.id))}；${[participationStatus(election, party.id), denominatorText(election)].filter(Boolean).join('；')}`);
           row.append(cell);
         });
         const source = element('td', 'ph-source-column');
