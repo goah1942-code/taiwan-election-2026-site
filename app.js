@@ -50,19 +50,51 @@ function attachTableSorting(tableId, kind) {
 function keepHistorySortFocusVisible(table) {
   table.addEventListener('focusin', (event) => {
     const button = event.target.closest('button[data-sort-key]');
-    if (!button || !table.contains(button) || button.closest('th').cellIndex < 2) return;
+    if (!button || !table.contains(button)) return;
     requestAnimationFrame(() => {
       if (!button.isConnected || document.activeElement !== button) return;
       const scroll = table.closest('.history-table-scroll');
       const nameHeading = table.querySelector('thead th:nth-child(2)');
-      if (!scroll || !nameHeading || getComputedStyle(nameHeading).position !== 'sticky' || scroll.scrollWidth <= scroll.clientWidth) return;
+      if (button.closest('th').cellIndex >= 2 && scroll && nameHeading &&
+          getComputedStyle(nameHeading).position === 'sticky' && scroll.scrollWidth > scroll.clientWidth) {
+        const target = button.getBoundingClientRect();
+        const left = nameHeading.getBoundingClientRect().right;
+        const right = scroll.getBoundingClientRect().left + scroll.clientLeft + scroll.clientWidth;
+        const gap = Math.min(4, Math.max(0, (right - left - target.width) / 2));
+        const delta = target.left < left + gap ? target.left - left - gap :
+          target.right > right - gap ? target.right - right + gap : 0;
+        scroll.scrollLeft = Math.max(0, Math.min(scroll.scrollWidth - scroll.clientWidth, scroll.scrollLeft + delta));
+      }
+      window.ElectionPageTabs?.pinContextReturn('candidates');
+      syncQueryNavigationOffset();
+      const navigation = $('query-navigation');
       const target = button.getBoundingClientRect();
-      const left = nameHeading.getBoundingClientRect().right;
-      const right = scroll.getBoundingClientRect().left + scroll.clientLeft + scroll.clientWidth;
-      const gap = Math.min(4, Math.max(0, (right - left - target.width) / 2));
+      const bar = navigation && !navigation.hidden ? navigation.getBoundingClientRect() : null;
+      let visibleTop = bar && bar.top < window.innerHeight && bar.bottom > 0 ? Math.max(12, bar.bottom + 12) : 12;
+      const menu = navigation?.querySelector('.query-action-menu');
+      const actions = menu?.open ? navigation.querySelector('.query-navigation-actions')?.getBoundingClientRect() : null;
+      if (actions && actions.top < window.innerHeight && actions.bottom > 0 &&
+          actions.left < target.right && actions.right > target.left) visibleTop = Math.max(visibleTop, actions.bottom + 12);
+      visibleTop = Math.min(visibleTop, Math.max(12, window.innerHeight - target.height - 12));
+      const deltaY = target.top < visibleTop ? target.top - visibleTop :
+        target.bottom > window.innerHeight - 12 ? target.bottom - window.innerHeight + 12 : 0;
+      if (deltaY) window.scrollBy({top: deltaY, behavior: 'instant'});
+    });
+  });
+}
+function keepElectionTypeFocusVisible(list) {
+  list.addEventListener('focusin', (event) => {
+    const button = event.target.closest('button');
+    if (!button || !list.contains(button)) return;
+    requestAnimationFrame(() => {
+      if (!button.isConnected || document.activeElement !== button || list.scrollWidth <= list.clientWidth) return;
+      const target = button.getBoundingClientRect();
+      const left = list.getBoundingClientRect().left + list.clientLeft;
+      const right = left + list.clientWidth;
+      const gap = Math.min(4, Math.max(0, (list.clientWidth - target.width) / 2));
       const delta = target.left < left + gap ? target.left - left - gap :
         target.right > right - gap ? target.right - right + gap : 0;
-      scroll.scrollLeft = Math.max(0, Math.min(scroll.scrollWidth - scroll.clientWidth, scroll.scrollLeft + delta));
+      if (delta) list.scrollLeft = Math.max(0, Math.min(list.scrollWidth - list.clientWidth, list.scrollLeft + delta));
     });
   });
 }
@@ -163,7 +195,14 @@ function renderCounties() {
       button.textContent = county.name;
       button.setAttribute('aria-pressed', String(state.county?.id === county.id));
       button.setAttribute('aria-label', county.available ? county.name : `${county.name}，資料準備中`);
-      button.addEventListener('click', () => { state.navigationMode='user'; selectCounty(county.id, {type: state.type?.id || state.selectionTypeId}); });
+      button.addEventListener('click', () => {
+        state.navigationMode = 'user';
+        clearRouteHash();
+        const type = state.type?.id || state.selectionTypeId;
+        const family = mapElectionFamily(type);
+        selectCounty(county.id, {type, scrollToCandidates: true,
+          scrollTarget: family === 'council' || family === 'village' ? 'region-level-heading' : 'candidate-heading'});
+      });
       group.querySelector('.county-buttons').append(button);
     }
     $('county-list').append(group);
@@ -381,7 +420,17 @@ function renderQueryNavigation() {
     && query.district === previous.district && query.zone === previous.zone && query.view === previous.view;
   const back = $('query-previous-office');
   back.hidden = !previous || same; back.disabled = state.loading;
-  if (previous) back.textContent = `回到剛才：${queryLabel(previous)}`;
+  const compact = queryNavigationIsCompact();
+  if (previous) back.textContent = `回到剛才：${queryLabel(previous, compact)}`;
+  const showDirectReturn = compact && !back.hidden;
+  nav.classList.toggle('has-office-return', showDirectReturn);
+  const destination = showDirectReturn ? nav : nav.querySelector('.query-navigation-actions');
+  if (destination && back.parentElement !== destination) {
+    const hadFocus = document.activeElement === back;
+    if (showDirectReturn) nav.insertBefore(back, $('query-action-menu'));
+    else destination.prepend(back);
+    if (hadFocus && !back.disabled && !back.hidden) back.focus({preventScroll: true});
+  }
   for (const button of document.querySelectorAll('[data-region-back]')) button.textContent = parentQueryLabel();
   for (const button of document.querySelectorAll('[data-taiwan-return]')) button.textContent = '回全台重選縣市';
 }
@@ -539,7 +588,9 @@ function focusLevel(sequence, id) {
     if (!target) return;
     syncQueryNavigationOffset();
     target.focus({preventScroll: true});
-    (councilOverview ? displayControls : target).scrollIntoView({behavior: 'auto', block: 'start'});
+    const scrollTarget = councilOverview ? displayControls :
+      id === 'candidate-heading' ? $('result-source')?.closest('.result-topline') || target : target;
+    scrollTarget.scrollIntoView({behavior: 'auto', block: 'start'});
   });
 }
 function clearRouteHash() {
@@ -710,7 +761,7 @@ async function selectType(type, preferred = {}) {
   $('zone-search').placeholder = village ? '例如：村里名稱、姓名' : '例如：第 8 選舉區、姓名';
   renderTypes(); breadcrumb();
   if (hasDistricts) {
-    $('district-select').innerHTML = type.districts.map(district => `<option value="${escapeHtml(district.id)}">${escapeHtml(district.name)}（${district.zoneCount} ${village ? '村里' : '選區'}）</option>`).join('');
+    $('district-select').innerHTML = (!family ? '<option value="">全部行政區</option>' : '') + type.districts.map(district => `<option value="${escapeHtml(district.id)}">${escapeHtml(district.name)}（${district.zoneCount} ${village ? '村里' : '選區'}）</option>`).join('');
     let district = type.districts.find(item => item.id === preferred.district);
     let lookupIncomplete = false;
     if (!district && family === 'village' && preferred.zone) {
@@ -725,23 +776,27 @@ async function selectType(type, preferred = {}) {
     }
     if (!district && family !== 'village') {
       const preferredZone = type.zones.find(zone => zone.id === preferred.zone);
-      district = type.districts.find(item => item.name === preferredZone?.district) || type.districts[0];
+      district = type.districts.find(item => item.name === preferredZone?.district)
+        || (family || type.districts.length === 1 ? type.districts[0] : null);
     }
     if (district) {
       await selectDistrict(district, preferred.zone, sequence, Boolean(preferred.scrollToCandidates), preferred.scrollTarget);
       return;
     }
-    renderDistricts(); syncCountyMap(); breadcrumb(); updateUrl(true);
+    if (family === 'village') renderDistricts();
+    else { $('district-select').value = ''; renderZones(); promptForZoneSelection(); }
+    syncCountyMap(); breadcrumb(); updateUrl(true);
     if (preferred.zone || preferred.district) $('region-summary').textContent += lookupIncomplete ? ' 部分資料讀取失敗，請重新選擇行政區。' : ' 連結中的區域未找到，請重新選擇行政區。';
     if (preferred.scrollToCandidates) focusLevel(sequence, 'region-level-heading');
     return;
   }
   renderZones();
   const zone = type.zones.find(item => item.id === preferred.zone);
-  if (zone || family === 'mayor' || !family) {
+  if (zone || family === 'mayor' || (!family && !preferred.zone && type.zones.length === 1)) {
     await selectZone(zone || type.zones[0], Boolean(preferred.scrollToCandidates), preferred.scrollTarget);
     return;
   }
+  if (!family) promptForZoneSelection();
   syncCountyMap(); breadcrumb(); updateUrl(true);
   if (preferred.zone) $('region-summary').textContent += ' 連結中的選區未找到，請重新選擇。';
   if (preferred.scrollToCandidates) focusLevel(sequence, 'region-level-heading');
@@ -764,12 +819,13 @@ async function selectDistrict(district, preferredZone, parentSequence, scrollToC
     state.loading = false;
     renderZones();
     const zone = allZones().find(item => item.id === preferredZone);
-    if (zone || mapElectionFamily(state.type.id) !== 'village') {
+    if (zone || (!preferredZone && mapElectionFamily(state.type.id) !== 'village' && allZones().length === 1)) {
       await selectZone(zone || allZones()[0], scrollToCandidates, scrollTarget);
       return;
     }
+    if (!mapElectionFamily(state.type.id)) promptForZoneSelection();
     syncCountyMap(); breadcrumb(); updateUrl(true);
-    if (preferredZone) $('region-summary').textContent += ' 連結中的村里未找到，請重新選擇。';
+    if (preferredZone) $('region-summary').textContent += ' 連結中的區域未找到，請重新選擇。';
     if (scrollToCandidates) focusLevel(sequence, 'region-level-heading');
   } catch (error) {
     if (sequence !== state.sequence) return;
@@ -777,8 +833,16 @@ async function selectDistrict(district, preferredZone, parentSequence, scrollToC
     syncCountyMap(); message('村里載入失敗', error.message, '!'); updateUrl(true);
   }
 }
+function promptForZoneSelection() {
+  message('請先選擇選區', '從選區列表選擇要查詢的地區，即可查看該區候選人與上屆結果。');
+}
 async function selectZone(zone, scrollToCandidates = false, scrollTarget = 'candidate-heading') {
   if (!zone) return;
+  if (!mapElectionFamily(state.type?.id) && !state.district && state.type?.districts.length) {
+    // The user chose this zone; retain its recorded district in the URL and list.
+    state.district = state.type.districts.find(item => item.name === zone.district) || null;
+    if (state.district) { $('district-select').value = state.district.id; renderZones(); }
+  }
   const sequence = ++state.sequence;
   resetPartyHistory();
   state.level = 'result'; state.loading = true; state.error = '';
@@ -1095,10 +1159,32 @@ async function init() {
     $('empty-state').insertAdjacentHTML('beforeend', '<p><a href="http://127.0.0.1:8765/">開啟本機查詢網站 ↗</a></p>');
     return;
   }
+  keepElectionTypeFocusVisible($('type-list'));
+  $('result-source').addEventListener('focus', event => {
+    syncQueryNavigationOffset();
+    const navigation = $('query-navigation');
+    if (navigation && !navigation.hidden &&
+        event.currentTarget.getBoundingClientRect().top < navigation.getBoundingClientRect().bottom + 12) {
+      event.currentTarget.closest('.result-topline')?.scrollIntoView({behavior: 'auto', block: 'start'});
+    }
+  });
   $('query-previous-office').addEventListener('click', returnToPreviousOffice);
   const queryMenu = $('query-action-menu');
   const compactNavigation = window.matchMedia('(max-width: 900px)');
-  const syncQueryMenu = () => { queryMenu.open = !compactNavigation.matches; renderQueryNavigation(); };
+  const syncQueryMenu = () => {
+    const back = $('query-previous-office');
+    const active = document.activeElement;
+    const summary = queryMenu.querySelector('summary');
+    const restoreBackFocus = active === back;
+    const preserveActionFocus = queryMenu.contains(active) && active !== summary && active !== back;
+    queryMenu.open = !compactNavigation.matches || preserveActionFocus;
+    renderQueryNavigation();
+    if (restoreBackFocus && !back.hidden && !back.disabled) back.focus({preventScroll: true});
+    else if (!compactNavigation.matches && active === summary) {
+      const firstAction = [...queryMenu.querySelectorAll('button,a')].find(action => !action.hidden && !action.disabled);
+      firstAction?.focus({preventScroll: true});
+    }
+  };
   compactNavigation.addEventListener('change', syncQueryMenu);
   syncQueryMenu();
   queryMenu.addEventListener('click', event => {
@@ -1109,13 +1195,23 @@ async function init() {
       event.preventDefault(); queryMenu.open = false; queryMenu.querySelector('summary').focus();
     }
   });
+  queryMenu.addEventListener('focusout', event => {
+    if (compactNavigation.matches && queryMenu.open && !queryMenu.contains(event.relatedTarget)) queryMenu.open = false;
+  });
   document.addEventListener('pointerdown', event => {
     if (compactNavigation.matches && queryMenu.open && !queryMenu.contains(event.target)) queryMenu.open = false;
   });
   if (window.ResizeObserver) {
     new ResizeObserver(syncQueryNavigationOffset).observe($('query-navigation'));
   }
-  $('district-select').addEventListener('change', (event) => { state.navigationMode='user'; selectDistrict(state.type.districts.find((district) => district.id === event.target.value), undefined, undefined, true); });
+  $('district-select').addEventListener('change', (event) => {
+    state.navigationMode = 'user';
+    if (!event.target.value && !mapElectionFamily(state.type?.id)) {
+      clearRouteHash(); selectType(state.type, {scrollToCandidates: true, scrollTarget: 'region-level-heading'});
+      return;
+    }
+    selectDistrict(state.type.districts.find(district => district.id === event.target.value), undefined, undefined, true);
+  });
   for (const button of document.querySelectorAll('[data-map-family]')) {
     button.addEventListener('click', () => {
       if (!state.manifest) return;

@@ -92,7 +92,17 @@
         if(url.href!==location.href)history.pushState(null,'',url);
       }
       target.focus({preventScroll:true});target.scrollIntoView({block:'start',behavior:'auto'});
+      if(id==='inc-selected-heading')revealZoneReturn();
     });
+  }
+  function revealZoneReturn() {
+    const control=$('inc-change-zone');
+    if(root.hidden||!control?.getClientRects().length)return;
+    const box=control.getBoundingClientRect();
+    const bar=root.querySelector('.page-context-return')?.getBoundingClientRect();
+    const overlaps=bar&&bar.top<box.bottom&&bar.bottom>0&&bar.right>box.left&&bar.left<box.right;
+    const visibleTop=overlaps?Math.max(16,bar.bottom+16):16;
+    if(box.top<visibleTop&&box.bottom>0)window.scrollBy({top:box.top-visibleTop,behavior:'auto'});
   }
   function configureDistrict() {
     const values=[...new Set(rows.filter(r=>normalize(r.county)===normalize(county)).map(r=>r.district).filter(Boolean))].sort(collator.compare);
@@ -100,10 +110,6 @@
     if (!values.includes(district)) district='';
     $('inc-district').value=district;
     $('inc-district-wrap').hidden=office!=='village';
-  }
-  function groups() {
-    const query=$('inc-search').value;
-    return searchGroups(groupRows(rows,office,county,district),query);
   }
   function chooseCounty(name, focusStats=false) {
     routeWarning='';invalidRouteArea=false;
@@ -260,7 +266,9 @@
     if(selected){
       $('inc-sidebar-county').textContent=county;$('inc-return-counties').textContent=national?'重選縣市或類別':'重選縣市';
       const list=$('inc-zone-list'),oldScroll=list.scrollTop;
-      const available=groups();if(!available.some(g=>g.key===area))area=national&&!invalidRouteArea&&available.length===1?available[0].key:'';
+      const allAvailable=groupRows(rows,office,county,district);
+      const available=searchGroups(allAvailable,query);
+      if(!allAvailable.some(g=>g.key===area))area=national&&!invalidRouteArea&&allAvailable.length===1?allAvailable[0].key:'';
       const current=available.find(g=>g.key===area);
       list.classList.toggle('is-short-list',available.length>0&&available.length<=3);
       if(available.some(group=>group.matchedCountywide))$('inc-search-hint').textContent+=' 本次也列出涵蓋全縣市的原住民選區，請依資格確認。';
@@ -282,6 +290,8 @@
       $('inc-selected-context').textContent=current?`${county}${office==='village'?' · 村里依行政區分開列出':' · 選區名稱依現任名冊列載'}`:'請調整搜尋或行政區。';
       renderResults(current?current.matchingRows:[],current?.rows.length||0);
       if(!current&&available.length){const kind=national?'名冊類別':office==='village'?'村里':'選區';$('inc-selected-context').textContent=`已選擇${county}，請從${kind}列表點選要查詢的${kind}。`;$('inc-status').textContent=`選定${kind}後，這裡才會顯示對應名冊；${national?'請點選要查看的類別。':'不會自動替你選第一區。'}`;}
+      const retained=query&&!current?allAvailable.find(g=>g.key===area):null;
+      if(retained)$('inc-selected-context').textContent+=` 原選區「${retained.label}」已保留，清除搜尋可返回名冊。`;
       $('inc-selected-geography').hidden=!current||!['legislator','council'].includes(office)||national;
       if(national&&current){$('inc-selected-context').textContent='全國名單，未按縣市分配；請依相應選舉類別查看。';$('inc-selected-scope').textContent='';$('inc-geography-source').removeAttribute('href');}
       else if(current?.scopeMode==='geographic')$('inc-selected-context').textContent=`${county} · ${current.scopeKind} · 地理範圍不判定個人選民資格。`;
@@ -355,6 +365,10 @@
   mapSizeMedia.addEventListener('change',()=>{if(!mapView&&geometry&&!root.hidden&&view==='map'&&!county)applyMapView();});
   $('inc-return-counties').addEventListener('click',()=>{routeWarning='';invalidRouteArea=false;county='';district='';area='';page=1;$('inc-search').value='';render();updateUrl();focusHeading('inc-result-heading');});
   $('inc-change-zone').addEventListener('click',()=>focusHeading('inc-zone-heading',true));
+  $('inc-change-zone').addEventListener('focus',event=>{
+    const control=event.currentTarget;
+    requestAnimationFrame(()=>{if(document.activeElement===control&&!root.hidden)revealZoneReturn();});
+  });
   $('inc-district').addEventListener('change',()=>{routeWarning='';invalidRouteArea=false;district=$('inc-district').value;area='';page=1;render();updateUrl();});
   $('inc-search').addEventListener('input',()=>{
     page=1;

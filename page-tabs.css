@@ -1,7 +1,7 @@
 .page-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin:28px 0 0;padding:5px;border:1px solid #d9e4dd;border-radius:12px;background:#eaf0eb}
 .page-tab{min-width:0;min-height:70px;padding:13px 20px;border:1px solid transparent;border-radius:8px;background:transparent;text-align:left;color:#526762;display:flex;flex-direction:column;justify-content:center;gap:5px}
 .page-tab strong{font-size:17px;line-height:1.4}.page-tab>span{font-size:12px;line-height:1.6}
-.page-tab[aria-selected=true]{border-color:#bdcfc4;background:#fff;color:#146c62;box-shadow:0 2px 6px #24482f0a}
+.page-tab[aria-selected=true]{border-color:#bdcfc4;background:#fff;color:#146c62;box-shadow:inset 0 -4px 0 #146c62,0 2px 6px #24482f0a}
 .page-tab:hover{background:#f7faf7}.page-tab[aria-selected=true]:hover{background:#fff}
 .page-tab:focus-visible{outline:3px solid #168377;outline-offset:3px}
 .page-tab-panel>.intro{padding:36px 0 30px}
@@ -25,3 +25,9 @@
 @media(max-width:900px){.query-navigation.has-context-return{display:grid;grid-template-columns:minmax(0,1fr) auto}.query-navigation.has-context-return>.page-context-back{grid-column:1/-1;grid-row:1;justify-self:start}.query-navigation.has-context-return>.query-context{grid-column:1;grid-row:2}.query-navigation.has-context-return>.query-action-menu{grid-column:2;grid-row:2}}
 
 #candidate-panel.has-context-return [tabindex="-1"]{scroll-margin-top:112px}
+
+/* Keep snapshot meaning visible before any query or first panel selection. */
+.page-data-note{margin:12px 4px 0;color:#4d675b;font-size:14px;line-height:1.7}
+
+/* Keep each voting-tab phrase together without shortening its accessible name. */
+#voting-tab strong span{white-space:nowrap}

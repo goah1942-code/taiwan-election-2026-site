@@ -7,27 +7,27 @@
   <meta name="description" content="輸入戶籍地址，查看 2026 九合一選舉的選票種類、選區與候選人登記名單，也可從全台地圖查詢。">
   <title>2026 九合一選舉｜候選人查詢</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=20261015-council-sidebar-v2">
-  <link rel="stylesheet" href="./party-history.css?v=20261019-whole-site-ux03">
+  <link rel="stylesheet" href="./styles.css?v=20261020-whole-site-ui10">
+  <link rel="stylesheet" href="./party-history.css?v=20261020-whole-site-ui09">
   <link rel="stylesheet" href="./county-map.css?v=20261016-council-candidates-v1">
-  <link rel="stylesheet" href="./village-map.css?v=20261019-whole-site-ux05">
-  <link rel="stylesheet" href="./ballot-notice.css?v=20261019-whole-site-ux04">
+  <link rel="stylesheet" href="./village-map.css?v=20261021-whole-site-ui19">
+  <link rel="stylesheet" href="./ballot-notice.css?v=20261020-whole-site-ui14">
   <link rel="stylesheet" href="./ballot-history.css?v=20261015-ui50-final">
-  <link rel="stylesheet" href="./page-tabs.css?v=20261019-whole-site-ux02">
-  <script src="./page-tabs.js?v=20261019-whole-site-ux02" defer></script>
+  <link rel="stylesheet" href="./page-tabs.css?v=20261020-whole-site-ui03">
+  <script src="./page-tabs.js?v=20261020-whole-site-ui10" defer></script>
   <script src="./candidate-matching.js?v=20261015-ui50-final" defer></script>
   <script src="./address-resolver.js?v=20261015-ui50-final" defer></script>
   <script src="./ballot-history.js?v=20261015-ui50-final" defer></script>
   <script src="./ballot-notice.js?v=20261019-whole-site-ux04" defer></script>
-  <script src="./party-history.js?v=20261019-whole-site-ux03" defer></script>
+  <script src="./party-history.js?v=20261020-whole-site-ui09" defer></script>
   <script src="./county-map.js?v=20261015-ui50-final" defer></script>
   <script src="./village-basemap.js?v=20261015-ui50-final" defer></script>
-  <script src="./village-map.js?v=20261019-whole-site-ux05" defer></script>
-  <script src="./app.js?v=20261019-whole-site-ux04" defer></script>
-  <link rel="stylesheet" href="./incumbents.css?v=20261018-five-minute-r07">
+  <script src="./village-map.js?v=20261020-whole-site-ui12-3" defer></script>
+  <script src="./app.js?v=20261020-whole-site-ui17" defer></script>
+  <link rel="stylesheet" href="./incumbents.css?v=20261020-whole-site-ui18">
   <script src="./incumbent-history.js?v=20261018-five-minute-r08" defer></script>
   <script src="./officeholder-statistics.js?v=20261019-whole-site-ux04" defer></script>
-  <script src="./incumbents.js?v=20261019-whole-site-ux05b" defer></script>
+  <script src="./incumbents.js?v=20261020-whole-site-ui16" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至主要內容</a>
@@ -44,9 +44,10 @@
   <main id="main" class="page">
     <nav class="page-tabs" role="tablist" aria-label="查詢分頁">
       <button type="button" id="candidates-tab" class="page-tab" role="tab" aria-selected="true" aria-controls="candidate-panel" data-page-tab="candidates"><strong>看候選人</strong><span>地圖、參選名單與上屆結果</span></button>
-      <button type="button" id="voting-tab" class="page-tab" role="tab" aria-selected="false" aria-controls="voting-panel" tabindex="-1" data-page-tab="voting"><strong>查我的投票區域</strong><span>輸入地址，查看自己的選區與選票</span></button>
-      <button type="button" id="incumbents-tab" class="page-tab" role="tab" aria-selected="false" aria-controls="incumbents-panel" tabindex="-1" data-page-tab="incumbents"><strong>現任者</strong><span>總統、縣市長、立委、議員與里長</span></button>
+      <button type="button" id="voting-tab" class="page-tab" role="tab" aria-selected="false" aria-controls="voting-panel" tabindex="-1" data-page-tab="voting"><strong><span>查我的</span><wbr><span>投票區域</span></strong><span>輸入地址，查看自己的選區與選票</span></button>
+      <button type="button" id="incumbents-tab" class="page-tab" role="tab" aria-selected="false" aria-controls="incumbents-panel" tabindex="-1" data-page-tab="incumbents"><strong>現任者</strong><span>名冊、完整政黨分布與歷年票數</span></button>
     </nav>
+    <p class="page-data-note">本站使用已收錄的來源快照，非即時同步。資料日期與來源請見各名冊、統計或選舉結果。</p>
 
     <div id="candidate-panel" class="page-tab-panel" role="tabpanel" aria-labelledby="candidates-tab">
     <section class="intro" aria-labelledby="page-title">
@@ -197,7 +198,20 @@
       <p class="reading-note" id="reelection-help" tabindex="-1">「追求連任」依 2022 同類、同選區紀錄顯示：上屆當選＝是，參選但未當選＝再次參選。空白表示沒有可匹配的同區紀錄或缺少可比資料，不表示這個人從未參選。</p>
       <p class="reading-note">「參選備註」保留同選區的「2026 有參選」；經姓名與完整生日確認的 2024 當選人會標示「2024立委當選」，點擊可查看中選會當選公告。</p>
       <p class="profile-note">兩年表格姓名旁的 WIKI（中文維基百科）／VOTETW（台灣選舉維基百科）為外部人物介紹，點選另開分頁。沒有連結表示目前沒有已核實的對應介紹，不代表外站一定沒有資料。</p>
-      <p class="reading-note" id="party-history-help" tabindex="-1">歷史圖預設列出全部來源政黨、無黨籍與連署等分類，不設得票門檻；「無」顯示為「無黨籍（來源：無）」，不同來源名稱分別保留。「占全部有效票」模式可點政黨名稱顯示或隱藏折線及表格欄位，分母包含無政黨推薦等全部候選人有效票；折線只在第一次到最後一次參選之間顯示。「所選政黨合計100%」包含目前開啟的政黨及來源分類，以其原始票數合計重算圖表、提示與歷史表格；全關、合計0票或票數未知時顯示「—」，2022候選人表仍維持占全部有效票。切換「只看藍綠（合計100%）」時，固定顯示中國國民黨與民主進步黨，依兩黨原始票數合計重算比例，兩者合計 100%，其他政黨不列入分母。兩黨合計 0 票或資料未知時顯示「—」。切回原模式會恢復原本政黨選擇。2022 上屆候選人表、歷史圖表、提示與歷年表格同步切換，原始票數及當選結果保留。各次總統與縣市長選舉保留年份及種類。<a href="#party-history">返回圖表 ↑</a></p>
+      <section class="history-help" id="party-history-help" tabindex="-1" aria-labelledby="party-history-help-title">
+        <h3 id="party-history-help-title">歷史比例與來源分類怎麼看</h3>
+        <p>預設列出全部來源政黨、無黨籍與連署等分類，不設得票門檻。「無」顯示為「無黨籍（來源：無）」，不同來源名稱分別保留；折線只在第一次到最後一次參選之間顯示。</p>
+        <dl>
+          <dt>占全部有效票</dt>
+          <dd>分母是該次全部候選人的有效票，包含無政黨推薦。點政黨名稱可顯示或隱藏圖表、提示與歷史表格的分類；隱藏分類不會改變分母。2022候選人表也使用全部有效票。</dd>
+          <dt>所選政黨合計100%</dt>
+          <dd>分母只加總目前開啟分類的原始票數，用來重算圖表、提示與歷史表格。這是所選票數之間的比例，不代表全體選票分布；2022候選人表仍維持占全部有效票。</dd>
+          <dt>只看藍綠（合計100%）</dt>
+          <dd>分母只加總中國國民黨與民主進步黨的原始票數，其他政黨不列入。圖表、提示、歷史表格與2022候選人表都只顯示這兩黨，並依兩黨合計重算比例。</dd>
+        </dl>
+        <p>所選分類全關、合計0票或票數未知時，無法計算的比例顯示「—」。切回原模式會恢復原本政黨選擇。所有模式保留原始票數與當選結果，各次選舉保留年份及種類。</p>
+        <a class="help-return" href="#party-history">返回圖表 ↑</a>
+      </section>
       <p class="reading-note">滑鼠移到折線資料點，圖框下方立即列出年份、選舉種類、目前顯示分類的票數、比例與分母；窄版可點資料點查看。鍵盤移到資料點也可查看，按 Esc 關閉提示。</p>
       <ol><li>在地圖上方選「縣市長」「議員」或「里長」，再點縣市範圍。縣市長直接看名單；里長依序點行政區地圖、村里地圖，最後查看自己的村里。議員先從縣市地圖選議員選區，再直接查看候選人名單；電腦版可從左側「列表選區」直接換區。區域、平地原住民、山地原住民分開切換，需依選民資格選擇。</li><li>地圖可以拖曳、按加減縮放，也能搜尋行政區或村里名稱放大定位。「底圖＋里界」可對照道路與地名；「顯示全部里名」會在里界內顯示名稱，字也會隨地圖一起縮放。「使用縣市名稱選擇」及「也可以從清單選擇」提供文字入口；議員分區卡列出完整官方範圍、應選席次與登記人數。</li><li>名單旁的政黨選單可篩選，選「全部政黨」即可取消；2022 結果與參選備註不受篩選影響。</li><li>2022 結果自動顯示；手機可在歷史表格內左右滑動。</li><li>「回到上層」依序返回村里地圖、行政區地圖或縣市；「回到台灣選擇縣市」直接回台灣地圖並保留職務。瀏覽器上一頁／下一頁與網址重載也會恢復當時層級。</li></ol>
       <a class="help-return" href="#candidate-heading">返回候選人名單 ↑</a>
@@ -216,7 +230,7 @@
       <section class="intro" aria-labelledby="incumbents-page-title">
         <div class="eyebrow"><span class="eyebrow-line"></span> CURRENT OFFICEHOLDERS</div>
         <h1 id="incumbents-page-title">現任者<span class="title-dot">.</span></h1>
-        <p>從總統到村里長，查詢目前官方名冊中的公職人員與任職地區。</p>
+        <p>先選擇職務，查看現任名冊與完整政黨分布；歷年票數提供總統與縣市長選舉比較。</p>
       </section>
       <div class="inc-offices" role="group" aria-label="現任者職務">
         <button type="button" data-inc-office="president" aria-pressed="true"><strong>總統</strong><span class="inc-role-purpose">國家元首</span><small>全國</small></button>

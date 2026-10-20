@@ -98,3 +98,15 @@
 .ph-detail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 20px;font-size:16px}.ph-detail>strong{grid-column:1/-1;font-size:16px}.ph-detail-denominator{grid-column:1/-1;font-size:14px}
 .ph-detail-value{max-width:100%;align-items:flex-start}.ph-detail-reading{min-width:0;overflow-wrap:anywhere}.ph-detail-value>.ph-detail-dot{margin-top:8px}
 @media(max-width:680px){.ph-detail{grid-template-columns:minmax(0,1fr)}}
+
+/* Keep the native history anchor below the current query bar, including context returns. */
+#candidate-panel #party-history{scroll-margin-top:var(--query-nav-offset,140px)}
+.history-help{max-width:760px;margin:20px 0;padding:18px;border:1px solid #d8e7df;border-radius:10px;background:#f8fbf9;color:#405b62;font-size:16px;line-height:1.8;scroll-margin-top:24px}
+.history-help h3{margin:0 0 12px;font-size:18px;line-height:1.5;color:#253f48}
+.history-help p{margin:0 0 14px}.history-help dl{margin:0 0 14px}
+.history-help dt{margin:16px 0 5px;color:#253f48;font-weight:700}
+.history-help dd{margin:0;padding-left:12px;border-left:3px solid #c7ded1}
+.history-help .help-return{margin-top:0;font-size:16px}
+.history-help:focus-visible{outline:2px solid #168e80;outline-offset:3px}
+.ph-rule-link{font-size:16px}
+.ph-tooltip-denominator{font-size:16px;line-height:1.7}

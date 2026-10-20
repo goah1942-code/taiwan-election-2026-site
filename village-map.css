@@ -7,7 +7,7 @@
 .village-map-council-kinds>button{min-height:44px;padding:8px 13px;border:1px solid #cbded4;border-radius:8px;background:#fff;color:#365e52;font-size:12px;font-weight:700}
 .village-map-council-kinds>button[aria-pressed=true]{border-color:#287c6d;background:#287c6d;color:#fff}
 .village-map-council-kinds>button:focus-visible,.village-map-council-retry:focus-visible{outline:2px solid #168e80;outline-offset:2px}
-.village-map-council-notice{margin:9px 0 0;color:#667f74;font-size:11px;line-height:1.8}
+.village-map-council-notice{margin:9px 0 0;color:#3f5c50;font-size:14px;line-height:1.8}
 .village-map-council-retry{min-height:44px;margin-top:8px;padding:7px 11px;border:1px solid #cbded4;border-radius:7px;background:#fff;color:#315c58;font-size:12px}
 .village-map-search{position:relative;display:flex;align-items:center;gap:10px;margin:17px 0 13px}
 .village-map-search>label{flex:0 0 auto;color:#365e52;font-size:12px;font-weight:700}
@@ -68,7 +68,7 @@
 .village-map-toolbar>button:disabled{color:#a7b8af;cursor:default}
 .village-map-toolbar>.village-map-reset{font-size:12px}
 .village-map-tooltip{position:absolute;z-index:3;max-width:220px;padding:8px 12px;border:1px solid #bcd6c6;border-radius:7px;background:#fffffff5;box-shadow:0 3px 12px #1e484922;color:#173e36;text-align:center;pointer-events:none}
-.village-map-tooltip>span{display:block;margin-bottom:3px;color:#667f74;font-size:10px}
+.village-map-tooltip>span{display:block;margin-bottom:3px;color:#315c58;font-size:10px}
 .village-map-tooltip>strong{display:block;font-size:14px;white-space:nowrap}
 .village-map-tooltip.has-coverage{width:max-content;max-width:min(340px,calc(100% - 16px))}
 .village-map-tooltip.has-coverage>strong{white-space:normal;overflow-wrap:anywhere}
@@ -99,3 +99,6 @@
 .village-map-search-select>strong{font-size:16px;overflow-wrap:anywhere}.village-map-search-select>span{font-size:13px}.village-map-search-select>small{margin-left:auto;font-size:13px}
 .village-map-search-zoom{background:#fff;white-space:nowrap}
 .village-map-search-row>button:hover,.village-map-search-row>button:focus-visible{background:#dfeee5;outline:2px solid #168e80;outline-offset:-2px}
+
+/* Keep narrow map targets clear of the zoom toolbar. */
+@media(max-width:680px){.village-map-toolbar{position:static;justify-content:flex-end;border:0;border-bottom:1px solid #d6e5dc;border-radius:0;box-shadow:none;background:#fff}}

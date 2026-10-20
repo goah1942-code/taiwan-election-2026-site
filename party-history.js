@@ -399,7 +399,7 @@
           row.append(swatch, label, element('b', '', percentage(valueFor(point.election, party.id))));
           tooltip.append(row);
         });
-        tooltip.append(element('p', 'ph-tooltip-denominator', denominatorText(point.election)));
+        tooltip.append(element('p', 'ph-tooltip-denominator', `${countyName} · ${point.election.year} 年${electionLabel(point.election)} · ${denominatorText(point.election)}`));
       }
       tooltipDismissed = false;
       tooltip.hidden = false;

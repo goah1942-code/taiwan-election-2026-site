@@ -156,7 +156,8 @@ window.TaiwanVillageMap = (() => {
     let sequence = 0, destroyed = false, viewKey = '', active = null, pointerDrag = null, suppressClickUntil = 0, districtMode = false, hoverLock = null;
     let basemap = null, showBasemap = true;
     let showNames = false, showCouncilNames = true, villageNames = null;
-    let pointerPosition = null;
+    let islandLabels = new Map();
+    let pointerPosition = null, lastInputWasPointer = false, labelResizeObserver = null;
     let councilGeometry = null, councilMode = false, councilResult = false, activeCouncilZone = null, councilKind = 'geographic', councilLoadError = false, fallbackResult = false, fallbackMemberView = false;
     const councilKindsByCounty = new Map();
     const listeners = [];
@@ -241,6 +242,7 @@ window.TaiwanVillageMap = (() => {
       root.dataset.villageLabels = String(enabled);
       namesHint.hidden = !enabled;
       if (villageNames) villageNames.style.display = enabled ? '' : 'none';
+      syncIslandLabels();
     }
     function countyId() { return typeof context.county === 'object' ? context.county?.id : context.county; }
     function featureKey(feature) { return feature.id || feature.code || feature.name; }
@@ -263,10 +265,21 @@ window.TaiwanVillageMap = (() => {
       const chosen = visible.find(selected);
       inspection.textContent = councilMode ? '點選議員選區範圍，直接查看該選區候選人。' : councilResult ? `目前顯示${activeCouncilZone.name}範圍內的 ${visible.length} 個村里${chosen ? ` · 已標示${featureLabel(chosen)}` : ''}。` : fallbackResult ? `候選人名單保留；${fallbackMemberView ? `顯示 ${visible.length} 個已確認村里位置` : '目前為全縣市概略，不能推定本選區範圍'}。` : districtMode ? '點選鄉鎮市區範圍，進入該區的村里地圖。' : chosen && family() === 'village' ? `已選取 ${chosen.districtName}${chosen.name}` : `點選村里範圍，${family() === 'council' ? '查看該村里所屬區域議員選區' : '查看村里長候選人'}。`;
     }
+    function inspectionAnchor(feature) {
+      return islandLabels.get(feature.id)?.visibleAnchor?.point || (islandLabels.has(feature.id) ? feature.labelAnchor : feature.anchor);
+    }
     function positionTooltip() {
       if (!active || !svg || !svg.getScreenCTM()) { tooltip.hidden = true; return; }
-      const point = svg.createSVGPoint(); point.x = active.anchor.x; point.y = active.anchor.y;
-      const screen = point.matrixTransform(svg.getScreenCTM());
+      const anchor = inspectionAnchor(active);
+      const point = svg.createSVGPoint(); point.x = anchor.x; point.y = anchor.y;
+      let screen = point.matrixTransform(svg.getScreenCTM());
+      if (islandLabels.has(active.id) && pointerPosition) {
+        const hit = document.elementFromPoint(pointerPosition.x, pointerPosition.y);
+        const hovered = hit?.closest?.('[data-council-zone-id],[data-label-council-zone-id]');
+        const hoveredId = hovered?.getAttribute('data-council-zone-id') || hovered?.getAttribute('data-label-council-zone-id');
+        // A hovered piece can be visible while the other islands are offscreen.
+        if (hoveredId === featureKey(active)) screen = pointerPosition;
+      }
       const rect = frame.getBoundingClientRect();
       const topInset = Math.max(0, Number(options.getViewportTopInset?.()) || 0);
       if (screen.x < rect.left || screen.x > rect.right || screen.y < rect.top || screen.y > rect.bottom
@@ -285,7 +298,8 @@ window.TaiwanVillageMap = (() => {
       requestAnimationFrame(() => {
         if (destroyed || root.hidden || !svg || !group.isConnected || document.activeElement !== group) return;
         const matrix = svg.getScreenCTM(); if (!matrix) return;
-        const point = svg.createSVGPoint(); point.x = feature.anchor.x; point.y = feature.anchor.y;
+        const anchor = inspectionAnchor(feature);
+        const point = svg.createSVGPoint(); point.x = anchor.x; point.y = anchor.y;
         const screen = point.matrixTransform(matrix);
         // Natural Tab can scroll a zoomed SVG's old path bounds into view.
         // After that scroll, retain the newly focused geographic point onscreen.
@@ -317,6 +331,7 @@ window.TaiwanVillageMap = (() => {
       const cy = Math.max(home.y - home.height * .1, Math.min(home.y + home.height * 1.1, viewport.y + viewport.height / 2));
       viewport.x = cx - viewport.width / 2; viewport.y = cy - viewport.height / 2;
       svg.setAttribute('viewBox', `${viewport.x} ${viewport.y} ${viewport.width} ${viewport.height}`);
+      syncIslandLabels();
       zoomIn.disabled = viewport.width <= home.width / 40 + .001;
       zoomOut.disabled = viewport.width >= home.width * 1.2 - .001;
       root.dataset.zoom = (home.width / viewport.width).toFixed(2);
@@ -349,8 +364,11 @@ window.TaiwanVillageMap = (() => {
       const ratio = home.height / home.width;
       const width = Math.max(target.width, target.height / ratio, home.width / 40);
       const height = width * ratio;
-      setViewport({x: (feature.bounds[0] + feature.bounds[2] - width) / 2, y: (feature.bounds[1] + feature.bounds[3] - height) / 2, width, height});
+      const center = islandLabels.has(feature.id) ? feature.labelAnchor
+        : {x: (feature.bounds[0] + feature.bounds[2]) / 2, y: (feature.bounds[1] + feature.bounds[3]) / 2};
+      setViewport({x: center.x - width / 2, y: center.y - height / 2, width, height});
       const targetNode = features.get(featureKey(feature)); targetNode?.focus({preventScroll: true}); inspect(feature);
+      if (targetNode && islandLabels.has(feature.id)) keepFocusedFeatureVisible(feature, targetNode);
     }
     function choose(feature) {
       if (Date.now() < suppressClickUntil || destroyed) return;
@@ -442,17 +460,18 @@ window.TaiwanVillageMap = (() => {
         }
       }
     }
-    function islandCallouts() {
+    function islandCallouts(area = home, items = visible, font = home.width * .055) {
       const placements = new Map();
       if (!councilMode || !['澎湖縣', '連江縣'].includes(geometry.countyName)) return placements;
       // Keep the official geometry unchanged; labels sit in nearby open columns.
       const matzu = geometry.countyName === '連江縣';
       for (const side of ['left', 'right']) {
-        const items = visible.filter(item => (item.labelAnchor.x < home.x + home.width * .55 ? 'left' : 'right') === side)
+        const sideItems = items.filter(item => (item.labelAnchor.x < area.x + area.width * .55 ? 'left' : 'right') === side)
           .sort((a, b) => a.labelAnchor.y - b.labelAnchor.y);
-        const x = home.x + home.width * (side === 'left' ? (matzu ? .28 : .18) : (matzu ? .74 : .82));
-        const gap = home.height * .11, top = home.y + gap / 2, bottom = home.y + home.height - gap / 2;
-        const rows = items.map(item => ({item, y: Math.max(top, Math.min(bottom, item.labelAnchor.y - home.height * .08))}));
+        const x = area.x + area.width * (side === 'left' ? (matzu ? .28 : .18) : (matzu ? .74 : .82));
+        const gap = Math.max(area.height * .11, font * 1.65);
+        const inset = Math.max(gap / 2, font * .85), top = area.y + inset, bottom = area.y + area.height - inset;
+        const rows = sideItems.map(item => ({item, y: Math.max(top, Math.min(bottom, item.labelAnchor.y - area.height * .08))}));
         for (let i = 1; i < rows.length; i++) rows[i].y = Math.max(rows[i].y, rows[i - 1].y + gap);
         if (rows.length && rows[rows.length - 1].y > bottom) {
           rows[rows.length - 1].y = bottom;
@@ -462,9 +481,59 @@ window.TaiwanVillageMap = (() => {
       }
       return placements;
     }
+    function visibleMapBounds() {
+      if (!svg || !viewport) return viewport;
+      const matrix = svg.getScreenCTM(), rect = svg.getBoundingClientRect();
+      if (!matrix || !rect.width || !rect.height) return viewport;
+      // xMidYMid meet can paint islands in the space beside the nominal viewBox.
+      const inverse = matrix.inverse(), first = svg.createSVGPoint(), last = svg.createSVGPoint();
+      first.x = rect.left; first.y = rect.top; last.x = rect.right; last.y = rect.bottom;
+      const start = first.matrixTransform(inverse), end = last.matrixTransform(inverse);
+      return {x: Math.min(start.x, end.x), y: Math.min(start.y, end.y), width: Math.abs(end.x - start.x), height: Math.abs(end.y - start.y)};
+    }
+    function visibleIslandAnchor(record, area) {
+      const paths = [...(features.get(featureKey(record.feature))?.querySelectorAll('path') || [])];
+      for (const candidate of record.anchors) {
+        const point = candidate.point;
+        if (point.x < area.x || point.x > area.x + area.width || point.y < area.y || point.y > area.y + area.height) continue;
+        if (candidate.source === 'zone-label') return candidate;
+        const probe = svg.createSVGPoint(); probe.x = point.x; probe.y = point.y;
+        // Alternative source points must lie inside this exact drawn constituency.
+        if (paths.some(path => typeof path.isPointInFill === 'function' && path.isPointInFill(probe))) return candidate;
+      }
+      return null;
+    }
+    function syncIslandLabels() {
+      if (!councilMode || !svg || !viewport || !islandLabels.size) return;
+      const area = visibleMapBounds(), font = Math.min(home.width * .055, viewport.width * .055 * 1.5);
+      svg.setAttribute('data-callout-bounds', `${area.x} ${area.y} ${area.width} ${area.height}`);
+      const anchors = new Map();
+      for (const record of islandLabels.values()) {
+        record.visibleAnchor = visibleIslandAnchor(record, area);
+        if (record.visibleAnchor) anchors.set(record.feature.id, record.visibleAnchor);
+      }
+      const inView = visible.filter(feature => anchors.has(feature.id)).map(feature => ({...feature, labelAnchor: anchors.get(feature.id).point}));
+      const placements = islandCallouts(area, inView, font);
+      for (const {feature, group, text, line, anchor, badge} of islandLabels.values()) {
+        const point = placements.get(feature.id), located = anchors.get(feature.id);
+        group.style.display = point ? '' : 'none';
+        if (!point) { group.removeAttribute('data-label-anchor-source'); group.removeAttribute('data-label-anchor-reference'); continue; }
+        const sourcePoint = located.point;
+        group.setAttribute('data-label-anchor-source', located.source);
+        group.setAttribute('data-label-anchor-reference', located.reference);
+        const halfWidth = font * Math.max(.8, (text.textContent.length + .6) / 2), halfHeight = font * .75;
+        line.setAttribute('x1', sourcePoint.x); line.setAttribute('y1', sourcePoint.y);
+        line.setAttribute('x2', point.x + (sourcePoint.x < point.x ? -halfWidth : halfWidth)); line.setAttribute('y2', point.y);
+        anchor.setAttribute('cx', sourcePoint.x); anchor.setAttribute('cy', sourcePoint.y); anchor.setAttribute('r', font * .08);
+        badge.setAttribute('x', point.x - halfWidth); badge.setAttribute('y', point.y - halfHeight);
+        badge.setAttribute('width', halfWidth * 2); badge.setAttribute('height', halfHeight * 2); badge.setAttribute('rx', font * .22);
+        text.setAttribute('x', point.x); text.setAttribute('y', point.y); text.setAttribute('font-size', font);
+        text.style.fontSize = `${font}px`; text.style.strokeWidth = `${font * .16}px`;
+      }
+    }
     function renderGeometry() {
       clearBasemap();
-      villageNames = null;
+      villageNames = null; islandLabels = new Map();
       districtMode = family() === 'village' && context.level === 'county';
       councilMode = family() === 'council' && context.level === 'county' && Boolean(councilGeometry);
       activeCouncilZone = family() === 'council' && context.level === 'result' ? councilGeometry?.zones.find(item => item.id === context.zoneId) || null : null;
@@ -503,11 +572,14 @@ window.TaiwanVillageMap = (() => {
           if (hoverLock?.key !== featureKey(feature)) {
             hoverLock = {key: featureKey(feature), x: pointerPosition?.x ?? null, y: pointerPosition?.y ?? null};
           }
-          if (viewport && (feature.anchor.x < viewport.x || feature.anchor.x > viewport.x + viewport.width || feature.anchor.y < viewport.y || feature.anchor.y > viewport.y + viewport.height)) {
-            setViewport({...viewport, x: feature.anchor.x - viewport.width / 2, y: feature.anchor.y - viewport.height / 2});
+          const anchor = inspectionAnchor(feature);
+          const pointerFocus = islandLabels.has(feature.id) && lastInputWasPointer;
+          const focusBounds = islandLabels.has(feature.id) ? visibleMapBounds() : viewport;
+          if (!pointerFocus && focusBounds && (anchor.x < focusBounds.x || anchor.x > focusBounds.x + focusBounds.width || anchor.y < focusBounds.y || anchor.y > focusBounds.y + focusBounds.height)) {
+            setViewport({...viewport, x: anchor.x - viewport.width / 2, y: anchor.y - viewport.height / 2});
           }
           inspect(feature);
-          keepFocusedFeatureVisible(feature, group);
+          if (!pointerFocus) keepFocusedFeatureVisible(feature, group);
         });
         group.addEventListener('blur', () => {
           if (hoverLock?.key === featureKey(feature)) hoverLock = null;
@@ -543,16 +615,25 @@ window.TaiwanVillageMap = (() => {
         const radius = councilMode ? feature.labelPlacement?.safeRadius : null;
         const fit = Number.isFinite(radius) && radius > 0 ? radius * 2 / Math.hypot(labelText.length + .5, 1.6)
           : Math.min(box.width / (labelText.length + .5), box.height / 1.6);
-        const font = callout ? home.width * .045 : Math.min(fit, home.width * .035);
+        const font = callout ? home.width * .055 : Math.min(fit, home.width * .035);
         const text = svgNode('text', {x:point.x, y:point.y, 'font-size':font}, labelText);
         text.style.fontSize = `${font}px`; text.style.strokeWidth = `${font*.16}px`;
         if (callout) {
           group.classList.add('village-map-council-callout');
           const halfWidth = font * Math.max(.8, (labelText.length + .6) / 2), halfHeight = font * .75;
           const edgeX = point.x + (feature.labelAnchor.x < point.x ? -halfWidth : halfWidth);
-          group.append(svgNode('line', {x1: feature.labelAnchor.x, y1: feature.labelAnchor.y, x2: edgeX, y2: point.y, class: 'village-map-callout-line', 'vector-effect': 'non-scaling-stroke'}));
-          group.append(svgNode('circle', {cx: feature.labelAnchor.x, cy: feature.labelAnchor.y, r: home.width * .004, class: 'village-map-callout-anchor'}));
-          group.append(svgNode('rect', {x: point.x - halfWidth, y: point.y - halfHeight, width: halfWidth * 2, height: halfHeight * 2, rx: font * .22, class: 'village-map-callout-badge', 'vector-effect': 'non-scaling-stroke'}));
+          const line = svgNode('line', {x1: feature.labelAnchor.x, y1: feature.labelAnchor.y, x2: edgeX, y2: point.y, class: 'village-map-callout-line', 'vector-effect': 'non-scaling-stroke'});
+          const anchor = svgNode('circle', {cx: feature.labelAnchor.x, cy: feature.labelAnchor.y, r: font * .08, class: 'village-map-callout-anchor'});
+          const badge = svgNode('rect', {x: point.x - halfWidth, y: point.y - halfHeight, width: halfWidth * 2, height: halfHeight * 2, rx: font * .22, class: 'village-map-callout-badge', 'vector-effect': 'non-scaling-stroke'});
+          group.append(line, anchor, badge);
+          const memberIds = new Set((feature.villageIds || []).map(String));
+          const anchors = [
+            {point: feature.labelAnchor, source: 'zone-label', reference: feature.id},
+            {point: feature.anchor, source: 'zone-reference', reference: feature.id},
+            ...(geometry.villages || []).filter(village => memberIds.has(String(village.id)))
+              .map(village => ({point: village.labelAnchor, source: 'member-village-label', reference: village.id}))
+          ].filter(candidate => candidate.point && Number.isFinite(candidate.point.x) && Number.isFinite(candidate.point.y));
+          islandLabels.set(feature.id, {feature, group, text, line, anchor, badge, anchors, visibleAnchor: null});
         }
         group.append(text); villageNames.append(group);
         group.addEventListener('click', () => choose(feature));
@@ -590,7 +671,7 @@ window.TaiwanVillageMap = (() => {
       });
       svg.addEventListener('pointermove', event => {
         if (!pointerDrag) {
-          if (hoverLock && allowPointerInspection(event)) {
+          if ((hoverLock || islandLabels.size) && allowPointerInspection(event)) {
             const target = event.target.closest?.('.village-map-village,[data-label-village-id],[data-label-council-zone-id]');
             const key = target?.getAttribute('data-council-zone-id') || target?.getAttribute('data-village-id') || target?.getAttribute('data-district-id') || target?.getAttribute('data-label-village-id') || target?.getAttribute('data-label-council-zone-id');
             inspect(visible.find(feature => String(featureKey(feature)) === key) || null);
@@ -672,9 +753,15 @@ window.TaiwanVillageMap = (() => {
     listen(reset, 'click', () => { hoverLock = null; if (home) setViewport(home); inspect(null); });
     listen(search, 'input', renderSearch);
     listen(search, 'keydown', event => { if (event.key === 'Escape') { search.value = ''; renderSearch(); } });
-    listen(window, 'resize', positionTooltip);
+    listen(window, 'resize', () => { syncIslandLabels(); positionTooltip(); });
     listen(window, 'scroll', positionTooltip, {passive: true});
     listen(window, 'pointermove', event => { pointerPosition = {x: event.clientX, y: event.clientY}; }, true);
+    listen(window, 'pointerdown', () => { lastInputWasPointer = true; }, true);
+    listen(window, 'keydown', () => { lastInputWasPointer = false; }, true);
+    if (window.ResizeObserver) {
+      labelResizeObserver = new ResizeObserver(() => { syncIslandLabels(); positionTooltip(); });
+      labelResizeObserver.observe(frame);
+    }
     listen(baseButton, 'click', () => { showBasemap = true; syncBasemapMode(); });
     listen(boundaryButton, 'click', () => { showBasemap = false; syncBasemapMode(); });
     listen(baseRetry, 'click', () => basemap?.retry());
@@ -685,7 +772,7 @@ window.TaiwanVillageMap = (() => {
       syncNames();
     });
     syncBasemapMode();
-    return {update, destroy() { destroyed = true; sequence++; clearBasemap(); listeners.forEach(remove => remove()); root.replaceChildren(); root.classList.remove('is-dragging'); root.hidden = true; }};
+    return {update, destroy() { destroyed = true; sequence++; labelResizeObserver?.disconnect(); clearBasemap(); listeners.forEach(remove => remove()); root.replaceChildren(); root.classList.remove('is-dragging'); root.hidden = true; }};
   }
   return {create, councilDisplayName};
 })();

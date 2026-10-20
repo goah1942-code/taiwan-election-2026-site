@@ -3,6 +3,7 @@
   const tabs = [...document.querySelectorAll('[data-page-tab]')];
   const panels = Object.fromEntries(tabs.map(tab => [tab.dataset.pageTab, document.getElementById(tab.getAttribute('aria-controls'))]));
   if (!tabs.length || Object.values(panels).some(panel => !panel)) return;
+  const visitedPanels = new Set();
 
   function hashPanel() {
     if (['#ballot-notice', '#ballot-notice-heading', '#bn-result-heading', '#bn-print-notice', '#voting-page-title'].includes(location.hash)) return 'voting';
@@ -46,7 +47,9 @@
     clearContextReturn();
     const back=makeReturnButton(from),queryNav=document.getElementById('query-navigation');
     if(next==='candidates'&&queryNav&&!queryNav.hidden){
-      queryNav.insertBefore(back,document.getElementById('query-action-menu'));
+      const officeBack=document.getElementById('query-previous-office');
+      const before=officeBack?.parentElement===queryNav?officeBack:document.getElementById('query-action-menu');
+      queryNav.insertBefore(back,before);
       queryNav.classList.add('has-context-return');
     }else{
       const bar=document.createElement('nav');bar.className='page-context-return';
@@ -99,7 +102,7 @@
     else if (!supported) message = next === 'candidates'
       ? `你剛才查看的是現任${officeLabels[context.office] || '公職'}。這裡收錄2026九合一登記資料，沒有總統或立委候選名單；下方保留先前的地方選舉查詢。`
       : '這個職務尚無對應的現任名冊；下方保留先前的現任者查詢，請選擇已收錄的職務。';
-    else message = `剛才：${contextLabel(context)}。下方保留本分頁的${contextLabel(current)}查詢。${context.countyId ? '可用下方按鈕接續剛才的縣市與職務，再依各屆範圍選區。' : '請先選定縣市；現任名冊與2026登記資料為不同時點。'}`;
+    else message = `剛才：${contextLabel(context)}。下方目前顯示本分頁的${contextLabel(current)}查詢。${context.countyId ? '可用下方按鈕接續剛才的縣市與職務，再依各屆範圍選區。' : next === 'incumbents' ? '可直接閱讀目前名冊，或在下方切換職務；現任名冊與2026登記資料為不同時點。' : '請先選定縣市；現任名冊與2026登記資料為不同時點。'}`;
     const notice = document.createElement('section');notice.className = 'page-context-notice';notice.tabIndex = -1;
     notice.setAttribute('aria-label', '跨分頁查詢說明');
     const text = document.createElement('p');text.textContent = message;notice.append(text);
@@ -128,6 +131,8 @@
   function activate(key, {historyMode, focus = false, restore = false} = {}) {
     const next = Object.hasOwn(panels, key) ? key : 'candidates';
     const previousTab = document.body.dataset.activeTab;
+    const firstVisit = !visitedPanels.has(next);
+    visitedPanels.add(next);
     const userTransition = historyMode === 'push' && previousTab && previousTab !== next;
     const context = userTransition && !restore ? (previousTab === 'incumbents'
       ? window.ElectionIncumbentContext?.get() : previousTab === 'candidates' ? window.ElectionCandidateContext?.get() : null) : null;
@@ -155,7 +160,10 @@
       if (url.href !== location.href) history[historyMode === 'push' ? 'pushState' : 'replaceState'](null, '', url);
     }
     if (focus || focusWasHidden) tabs.find(tab => tab.dataset.pageTab === next).focus({preventScroll: true});
-    if(userTransition||!historyMode)showContextNotice(next,previousTab,context,!focus);
+    // A fresh all-Taiwan entry has no geographic query to hand off. Keep the
+    // tab and role introduction in view; the ordinary return button still works.
+    const noticeContext = next === 'incumbents' && firstVisit && !context?.countyId ? null : context;
+    if(userTransition||!historyMode)showContextNotice(next,previousTab,noticeContext,!focus);
     syncContextReturn(next);
     window.dispatchEvent(new CustomEvent('page-tab-change', {detail:{tab:next,fromTab:previousTab,restore:Boolean(restore)}}));
     if (next === 'candidates') requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
