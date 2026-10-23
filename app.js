@@ -413,6 +413,24 @@ function parentQueryLabel() {
 function renderQueryNavigation() {
   const nav = $('query-navigation'); if (!nav) return;
   nav.hidden = !state.county;
+  $('query-county-switcher').hidden = !state.county;
+  const countyButtons = $('query-county-buttons');
+  if (!countyButtons.childElementCount && state.manifest) {
+    for (const county of state.manifest.counties) {
+      const button = document.createElement('button'); button.type = 'button';
+      button.textContent = county.name; button.dataset.county = county.id;
+      button.addEventListener('click', () => {
+        state.navigationMode = 'user'; clearRouteHash();
+        const type = state.type?.id || state.selectionTypeId;
+        const family = mapElectionFamily(type);
+        selectCounty(county.id, {type, scrollToCandidates: true,
+          scrollTarget: family === 'mayor' ? 'candidate-heading' : 'region-level-heading'});
+      });
+      countyButtons.append(button);
+    }
+  }
+  for (const button of countyButtons.children) button.setAttribute('aria-pressed', String(button.dataset.county === state.county?.id));
+
   const query = captureQuery();
   $('query-context').textContent = query ? queryLabel(query, queryNavigationIsCompact()) : `${state.county?.name || ''} · 正在載入查詢`;
   const previous = state.previousOfficeQuery;

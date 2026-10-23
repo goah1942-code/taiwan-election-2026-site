@@ -158,3 +158,12 @@
  .query-navigation.has-office-return.has-context-return>.query-action-menu{grid-row:2}
  .query-navigation.has-office-return.has-context-return>#query-previous-office{grid-row:3}
 }
+
+/* Keep county choices available while reading a district or result. */
+.county-switcher{grid-column:1/-1;padding:16px 18px;border:1px solid #c1d9cd;border-radius:12px;background:#fff;margin-bottom:16px}
+.county-switcher h3{font-size:17px;margin:0 0 12px;scroll-margin-top:140px}
+.county-switcher-buttons{display:flex;flex-wrap:wrap;gap:8px}
+.county-switcher-buttons button{min-height:44px;padding:8px 14px;border:1px solid #b8d1c7;border-radius:8px;background:#fff;color:#245d50;font:inherit;font-size:15px;cursor:pointer}
+.county-switcher-buttons button[aria-pressed="true"]{background:#10786b;color:#fff;border-color:#10786b;font-weight:700}
+.county-switcher-buttons button:focus-visible{outline:3px solid #193f35;outline-offset:3px}
+@media(max-width:680px){.county-switcher{padding:12px}.county-switcher-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.county-switcher-buttons button{padding:8px 4px}}

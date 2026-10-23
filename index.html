@@ -7,7 +7,7 @@
   <meta name="description" content="輸入戶籍地址，查看 2026 九合一選舉的選票種類、選區與候選人登記名單，也可從全台地圖查詢。">
   <title>2026 九合一選舉｜候選人查詢</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=20261020-whole-site-ui10">
+  <link rel="stylesheet" href="./styles.css?v=20261023-county-switch">
   <link rel="stylesheet" href="./party-history.css?v=20261020-whole-site-ui09">
   <link rel="stylesheet" href="./county-map.css?v=20261016-council-candidates-v1">
   <link rel="stylesheet" href="./village-map.css?v=20261021-whole-site-ui19">
@@ -23,11 +23,11 @@
   <script src="./county-map.js?v=20261015-ui50-final" defer></script>
   <script src="./village-basemap.js?v=20261015-ui50-final" defer></script>
   <script src="./village-map.js?v=20261020-whole-site-ui12-3" defer></script>
-  <script src="./app.js?v=20261020-whole-site-ui17" defer></script>
+  <script src="./app.js?v=20261023-county-switch" defer></script>
   <link rel="stylesheet" href="./incumbents.css?v=20261020-whole-site-ui18">
   <script src="./incumbent-history.js?v=20261018-five-minute-r08" defer></script>
   <script src="./officeholder-statistics.js?v=20261019-whole-site-ux04" defer></script>
-  <script src="./incumbents.js?v=20261020-whole-site-ui16" defer></script>
+  <script src="./incumbents.js?v=20261023-county-switch" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳至主要內容</a>
@@ -79,12 +79,13 @@
           <summary>返回／切換</summary>
           <div class="query-navigation-actions">
             <button type="button" id="query-previous-office" hidden></button>
-            <a href="#select-heading">更換職務</a>
+            <a href="#query-county-heading">更換縣市</a><a href="#select-heading">更換職務</a>
             <button type="button" data-region-back>重新選擇縣市</button>
             <button type="button" data-taiwan-return>回全台重選縣市</button>
           </div>
         </details>
       </nav>
+      <section id="query-county-switcher" class="county-switcher" aria-labelledby="query-county-heading" hidden><h3 id="query-county-heading" tabindex="-1">更換縣市</h3><div id="query-county-buttons" class="county-switcher-buttons" role="group" aria-label="直接切換候選人縣市"></div></section>
       <div id="region-controls" class="region-controls">
       <section id="county-map" class="county-map" aria-labelledby="county-map-heading" hidden>
       <div class="county-map-header"><div><span class="section-kicker">STEP 02 · 選擇選區</span><h2 id="county-map-heading" tabindex="-1">在地圖上選擇縣市</h2></div><span class="county-map-badge">22 縣市</span></div>
@@ -254,6 +255,7 @@
         </fieldset>
         <p id="inc-search-hint" class="inc-status" hidden></p>
         <div id="inc-error" class="inc-error" hidden><button type="button" id="inc-retry">重新載入名冊</button></div>
+        <section id="inc-county-switcher" class="county-switcher" aria-labelledby="inc-county-switch-heading" hidden><h3 id="inc-county-switch-heading" tabindex="-1">更換縣市</h3><div id="inc-county-switch-buttons" class="county-switcher-buttons" role="group" aria-label="直接切換現任者縣市"></div></section>
         <section id="inc-county-browser" aria-label="選擇縣市" hidden>
           <div class="inc-view-controls" role="group" aria-label="縣市顯示方式"><button type="button" data-inc-view="list" aria-pressed="true">列表顯示</button><button type="button" data-inc-view="map" aria-pressed="false">地圖顯示</button></div>
           <p id="inc-county-status" class="inc-status" role="status"></p>

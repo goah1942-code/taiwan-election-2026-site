@@ -252,6 +252,14 @@
     const national=office==='legislator'&&county&&!counties.some(c=>normalize(c.name)===normalize(county));
     $('inc-route-note').hidden=!routeWarning;$('inc-route-note').textContent=routeWarning;
     $('inc-directory').dataset.stage=browsing?'county':selected?'district':'flat';
+    $('inc-county-switcher').hidden=!selected;
+    const switchButtons=$('inc-county-switch-buttons');
+    if(selected&&!switchButtons.childElementCount) for(const c of counties){
+      const button=document.createElement('button');button.type='button';button.textContent=c.name;button.dataset.county=c.name;
+      button.addEventListener('click',()=>chooseCounty(c.name));switchButtons.append(button);
+    }
+    for(const button of switchButtons.children)button.setAttribute('aria-pressed',String(normalize(button.dataset.county)===normalize(county)));
+
     $('inc-result-heading').textContent=browsing?`選擇縣市 · ${labels[office]}`:selected?`${county} · ${labels[office]}`:`${labels[office]}名冊`;
     $('inc-county-browser').hidden=!browsing;$('inc-workspace').hidden=browsing;$('inc-zone-sidebar').hidden=!selected;$('inc-return-counties').hidden=!selected;
     $('inc-filters').hidden=office==='president';$('inc-search-label').textContent=browsing?'搜尋縣市':national?'搜尋本類別姓名':selected?'搜尋本縣市姓名、行政區或選區':'搜尋縣市長姓名或縣市';
