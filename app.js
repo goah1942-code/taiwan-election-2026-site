@@ -13,10 +13,10 @@ function searchMatches(text, query) {
 }
 
 function tableHeaders(columns) {
-  return `<tr>${columns.map(({key, label, caption, helpAnchor}) => {
+  return `<tr role="row">${columns.map(({key, label, caption, helpAnchor}) => {
     const button = `<button type="button" class="table-sort" data-sort-key="${key}" data-label="${label}"><span class="table-heading-label"><span>${label}</span>${caption ? `<small>${caption}</small>` : ''}</span><span class="sort-indicator" aria-hidden="true">↕</span></button>`;
     const content = helpAnchor ? `<div class="column-heading">${button}<a class="column-help" href="#${helpAnchor}" aria-label="查看${label}的說明：是、再次參選與空白" title="查看是／再次參選／空白的說明">?</a></div>` : button;
-    return `<th scope="col" aria-sort="none">${content}</th>`;
+    return `<th role="columnheader" scope="col" aria-sort="none">${content}</th>`;
   }).join('')}</tr>`;
 }
 function compareValues(left, right, direction) {
@@ -988,8 +988,8 @@ function renderCandidates() {
   $('candidate-list').innerHTML = list.length ? list.map(({candidate}) => {
     const status = statuses.get(candidate);
     const notes = [candidate.note, candidate.statusNote].filter(Boolean);
-    return `<tr><td><div class="candidate-person"><strong class="candidate-name">${escapeHtml(candidate.name)}</strong>${profileLinksHtml(candidate)}</div>${notes.length ? `<small class="candidate-table-note">${notes.map(escapeHtml).join(' · ')}</small>` : ''}</td><td>${window.ElectionPartyStyle.badge(candidate.party,candidate.party === '無' ? '無政黨推薦' : candidate.party)}</td><td class="${status === 2 ? 'win-tag' : status === 1 ? 'repeat-tag' : ''}">${status === 2 ? '是' : status === 1 ? '再次參選' : ''}</td></tr>`;
-  }).join('') : '<tr><td colspan="3" class="no-results">目前選區沒有符合政黨篩選條件的候選人。</td></tr>';
+    return `<tr role="row"><td role="cell"><div class="candidate-person"><strong class="candidate-name">${escapeHtml(candidate.name)}</strong>${profileLinksHtml(candidate)}</div>${notes.length ? `<small class="candidate-table-note">${notes.map(escapeHtml).join(' · ')}</small>` : ''}</td><td role="cell">${window.ElectionPartyStyle.badge(candidate.party,candidate.party === '無' ? '無政黨推薦' : candidate.party)}</td><td role="cell" class="${status === 2 ? 'win-tag' : status === 1 ? 'repeat-tag' : ''}">${status === 2 ? '<span class="candidate-status-context">追求連任：</span>是' : status === 1 ? '再次參選' : ''}</td></tr>`;
+  }).join('') : '<tr role="row"><td role="cell" colspan="3" class="no-results">目前選區沒有符合政黨篩選條件的候選人。</td></tr>';
   updateSortHeaders('candidate-table', sort, 'candidate-sort-status');
 }
 function matchingRegistrationCandidates(currentCandidates, previousCandidates) {

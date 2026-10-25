@@ -1,0 +1,54 @@
+/* Narrow-screen reading layout; desktop keeps its existing tables and columns. */
+.candidate-status-context{display:none}
+@media(max-width:680px){
+ .page{padding-left:12px;padding-right:12px}
+ .page-tab{padding:10px 7px}.page-tab strong{font-size:15px}.page-tab>span{font-size:12px}
+ .page-tab-panel>.intro{padding:22px 0 20px}.intro h1{font-size:28px;line-height:1.35}
+ .quick-nav{gap:6px}.quick-nav a{padding:8px 10px}
+ .county-switcher{padding:12px;margin-bottom:14px}
+ .county-switcher h3{font-size:16px;margin-bottom:10px}
+ .county-switcher-buttons,.inc-stat-counties{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+ .county-switcher-buttons button,.inc-stat-counties button{font-size:14px;padding:8px 2px;min-height:44px;line-height:1.45}
+ .results-panel{padding:18px 12px}
+ .list-heading{display:block}.list-heading h3{font-size:18px;line-height:1.6;margin-bottom:12px}
+ .list-heading .filter-control{display:flex;justify-content:space-between;gap:12px;font-size:15px;margin-bottom:14px}
+ .filter-control select{min-height:44px;flex:1;max-width:240px;font-size:16px;padding:8px}
+ .history-sort-control select,#zone-search,.village-map-search input{font-size:16px;min-height:44px}
+ /* Keep table roles/column headers for sorting and assistive technology. */
+ #candidate-table{display:block;border:0;font-size:15px}
+ #candidate-table thead,#candidate-table tbody{display:block;width:100%}
+ #candidate-table thead tr{display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:4px;margin-bottom:12px}
+ #candidate-table th:nth-child(n){width:auto;min-width:0;border-radius:7px;background:#edf3ef}
+ #candidate-table .table-sort{font-size:13px;padding:10px 6px;min-height:48px}
+ #candidate-table tbody tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 12px;margin:0 0 10px;padding:14px 12px;border:1px solid #dbe5df;border-radius:10px;background:#fff}
+ #candidate-table tbody td{display:block;border:0;padding:0;min-width:0;text-align:left}
+ #candidate-table tbody td:first-child{grid-column:1/-1}
+ #candidate-table .candidate-person{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px}
+ #candidate-table .candidate-name{font-size:18px;line-height:1.5}
+ #candidate-table .profile-links{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+ #candidate-table .profile-link{min-height:44px;min-width:44px;padding:7px;font-size:12px}
+ #candidate-table .party-identity{font-size:15px;line-height:1.6}
+ #candidate-table tbody td:last-child{font-size:14px;line-height:1.6;align-self:center;text-align:right}
+ #candidate-table .candidate-status-context{display:inline;font-size:12px;font-weight:500}
+ #candidate-table .candidate-table-note{font-size:13px;margin-top:6px}
+ .inc-directory{padding:16px 10px}
+ .inc-directory-heading .inc-reading-actions{display:grid;gap:8px}
+ .inc-reading-actions button{font-size:15px;text-align:left}
+ .inc-filters input,.inc-filters select{font-size:16px}
+ .inc-county-list{gap:8px}.inc-county-list button{padding:12px;min-height:76px}
+ .inc-stat-controls{gap:18px;margin:18px 0}.inc-stat-control-group h4{font-size:15px}
+ .inc-stat-columns>section{padding:14px 8px}
+ .inc-stat-columns .inc-stat-table th:first-child{min-width:0}
+ .inc-stat-columns .inc-stat-table th,.inc-stat-columns .inc-stat-table td{padding:11px 4px}
+ .inc-stat-columns .inc-stat-table .party-identity{gap:5px}
+ .inc-stat-columns .inc-stat-table th:first-child{width:45%}
+ .inc-stat-columns .inc-stat-track{width:56px}
+ .inc-stat-cards strong{font-size:25px}
+ .inc-person-row .inc-links a{display:inline-flex;align-items:center;min-height:44px;padding:5px 8px;border:1px solid #d5e1da;border-radius:7px}
+ .history-table-scroll,.inc-stat-table-wrap,.bnh-table-scroll{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+ .result-navigation{display:grid;grid-template-columns:1fr;gap:7px}
+ .result-navigation a{font-size:14px;min-height:44px}
+}
+@media(max-width:680px){
+ #party-filter{height:auto;min-height:44px;font-size:16px;max-width:none;width:auto;flex:1}
+}

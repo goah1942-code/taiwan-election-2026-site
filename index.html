@@ -24,12 +24,13 @@
   <script src="./county-map.js?v=20261015-ui50-final" defer></script>
   <script src="./village-basemap.js?v=20261015-ui50-final" defer></script>
   <script src="./village-map.js?v=20261020-whole-site-ui12-3" defer></script>
-  <script src="./app.js?v=20261025-colors" defer></script>
+  <script src="./app.js?v=20261025-mobile" defer></script>
   <link rel="stylesheet" href="./incumbents.css?v=20261020-whole-site-ui18">
   <script src="./incumbent-history.js?v=20261025-colors" defer></script>
   <script src="./officeholder-statistics.js?v=20261025-colors" defer></script>
   <script src="./incumbents.js?v=20261025-colors" defer></script>
   <link rel="stylesheet" href="./party-style.css?v=20261025-colors">
+  <link rel="stylesheet" href="./mobile-layout.css?v=20261025-mobile">
 </head>
 <body>
   <a class="skip-link" href="#main">跳至主要內容</a>
@@ -179,7 +180,7 @@
           <div id="electorate-reference" class="electorate-reference" aria-label="選區選舉人數參考"></div>
           <div class="list-heading"><h3 id="candidate-heading" tabindex="-1">2026 登記資料 <span id="candidate-zone-label"></span><span id="filtered-count"></span></h3><label class="filter-control">政黨 <select id="party-filter" aria-label="篩選政黨"><option value="">全部政黨</option></select></label></div>
           <p id="candidate-stage-note" class="candidate-stage-note" hidden></p>
-          <div class="candidate-table-scroll"><table id="candidate-table" class="candidate-table sortable-table" aria-labelledby="candidate-heading"><thead id="candidate-columns"></thead><tbody id="candidate-list" aria-live="polite"></tbody></table></div>
+          <div class="candidate-table-scroll"><table id="candidate-table" role="table" class="candidate-table sortable-table" aria-labelledby="candidate-heading"><thead role="rowgroup" id="candidate-columns"></thead><tbody role="rowgroup" id="candidate-list" aria-live="polite"></tbody></table></div>
           <span id="candidate-sort-status" class="sr-only" aria-live="polite"></span>
           <nav class="result-navigation" aria-label="候選人名單查詢切換"><a data-zone-return href="#zone-heading">返回選區 ↑</a><a data-map-return href="#county-map-heading" hidden>返回地圖 ↑</a><a href="#select-heading">更換縣市或職務 ↑</a><a id="party-history-jump" href="#party-history" hidden>歷年政黨比例 ↓</a></nav>
           <section class="history-block" aria-labelledby="history-heading">
