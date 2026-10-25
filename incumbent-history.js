@@ -6,8 +6,7 @@ window.IncumbentHistory=(()=>{
   const number=value=>value==null?'—':value.toLocaleString('zh-TW');
   const percentage=value=>value==null?'—':value>0&&value<0.1?'<0.1%':value.toFixed(1)+'%';
   const partyLabel=name=>name==='無'?'無黨籍（來源：無）':name||'來源未列';
-  const colors=['#76519a','#a95727','#7c6818','#a7406c','#496a80','#66594b'];
-  const color=(name,i)=>name==='中國國民黨'?'#245baa':name==='民主進步黨'?'#217846':['台灣民眾黨','臺灣民眾黨'].includes(name)?'#087e8a':colors[i%colors.length];
+  const color=name=>window.ElectionPartyStyle.color(name);
   const cache=new Map();let context,data,kind='president',year='',sequence=0,key='',routeNote='';
   function comparison(current,previous){
     const old=new Map((previous?.parties||[]).map(p=>[p.party,p]));
@@ -58,7 +57,7 @@ window.IncumbentHistory=(()=>{
     $('inc-history-change-heading').textContent=previous?`比${previous.year}年`:'前次比較';
     $('inc-history-rows').innerHTML=rows.map((r,i)=>{
       const change=!previous?'無前次資料':r.votes==null?'本次未列':r.previousVotes==null?'上次未列':changeLabel(r.change);
-      return `<tr><th scope="row"><span class="inc-party-swatch" aria-hidden="true" style="background:${color(r.party,i)}"></span>${escape(partyLabel(r.party))}</th><td>${number(r.votes)}</td><td>${percentage(r.share)}</td><td>${change}</td></tr>`;
+      return `<tr><th scope="row">${window.ElectionPartyStyle.badge(r.party,partyLabel(r.party))}</th><td>${number(r.votes)}</td><td>${percentage(r.share)}</td><td>${change}</td></tr>`;
     }).join('');
     $('inc-history-total').textContent=number(current.validVotes);
     $('inc-history-denominator').textContent=`分母：${number(current.validVotes)}張有效票；不含無效票。${previous?'變化與'+previous.year+'年同類選舉比較，使用各年自己的有效票分母；分類依來源原名，上次或本次未列者不計差值。':'這是本範圍已收錄最早的同類選舉。'}`;

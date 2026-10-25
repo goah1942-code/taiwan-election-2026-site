@@ -3,7 +3,6 @@
   'use strict';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
-  const palette = ['#7958a0', '#ac532c', '#795f13', '#a64370', '#496c83', '#76645c', '#526b32', '#9a427d'];
   let instanceCount = 0;
 
   function element(tag, className, text) {
@@ -20,12 +19,7 @@
     return node;
   }
 
-  function partyColor(party, index) {
-    if (party.name === '中國國民黨' || party.name === '國民黨') return '#245baa';
-    if (party.name === '民主進步黨' || party.name === '民進黨') return '#217846';
-    if (party.name === '台灣民眾黨' || party.name === '臺灣民眾黨' || party.name === '民眾黨') return '#087e8a';
-    return palette[index % palette.length];
-  }
+  function partyColor(party) { return window.ElectionPartyStyle.color(party.name); }
 
   function partyLabel(party) {
     return party.name === '無' ? '無黨籍（來源：無）' : party.name || '來源未列黨籍';

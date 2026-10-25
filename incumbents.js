@@ -238,7 +238,7 @@
   function personMarkup(r) {
     const party=r.party==='無'?'無黨籍（來源：無）':r.party||'來源未列';
     if(office==='president')return `<li class="inc-card"><div class="inc-card-top"><h3>${escape(r.name)}</h3><span class="inc-office">${escape(r.office)}</span></div><p class="inc-area">${escape(r.area)}</p><p class="inc-note">${escape(r.note)}</p><div class="inc-links">${link(r.sourceId,'官方來源')}</div></li>`;
-    return `<li class="inc-person-row">${office==='mayor'?`<strong class="inc-person-county">${escape(r.county)}</strong>`:''}<h3>${escape(r.name)}</h3><span class="inc-person-office">${escape(r.office)}</span><span class="inc-person-party"><small>來源所列黨籍</small>${escape(party)}</span><div class="inc-links">${link(r.sourceId,'官方來源')}${r.additionalSourceId?link(r.additionalSourceId,'代理職務說明'):''}</div>${r.note?`<p class="inc-person-note">${escape(r.note)}</p>`:''}</li>`;
+    return `<li class="inc-person-row">${office==='mayor'?`<strong class="inc-person-county">${escape(r.county)}</strong>`:''}<h3>${escape(r.name)}</h3><span class="inc-person-office">${escape(r.office)}</span><span class="inc-person-party"><small>來源所列黨籍</small>${window.ElectionPartyStyle.badge(r.party,party)}</span><div class="inc-links">${link(r.sourceId,'官方來源')}${r.additionalSourceId?link(r.additionalSourceId,'代理職務說明'):''}</div>${r.note?`<p class="inc-person-note">${escape(r.note)}</p>`:''}</li>`;
   }
   function renderResults(items,total=items.length) {
     const pages=Math.max(1,Math.ceil(items.length/pageSize));page=Math.min(page,pages);const first=(page-1)*pageSize;

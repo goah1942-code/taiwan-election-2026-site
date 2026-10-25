@@ -41,7 +41,7 @@ window.OfficeholderStatistics=(()=>{
     scope=value;routeNote='';render();persist();
   }
   function distributionRow(party,value,share){
-    return `<tr><th scope="row">${escape(partyLabel(party))}</th><td>${number(value)}</td><td><div class="inc-stat-share"><span>${escape(percent(share))}</span><div class="inc-stat-track" aria-hidden="true"><i style="width:${share||0}%"></i></div></div></td></tr>`;
+    return `<tr style="--party-accent:${window.ElectionPartyStyle.color(party)}"><th scope="row">${window.ElectionPartyStyle.badge(party,partyLabel(party))}</th><td>${number(value)}</td><td><div class="inc-stat-share"><span>${escape(percent(share))}</span><div class="inc-stat-track" aria-hidden="true"><i style="width:${share||0}%"></i></div></div></td></tr>`;
   }
   function renderChoices(id,items,selected){
     const group=$(id),buttons=[...group.children];

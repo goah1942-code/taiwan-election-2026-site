@@ -14,20 +14,22 @@
   <link rel="stylesheet" href="./ballot-notice.css?v=20261020-whole-site-ui14">
   <link rel="stylesheet" href="./ballot-history.css?v=20261015-ui50-final">
   <link rel="stylesheet" href="./page-tabs.css?v=20261020-whole-site-ui03">
+  <script src="./party-style.js?v=20261025-colors" defer></script>
   <script src="./page-tabs.js?v=20261020-whole-site-ui10" defer></script>
   <script src="./candidate-matching.js?v=20261015-ui50-final" defer></script>
   <script src="./address-resolver.js?v=20261015-ui50-final" defer></script>
-  <script src="./ballot-history.js?v=20261015-ui50-final" defer></script>
+  <script src="./ballot-history.js?v=20261025-colors" defer></script>
   <script src="./ballot-notice.js?v=20261019-whole-site-ux04" defer></script>
-  <script src="./party-history.js?v=20261020-whole-site-ui09" defer></script>
+  <script src="./party-history.js?v=20261025-colors" defer></script>
   <script src="./county-map.js?v=20261015-ui50-final" defer></script>
   <script src="./village-basemap.js?v=20261015-ui50-final" defer></script>
   <script src="./village-map.js?v=20261020-whole-site-ui12-3" defer></script>
-  <script src="./app.js?v=20261023-county-switch" defer></script>
+  <script src="./app.js?v=20261025-colors" defer></script>
   <link rel="stylesheet" href="./incumbents.css?v=20261020-whole-site-ui18">
-  <script src="./incumbent-history.js?v=20261018-five-minute-r08" defer></script>
-  <script src="./officeholder-statistics.js?v=20261019-whole-site-ux04" defer></script>
-  <script src="./incumbents.js?v=20261023-county-switch" defer></script>
+  <script src="./incumbent-history.js?v=20261025-colors" defer></script>
+  <script src="./officeholder-statistics.js?v=20261025-colors" defer></script>
+  <script src="./incumbents.js?v=20261025-colors" defer></script>
+  <link rel="stylesheet" href="./party-style.css?v=20261025-colors">
 </head>
 <body>
   <a class="skip-link" href="#main">跳至主要內容</a>
@@ -307,6 +309,7 @@
           <p class="inc-stat-definition">所有政黨及無黨籍均列入分母。比例四捨五入至小數1位；非零且小於0.1%者標示「&lt;0.1%」。合計可能不等於100%；人數比例與得票比例分別計算，不代表支持度或預測。</p>
             <p class="inc-stat-definition">統計範圍可獨立切換，不受上方姓名搜尋、行政區或單一村里影響。</p>
           </details>
+          <p class="party-color-note">各頁使用一致政黨配色；顏色輔助辨識，政黨及無黨籍分類以完整來源名稱為準。</p>
           <div id="inc-stat-columns" class="inc-stat-columns" tabindex="-1">
             <section id="inc-count-statistics" aria-labelledby="inc-count-stat-heading"><h4 id="inc-count-stat-heading">現任名冊：政黨人數與比例</h4><p id="inc-count-context" class="inc-stat-table-context"></p><p id="inc-count-denominator" class="inc-stat-denominator"></p><div class="inc-stat-table-wrap"><table class="inc-stat-table"><caption class="sr-only">所選統計範圍的來源政黨人數分布</caption><thead><tr><th scope="col">來源所列政黨</th><th scope="col" id="inc-count-unit-heading">人數</th><th scope="col" id="inc-count-share-heading">人數比例</th></tr></thead><tbody id="inc-stats-parties"></tbody><tfoot><tr><th scope="row">合計</th><td id="inc-stats-party-total"></td><td id="inc-stats-party-percent"></td></tr></tfoot></table></div></section>
             <section id="inc-vote-statistics" aria-labelledby="inc-vote-stat-heading"><h4 id="inc-vote-stat-heading">政黨票數與比例</h4><p id="inc-vote-denominator" class="inc-stat-denominator"></p><div id="inc-vote-error" class="inc-error" hidden><button type="button" id="inc-votes-retry">重新載入票數</button></div><div class="inc-stat-table-wrap"><table class="inc-stat-table"><caption class="sr-only">所選統計範圍及票種的政黨得票分布</caption><thead><tr><th scope="col">選舉資料政黨</th><th scope="col">票數</th><th scope="col">得票比例</th></tr></thead><tbody id="inc-stats-votes"></tbody><tfoot id="inc-vote-tfoot" hidden><tr><th scope="row">合計有效票</th><td id="inc-votes-total"></td><td id="inc-votes-percent"></td></tr></tfoot></table></div><p id="inc-vote-source" class="inc-stat-source"></p></section>

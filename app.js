@@ -988,7 +988,7 @@ function renderCandidates() {
   $('candidate-list').innerHTML = list.length ? list.map(({candidate}) => {
     const status = statuses.get(candidate);
     const notes = [candidate.note, candidate.statusNote].filter(Boolean);
-    return `<tr><td><div class="candidate-person"><strong class="candidate-name">${escapeHtml(candidate.name)}</strong>${profileLinksHtml(candidate)}</div>${notes.length ? `<small class="candidate-table-note">${notes.map(escapeHtml).join(' · ')}</small>` : ''}</td><td>${escapeHtml(candidate.party === '無' ? '無政黨推薦' : candidate.party)}</td><td class="${status === 2 ? 'win-tag' : status === 1 ? 'repeat-tag' : ''}">${status === 2 ? '是' : status === 1 ? '再次參選' : ''}</td></tr>`;
+    return `<tr><td><div class="candidate-person"><strong class="candidate-name">${escapeHtml(candidate.name)}</strong>${profileLinksHtml(candidate)}</div>${notes.length ? `<small class="candidate-table-note">${notes.map(escapeHtml).join(' · ')}</small>` : ''}</td><td>${window.ElectionPartyStyle.badge(candidate.party,candidate.party === '無' ? '無政黨推薦' : candidate.party)}</td><td class="${status === 2 ? 'win-tag' : status === 1 ? 'repeat-tag' : ''}">${status === 2 ? '是' : status === 1 ? '再次參選' : ''}</td></tr>`;
   }).join('') : '<tr><td colspan="3" class="no-results">目前選區沒有符合政黨篩選條件的候選人。</td></tr>';
   updateSortHeaders('candidate-table', sort, 'candidate-sort-status');
 }
@@ -1106,7 +1106,7 @@ function renderHistoryRows() {
   const value = ({candidate, share}) => sort.key === 'voteSharePercent' ? share : sort.key === 'registration' ? historyParticipationText(candidate, registrations) :
     sort.key === 'elected' ? Number(candidate.elected) : candidate[sort.key];
   rows.sort((a, b) => compareValues(value(a), value(b), sort.direction) || a.index - b.index);
-  tableBody.innerHTML = rows.length ? rows.map(({candidate, share}) => `<tr><td>${escapeHtml(candidate.number ?? '—')}</td><td><div class="candidate-person"><span>${escapeHtml(candidate.name)}</span>${profileLinksHtml(candidate)}</div></td><td>${escapeHtml(candidate.party)}</td><td>${historyVoteCount(candidate.votes) == null ? '—' : candidate.votes.toLocaleString('zh-TW')}</td><td>${historyPercentage(share)}</td><td class="${candidate.elected ? 'win-tag' : 'lose-tag'}">${candidate.elected ? '當選' : '未當選'}</td><td class="registration-note">${historyParticipationHtml(candidate, registrations)}</td></tr>`).join('') :
+  tableBody.innerHTML = rows.length ? rows.map(({candidate, share}) => `<tr><td>${escapeHtml(candidate.number ?? '—')}</td><td><div class="candidate-person"><span>${escapeHtml(candidate.name)}</span>${profileLinksHtml(candidate)}</div></td><td>${window.ElectionPartyStyle.badge(candidate.party)}</td><td>${historyVoteCount(candidate.votes) == null ? '—' : candidate.votes.toLocaleString('zh-TW')}</td><td>${historyPercentage(share)}</td><td class="${candidate.elected ? 'win-tag' : 'lose-tag'}">${candidate.elected ? '當選' : '未當選'}</td><td class="registration-note">${historyParticipationHtml(candidate, registrations)}</td></tr>`).join('') :
     `<tr><td colspan="7" class="history-share-empty">${state.partyShareMode === 'blue-green' && view.reason !== 'unknown' ? '本次沒有中國國民黨或民主進步黨推薦的候選人，比例無法計算；可切回「全部候選人」查看完整結果。' : '候選人資料未知，無法計算比例。'}</td></tr>`;
   updateSortHeaders('history-table', sort, 'history-sort-status');
 }

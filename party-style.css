@@ -1,0 +1,40 @@
+/* Party identity uses a stable swatch plus the full source label. */
+.party-identity{display:inline-flex;align-items:flex-start;gap:.5em;max-width:100%;padding:4px 8px;border:1px solid #e2e8ec;border-radius:7px;background:#f8fafb;color:#243647;font-size:inherit;line-height:1.55;text-align:left;vertical-align:middle}
+.party-identity-dot{display:inline-block;flex:0 0 10px;width:10px;height:10px;margin-top:.45em;border-radius:3px;background:var(--party-accent);box-shadow:inset 0 0 0 1px #00000012}
+.party-identity>span:last-child{min-width:0;overflow-wrap:anywhere}
+.inc-stat-columns{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:24px}
+.inc-stat-columns>section{min-width:0;padding:20px;border:1px solid #dce5e9;border-radius:12px;background:#fff}
+.inc-stat-columns h4{line-height:1.55;margin-bottom:12px}
+.inc-stat-table{font-variant-numeric:tabular-nums}
+.inc-stat-table th,.inc-stat-table td{padding:12px 10px;vertical-align:middle}
+.inc-stat-table tbody tr:hover{background:#f6f9fb}
+.inc-stat-share{gap:7px}.inc-stat-track{height:8px;background:#e9edf1;max-width:100%}
+.inc-stat-track i{background:var(--party-accent,#64748b)}
+.inc-stat-table .party-identity{border:0;background:transparent;padding:0;font-weight:600}
+.inc-stat-table caption{font-size:14px;line-height:1.6;padding:10px 0}
+.inc-person-party{min-width:0}.inc-person-party small{margin-bottom:6px}
+.inc-person-row{row-gap:12px;align-items:center}
+#candidate-table td,#history-table td{vertical-align:middle;padding-top:14px;padding-bottom:14px}
+#candidate-table .party-identity,#history-table .party-identity{font-size:14px}
+.ph-party-button{line-height:1.5}.ph-party-swatch{height:5px;flex-basis:16px;width:16px}
+.inc-history-bar{height:24px}.inc-history-bar i+i{box-shadow:inset 1px 0 #ffffffa6}
+.party-color-note{font-size:14px;line-height:1.7;color:#526170;margin:12px 0}
+@media(max-width:1100px){.inc-stat-columns{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:680px){
+ .inc-stat-columns>section{padding:14px 10px}.inc-stat-table th,.inc-stat-table td{padding:12px 6px}
+ .inc-stat-columns .inc-stat-table{table-layout:auto;font-size:15px}
+ .inc-stat-columns .inc-stat-table th:first-child{min-width:7em}
+ .inc-stat-columns .inc-stat-table td{white-space:nowrap}
+ .inc-stat-track{width:64px}.party-identity{padding:3px 6px;gap:6px}
+ .inc-person-row .party-identity{font-size:15px}
+ #candidate-table .party-identity,#history-table .party-identity{font-size:14px}
+}
+/* Give source party names enough room without shrinking the reading type. */
+@media(max-width:680px){
+ #candidate-table th:nth-child(1){width:35%}
+ #candidate-table th:nth-child(2){width:44%}
+ #candidate-table th:nth-child(3){width:21%}
+ #candidate-table td{padding-left:4px;padding-right:4px}
+ #candidate-table .party-identity{padding:0;border:0;background:transparent;gap:4px}
+ #candidate-table .party-identity-dot{flex-basis:8px;width:8px;height:8px;margin-top:.5em}
+}
