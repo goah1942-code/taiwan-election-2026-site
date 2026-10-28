@@ -82,9 +82,11 @@ window.IncumbentHistory=(()=>{
     root.hidden=false;$('inc-history-heading').textContent=`${next.scope||'全台'}歷年政治分布`;
     $('inc-history-status').textContent='正在讀取完整歷史政黨資料…';$('inc-history-content').hidden=true;$('inc-history-retry').hidden=true;
     try{
-      if(!cache.has(key))cache.set(key,fetch(`./incumbents-data/history/${key}.json?v=20261018-five-minute-r01`).then(r=>{if(!r.ok)throw Error('讀取失敗');return r.json();}).catch(error=>{cache.delete(nextKey);throw error;}));
-      const value=await cache.get(key);if(request!==sequence)return;
-      if(!value.elections?.length||value.elections.some(e=>!e.validVotes||!e.parties?.length||e.parties.reduce((sum,p)=>sum+p.votes,0)!==e.validVotes))throw Error('歷史資料不完整');
+      if(!cache.has(nextKey))cache.set(nextKey,fetch(`./incumbents-data/history/${nextKey}.json?v=20261018-five-minute-r01`).then(r=>{if(!r.ok)throw Error('讀取失敗');return r.json();}).then(value=>{
+        if(!value.elections?.length||value.elections.some(e=>!e.validVotes||!e.parties?.length||e.parties.reduce((sum,p)=>sum+p.votes,0)!==e.validVotes))throw Error('歷史資料不完整');
+        return value;
+      }).catch(error=>{cache.delete(nextKey);throw error;}));
+      const value=await cache.get(nextKey);if(request!==sequence)return;
       data=value;render();if(location.hash==='#inc-history-heading')show(false);
     }catch{if(request!==sequence)return;$('inc-history-status').textContent='歷史資料暫時無法載入，現任名冊與最近一次選舉統計仍可使用。';$('inc-history-retry').hidden=false;}
   }

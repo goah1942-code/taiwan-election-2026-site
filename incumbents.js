@@ -322,7 +322,15 @@
     const sameRoster=next.office===office&&(next.county||'')===county&&(next.district||'')===district&&(next.area||'')===area&&(!hierarchical()||(next.view||view)===view);
     const previousQuery=preserveQuery&&sameRoster?{text:$('inc-search').value,page}:null;
     const request=++sequence;routeWarning='';invalidRouteArea=false;$('inc-route-note').hidden=true;office=next.office;county=next.county||'';district=next.district||'';area=next.area||'';view=next.view||view;page=1;rows=[];
+    // Commit the user's choice before awaiting data; background completion must not navigate.
+    if(writeRoute&&!root.hidden)updateUrl();
+    const pendingRoute=location.href;
     renderOfficeGuide();
+    $('inc-result-heading').textContent=`${labels[office]}名冊`;
+    $('inc-selected-context').textContent='';
+    $('inc-checked').textContent='正在讀取本職務的來源資料…';
+    $('inc-source-note').textContent='名冊載入完成後顯示來源與查核日期。';
+    $('inc-stale').hidden=true;$('inc-sources').replaceChildren();
     window.OfficeholderStatistics?.reset();$('inc-office-statistics').hidden=true;$('inc-show-stats').hidden=true;$('inc-show-history').hidden=true;$('inc-selected-geography').hidden=true;$('inc-search-hint').hidden=true;$('inc-village-steps').hidden=true;
     $('inc-search').value='';$('inc-directory').setAttribute('aria-busy','true');$('inc-filters').disabled=true;
     $('inc-county-browser').hidden=true;$('inc-workspace').hidden=false;$('inc-workspace').classList.remove('has-sidebar');$('inc-zone-sidebar').hidden=true;$('inc-return-counties').hidden=true;
@@ -361,7 +369,7 @@
       $('inc-source-note').textContent=['mayor','council','village'].includes(office)?'地方名冊未提供逐筆任免日期；代理職稱依來源保留，缺漏不代表缺額。黨籍為來源所列，可能尚未反映異動。':office==='legislator'?'依立法院第11屆資料，排除已離職者；不分區與原住民名單另列，不依縣市分配。':'依總統府現任總統介紹，顯示就任日期與官方連結。';
       const sources=[...new Set(rows.flatMap(r=>[r.sourceId,r.additionalSourceId].filter(Boolean)))];$('inc-sources').innerHTML=sources.map(id=>`<li>${link(id)}${index.sources[id].sourceUpdatedAt?`（來源日期：${escape(index.sources[id].sourceUpdatedAt)}）`:''}</li>`).join('');
       $('inc-stale').hidden=Date.now()-Date.parse(index.checkedAt+'T00:00:00+08:00')<30*86400000;
-      render();if(writeRoute)updateUrl();
+      render();if(writeRoute&&!root.hidden&&location.href===pendingRoute)updateUrl(true);
       if(routeWarning)focusHeading('inc-route-note');else if(readingTargets.has(location.hash.slice(1)))focusHeading(location.hash.slice(1));else if(restoreReading)focusHeading(rosterHeading());
     }catch{if(request!==sequence)return;rows=[];$('inc-status').textContent='名冊暫時無法載入，請重新載入。';$('inc-error').hidden=false;}
     finally{if(request===sequence){$('inc-filters').disabled=!rows.length;$('inc-directory').setAttribute('aria-busy','false');}}

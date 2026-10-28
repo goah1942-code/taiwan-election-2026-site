@@ -14,6 +14,16 @@
   <link rel="stylesheet" href="./ballot-notice.css?v=20261020-whole-site-ui14">
   <link rel="stylesheet" href="./ballot-history.css?v=20261015-ui50-final">
   <link rel="stylesheet" href="./page-tabs.css?v=20261020-whole-site-ui03">
+  <script id="party-style-fallback">
+    // A failed color asset must not prevent names or election data from rendering.
+    window.ElectionPartyStyle = Object.freeze({
+      color: () => '#64748b',
+      badge(name, label = name || '來源未列黨籍') {
+        const safe = String(label ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        return `<span class="party-identity" style="--party-accent:#64748b"><span class="party-identity-dot" aria-hidden="true"></span><span>${safe}</span></span>`;
+      }
+    });
+  </script>
   <script src="./party-style.js?v=20261025-colors" defer></script>
   <script src="./page-tabs.js?v=20261020-whole-site-ui10" defer></script>
   <script src="./candidate-matching.js?v=20261015-ui50-final" defer></script>
@@ -26,9 +36,9 @@
   <script src="./village-map.js?v=20261020-whole-site-ui12-3" defer></script>
   <script src="./app.js?v=20261025-mobile" defer></script>
   <link rel="stylesheet" href="./incumbents.css?v=20261020-whole-site-ui18">
-  <script src="./incumbent-history.js?v=20261025-colors" defer></script>
+  <script src="./incumbent-history.js?v=20261028-recovery" defer></script>
   <script src="./officeholder-statistics.js?v=20261025-colors" defer></script>
-  <script src="./incumbents.js?v=20261025-colors" defer></script>
+  <script src="./incumbents.js?v=20261028-recovery" defer></script>
   <link rel="stylesheet" href="./party-style.css?v=20261025-colors">
   <link rel="stylesheet" href="./mobile-layout.css?v=20261025-mobile">
 </head>
