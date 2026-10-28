@@ -64,10 +64,10 @@ window.OfficeholderStatistics=(()=>{
     if(!context)return;
     const {office,rows,index,counties}=context,counts=summarize(rows,scope),all=summarize(rows);
     const hasPeople=office!=='president',hasVotes=office!=='village';
-    root.hidden=!rows.length;
+    root.hidden=!rows.length;$('inc-stat-notes').hidden=!rows.length;
     $('inc-statistics-heading').textContent=`${scope||'全台'}${labels[office]}統計`;
     $('inc-stat-route-note').hidden=!routeNote;$('inc-stat-route-note').textContent=routeNote;
-    $('inc-stat-quick-summary').textContent=`目前看${scope||'全台'}，${hasPeople?'收錄 '+number(counts.total)+(office==='legislator'?' 人':' 名冊人次')+'。':''}統計範圍獨立於姓名搜尋；下方可直接更換縣市。`;
+    $('inc-stat-quick-summary').textContent=`目前看${scope||'全台'}，${hasPeople?'收錄 '+number(counts.total)+(office==='legislator'?' 人':' 名冊人次')+'。':''}統計範圍獨立於姓名搜尋；可用統計範圍按鈕更換縣市。`;
     window.IncumbentHistory?.update({office,scope,counties});
     renderChoices('inc-stat-scope',[{value:'',label:'全台'},...counties.map(c=>({value:c.name,label:c.name}))],scope);
     $('inc-stat-brief').textContent={president:'2024總統候選人票，依推薦政黨加總。',mayor:'人數依現任名冊；票數為2022選舉，含嘉義市重行選舉。',legislator:'人數依現任名冊，縣市僅計區域立委；票種只影響票數。',council:'人數依現任名冊；票數為2022議員選舉，含全部議員類別。',village:'以名冊任職紀錄計人次；代理包括職稱或姓名的明確註記。目前未提供村里長歷年票數，下方另可看總統／縣市長歷史。'}[office];
@@ -86,11 +86,11 @@ window.OfficeholderStatistics=(()=>{
     $('inc-stat-count-unit').textContent=office==='legislator'?'人':'人次';
     const peopleScope=`${scope||'全台'}${office==='legislator'&&scope?'區域立委':labels[office]}`;
     $('inc-count-stat-heading').textContent=`${peopleScope}：政黨${office==='legislator'?'人數':'人次'}與比例`;
-    $('inc-count-context').textContent=`現任名冊 · ${index.checkedAt} 快照（非即時）`+(office==='legislator'&&!scope?'；含區域、不分區及原住民立委。':'');
+    $('inc-count-context').textContent=`現任名冊 · ${index.checkedAt} 快照`;
     $('inc-count-unit-heading').textContent=office==='legislator'?'人數':'收錄人次';$('inc-count-share-heading').textContent=office==='legislator'?'人數比例':'人次比例';
     $('inc-stat-county-people-header').textContent=office==='legislator'?'現任名冊人數':'現任名冊人次';
     $('inc-stats-parties').innerHTML=counts.parties.map(p=>distributionRow(p.party,p.count,p.share)).join('');
-    $('inc-count-denominator').textContent=`分母：${peopleScope} ${number(counts.total)} ${office==='legislator'?'人':'名冊人次'}（包含無黨籍及來源未列黨籍）。`;
+    $('inc-count-denominator').textContent=`分母：全部 ${number(counts.total)} ${office==='legislator'?'人':'名冊人次'}`;
     $('inc-stats-party-total').textContent=number(counts.total);$('inc-stats-party-percent').textContent=counts.total?'100%':'—';
     const variants=voteData?.elections?.[office]||[];
     if(variants.length&&!variants.some(e=>e.id===ballot)){
@@ -106,7 +106,7 @@ window.OfficeholderStatistics=(()=>{
     $('inc-stats-valid-label').textContent=votes?`${votes.event.year} 年有效票`:'選舉有效票';
     $('inc-vote-error').hidden=!hasVotes||!voteError;
     $('inc-vote-stat-heading').textContent=votes?`${scope||'全台'} · ${votes.event.label}：政黨票數與比例`:`${scope||'全台'}：政黨票數與比例`;
-    $('inc-vote-denominator').textContent=!hasVotes?'':votes?`分母：${number(total)} 張有效票（全部候選人／政黨）；不含無效票。`:(voteError?'票數尚未載入，人數統計仍可查看。':'正在載入中選會票數…');
+    $('inc-vote-denominator').textContent=!hasVotes?'':votes?`分母：全部有效票 ${number(total)} 票`:(voteError?'票數尚未載入，人數統計仍可查看。':'正在載入中選會票數…');
     $('inc-vote-definition').hidden=!hasVotes;
     $('inc-vote-definition').textContent=hasVotes?(votes?.event.note||'')+(office==='president'?'總統候選人得票依推薦政黨加總。':office==='legislator'?'票種分開計算；各縣市票數依投票所在地彙總，請勿將區域、原住民與不分區票相加。':'')+' 票數採例行選舉結果，不混入任內補選；人數與票數來自不同時點，不直接對應同一批人。':'';
     const parties=votes?.totals?.parties||[];
@@ -135,6 +135,7 @@ window.OfficeholderStatistics=(()=>{
     $('inc-stats-counties-acting').hidden=office!=='village';$('inc-stats-counties-acting').textContent=number(all.acting);
     $('inc-stats-counties-votes').hidden=!hasVotes;$('inc-stats-counties-votes').textContent=number(nationalVotes?.validVotes);
     $('inc-county-stat-caption').textContent=`各縣市${labels[office]}總覽${votes?' · '+votes.event.label:''}`;
+    window.dispatchEvent(new Event('page-notes-ready'));
   }
   function update(next){
     if(!root)return;
@@ -160,6 +161,6 @@ window.OfficeholderStatistics=(()=>{
     root.addEventListener('click',event=>{const button=event.target.closest('[data-inc-stat-jump]');if(!button)return;if(button.dataset.incStatJump==='history')window.IncumbentHistory?.show();else if(context?.onRead)context.onRead('inc-stat-columns');else{$('inc-stat-columns').focus({preventScroll:true});$('inc-stat-columns').scrollIntoView({block:'start'});}});
     $('inc-votes-retry').addEventListener('click',()=>loadVotes(true));
   }
-  function reset(){context=null;if(root)root.hidden=true;window.IncumbentHistory?.reset();}
+  function reset(){$('inc-stat-notes').hidden=true;context=null;if(root)root.hidden=true;window.IncumbentHistory?.reset();}
   return {update,reset,selectScope,summarize,ballotTotals};
 })();

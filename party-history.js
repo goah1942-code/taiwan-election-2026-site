@@ -227,6 +227,9 @@
     data = data || {};
     const {parties, elections} = normalise(data);
     const id = `party-history-${++instanceCount}`;
+    const notesContainer = options.notesContainer instanceof Element ? options.notesContainer : null;
+    const notes = element(notesContainer ? 'div' : 'details', 'ph-notes');
+    notes.append(element(notesContainer ? 'h4' : 'summary', '', '歷史政黨圖表說明與來源'));
     container.replaceChildren();
     container.classList.add('party-history');
     container.tabIndex = -1;
@@ -248,12 +251,12 @@
     heading.append(title, element('span', 'ph-county', countyName));
     container.setAttribute('aria-labelledby', title.id);
     container.append(heading);
-    container.append(element('p', 'ph-intro', '縣市長與總統選舉的歷史得票比例，依當年推薦政黨歸類；並非民調或 2026 年支持度。'));
+    notes.append(element('p', 'ph-intro', '縣市長與總統選舉的歷史得票比例，依當年推薦政黨歸類；並非民調或 2026 年支持度。'));
     const checkedOn = typeof data.checkedOn === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(data.checkedOn) ? data.checkedOn : '未取得';
     const sourceDate = element('p', 'ph-source-date');
     sourceDate.append(element('strong', '', `本站歷史資料核對日：${checkedOn}`),
       element('span', '', '此為本站核對紀錄，不代表原檔取得日或官方更新日；後兩項日期目前未取得。本站非即時同步，選舉年份另列於圖表。'));
-    container.append(sourceDate);
+    notes.append(sourceDate);
 
     const modeControls = element('div', 'ph-mode-controls');
     modeControls.setAttribute('role', 'group');
@@ -264,7 +267,7 @@
     [['all', '占全部有效票'], ['selected', '所選政黨合計100%'], ['blue-green', '只看藍綠（合計100%）']].forEach(([mode, label]) => {
       const button = element('button', 'ph-mode-button', label);
       button.type = 'button';
-      button.setAttribute('aria-describedby', modeNote.id);
+      button.setAttribute('aria-describedby', `${id}-denominator`);
       button.addEventListener('click', () => {
         if (shareMode === mode) return;
         setShareMode(mode);
@@ -273,7 +276,8 @@
       modeButtons.set(mode, button);
       modeControls.append(button);
     });
-    container.append(modeControls, modeNote);
+    container.append(modeControls);
+    notes.append(modeNote);
 
     const controls = element('div', 'ph-party-controls');
     controls.setAttribute('role', 'group');
@@ -324,6 +328,7 @@
     container.append(controls);
     const shapeLegend = element('div', 'ph-shape-legend');
     const denominatorLegend = element('span');
+    denominatorLegend.id = `${id}-denominator`;
     const totalLegend = element('span');
     shapeLegend.append(element('span', '', '● 總統選舉'), element('span', '', '■ 縣市長選舉'),
       denominatorLegend, totalLegend);
@@ -337,7 +342,7 @@
       pairLegend.append(label);
     });
     container.append(pairLegend);
-    container.append(element('p', 'ph-scroll-hint', '滑鼠移到、點選或用鍵盤移到資料點，圖框下方會列出目前顯示分類的票數、比例與分母；按 Esc 關閉。點年份也可展開數據，左右滑動看其他年份。'));
+    notes.append(element('p', 'ph-scroll-hint', '滑鼠移到、點選或用鍵盤移到資料點，圖框下方會列出目前顯示分類的票數、比例與分母；按 Esc 關閉。點年份也可展開數據，左右滑動看其他年份。'));
     const chartFrame = element('div', 'ph-chart-frame');
     const fixedAxis = svgElement('svg', {viewBox: '0 0 44 330', class: 'ph-fixed-axis', 'aria-hidden': 'true'});
     for (let share = 0; share <= 100; share += 20) {
@@ -520,9 +525,10 @@
     });
     container.append(navigation);
     const note = element('p', 'ph-reading-note');
-    container.append(note);
+    notes.append(note);
     const coverageNote = element('p', 'ph-coverage-note');
-    if (data.coverageNote) container.append(coverageNote);
+    if (data.coverageNote) notes.append(coverageNote);
+    (notesContainer || container).append(notes);
     const status = element('span', 'sr-only');
     status.setAttribute('aria-live', 'polite');
     container.append(status);
@@ -547,7 +553,7 @@
       controls.hidden = blueMode;
       pairLegend.hidden = !blueMode;
       modeNote.textContent = blueMode ? '藍綠＝中國國民黨＋民主進步黨。每黨比例＝該黨票數 ÷ 兩黨合計票數；兩者合計 100%。與 2022 上屆結果同步切換。' : selectedMode ? '比例＝該分類原始票數 ÷ 已開啟政黨與分類的票數合計。點政黨名稱可重新選擇，圖表、提示與本表一起重算；2022 上屆結果維持占全部有效票。' : '比例＝各來源分類票數 ÷ 當次全部有效票。預設顯示全部政黨、無黨籍與連署等分類，可點名稱切換圖表、提示與表格；與 2022 上屆結果同步切換。';
-      denominatorLegend.textContent = blueMode ? '分母：國民黨＋民進黨票數' : selectedMode ? '占所選政黨得票' : '占當次全部有效票';
+      denominatorLegend.textContent = blueMode ? '分母：國民黨＋民進黨票數' : selectedMode ? '分母：所選政黨得票' : '分母：當次全部有效票';
       totalLegend.textContent = blueMode ? '藍綠合計 100%' : selectedMode ? '所選合計 100%' : '隱藏分類後不一定合計 100%';
       note.textContent = blueMode ? '保留兩黨原始票數；零票旁標示當次來源的參選分類狀態。兩黨合計 0 票或票數未知時，比例顯示「—」且不畫資料點。百分比顯示至小數兩位，兩者合計 100.00%。' : selectedMode ? '折線保留第一次到最後一次參選的範圍。所選政黨任一票數未知，或合計為 0 票時，該次比例顯示「—」且不畫資料點。比例按原始票數計算；顯示至小數兩位，加總可能有微小四捨五入差異。' : '折線只顯示第一次到最後一次參選之間；零票旁標示當次來源的參選分類狀態，未知票數不當作 0。比例以當次全部有效票計算，全部分類包含全部有效票；隱藏部分分類後，顯示比例不一定合計為 100%。「無」標示為「無黨籍（來源：無）」，其他來源名稱原樣保留。';
       coverageNote.textContent = blueMode ? (data.coverageNote || '').replace('無黨籍與連署票保留於分母，不列為政黨選項。', '藍綠模式只以兩黨票數為分母。') : selectedMode ? (data.coverageNote || '').replace('無黨籍與連署票保留於分母，不列為政黨選項。', '此模式只以已開啟政黨的票數為分母。') : data.coverageNote || '';
@@ -671,6 +677,7 @@
         tooltipEvents.abort();
         if (focusFrame != null) cancelAnimationFrame(focusFrame);
         dismissTooltip();
+        notes.remove();
         container.replaceChildren(); container.removeAttribute('aria-labelledby');
       },
       setPartyVisible(partyId, visible) {

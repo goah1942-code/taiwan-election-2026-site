@@ -1,0 +1,42 @@
+/* Short task copy above; complete, readable explanations at each tab's end. */
+.page-tab-panel>.intro{padding:26px 0 22px}
+.page-tab-panel>.intro h1{font-size:34px;line-height:1.35}
+.page-tab-panel>.intro p{margin:10px 0 14px}
+.map-election-hint:empty{display:none}
+.data-summary{font-size:14px;line-height:1.6;color:#4c665e;margin:8px 0}
+.notes-link{display:inline-flex;align-items:center;min-height:44px;font-size:14px;font-weight:600;color:#226f63}
+.page-notes{margin:28px 0 0;padding:20px;border:1px solid #d9e5df;border-radius:12px;background:#fff;overflow-wrap:anywhere}
+.page-notes h2{font-size:18px;margin:0 0 12px;line-height:1.5}
+.page-note-detail{border-top:1px solid #e0e8e3;margin:0;padding:0}
+.page-note-detail>summary{display:list-item;cursor:pointer;min-height:48px;padding:13px 4px;color:#285d52;font-size:16px;font-weight:650;line-height:1.5}
+.page-notes :is(summary,a,button):focus-visible{outline:3px solid #178476;outline-offset:3px}
+.page-notes .notes-body{padding:0 4px 16px}
+.page-notes :is(p,li,dd,dt,small){font-size:15px;line-height:1.8;color:#40584f}
+.page-notes p{margin:10px 0}
+.page-notes h3{font-size:16px;line-height:1.6}
+.page-notes .site-footer,.page-notes .usage-guide,.page-notes .inc-role-guide,.page-notes .inc-data-note,.page-notes .footer-notice{display:block;margin:0;padding:0;border:0;border-radius:0;box-shadow:none;background:transparent}
+.page-notes .site-footer>span,.page-notes .note-icon{display:none}
+.page-notes .usage-guide>h2{font-size:16px;margin-top:12px}
+.page-notes .help-return,.page-notes .notes-back{display:inline-flex;align-items:center;min-height:44px;margin:8px 12px 0 0;font-size:14px;color:#226f63}
+.notes-back{background:#f2f8f5;border:1px solid #c9ddd3;border-radius:6px;padding:8px 12px;cursor:pointer}
+.page-notes [id],.page-note-detail>summary{scroll-margin-top:160px}
+.page-notes :empty{margin:0}
+.bn-notice .page-notes{margin:18px 16px;border:0;border-top:1px solid #d9e5df;border-radius:0;padding:12px 0}
+.bn-notice .bn-sources{margin:0}
+.bn-notice .bn-sources>summary:before{content:none}
+.bn-form .notes-link,.bn-ballot-footer .notes-link{font-size:13px}
+@media(max-width:680px){
+ .page-tab-panel>.intro{padding:18px 0 14px}
+ .page-tab-panel>.intro h1{font-size:27px}
+ .page-notes{padding:14px;margin-top:20px}
+ .page-notes :is(p,li,dd,dt,small){font-size:15px}
+ .page-note-detail>summary{font-size:15px}
+ .data-summary{font-size:13px}
+ .page-notes ol,.page-notes ul{padding-left:22px}
+}
+@media print{
+ .page-notes .notes-back,.page-notes .help-return,.notes-link{display:none!important}
+ .page-notes{border:0;padding:0;box-shadow:none}
+ .page-note-detail>summary{font-size:14px;padding:4px;min-height:0}
+ .page-notes :is(p,li,dd,dt,small){font-size:11px}
+}

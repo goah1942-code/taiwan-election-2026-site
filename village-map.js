@@ -89,6 +89,7 @@ window.TaiwanVillageMap = (() => {
   }
   function create(root, options = {}) {
     const instanceId = `village-map-${++instanceNumber}`;
+    const notesContainer = options.notesContainer instanceof Element ? options.notesContainer : null;
     root.classList.add('village-map');
     root.hidden = true;
     const header = node('div', 'village-map-header');
@@ -146,11 +147,15 @@ window.TaiwanVillageMap = (() => {
     const selectedKey = node('span'); selectedKey.append(node('i', 'is-selected'), document.createTextNode('目前選取'));
     const guide = node('span', null, '拖曳可移動 · 按 + 放大');
     legend.append(borderKey, selectedKey, guide);
-    const sourceDetails = node('details', 'village-map-source');
-    sourceDetails.append(node('summary', null, '村里圖資來源'));
+    const sourceDetails = node(notesContainer ? 'div' : 'details', 'village-map-source');
+    sourceDetails.hidden = true;
+    sourceDetails.append(node(notesContainer ? 'h4' : 'summary', null, '村里圖資來源與說明'));
     const sourceText = node('p'); sourceDetails.append(sourceText);
+    const qualificationNote = node('p', 'village-map-qualification-note'); qualificationNote.hidden = true;
+    sourceDetails.append(qualificationNote, namesHint);
     root.setAttribute('aria-labelledby', title.id);
-    root.replaceChildren(header, councilControls, councilNotice, councilRetry, coverageNotice, searchWrap, layerControls, frame, baseInfo, inspection, namesHint, legend, sourceDetails);
+    root.replaceChildren(header, councilControls, councilNotice, councilRetry, coverageNotice, searchWrap, layerControls, frame, baseInfo, inspection, legend);
+    (notesContainer || root).append(sourceDetails);
 
     let context = {}, geometry = null, svg = null, visible = [], features = new Map(), home = null, viewport = null;
     let sequence = 0, destroyed = false, viewKey = '', active = null, pointerDrag = null, suppressClickUntil = 0, districtMode = false, hoverLock = null;
@@ -182,6 +187,8 @@ window.TaiwanVillageMap = (() => {
     function renderCouncilControls() {
       councilControls.replaceChildren(); councilControls.hidden = family() !== 'council' || !councilGeometry || context.level === 'result';
       councilNotice.hidden = family() !== 'council'; councilRetry.hidden = !councilLoadError || family() !== 'council';
+      qualificationNote.hidden = family() !== 'council';
+      qualificationNote.textContent = family() === 'council' ? '地理位置不判定選民資格；區域、平地原住民及山地原住民選區須依資格選擇。類別只切換地圖，選區列表保留全部類別。' : '';
       if (family() !== 'council') return;
       if (!councilGeometry) {
         councilNotice.textContent = context.level === 'result'
@@ -212,7 +219,7 @@ window.TaiwanVillageMap = (() => {
         if (!reasons.length) reasons.push('圖形來源不完整');
         return `${item.name}${reasons.join('、')}`;
       });
-      councilNotice.textContent = `${kindName} · 地理位置不判定選民資格。${context.level === 'county' ? '類別只切換地圖，選區列表保留全部類別。' : ''}${gaps.length ? ` ${gaps.join('；')}；只呈現已配準範圍，不推補缺漏。` : ''}`;
+      councilNotice.textContent = `${kindName}${gaps.length ? ` · ${gaps.join('；')}；只呈現已配準範圍，不推補缺漏。` : ''}`;
     }
     function basemapStatus(value) {
       if (destroyed) return;
@@ -438,6 +445,7 @@ window.TaiwanVillageMap = (() => {
       if (matches.length > 8) searchResults.append(node('p', null, `共 ${matches.length} 個結果，請多輸入幾個字縮小範圍。`));
     }
     function renderSource() {
+      sourceDetails.hidden = false;
       const source = geometry.source || {};
       sourceText.replaceChildren();
       const link = node('a', null, source.name || source.title || '內政部國土測繪中心 · 村里界');
@@ -696,6 +704,8 @@ window.TaiwanVillageMap = (() => {
       svg.addEventListener('pointerleave', () => { if (pointerDrag && !pointerDrag.moved) pointerDrag = null; });
     }
     function showError(message = '村里地圖暫時無法載入，仍可從下方分區清單繼續查詢。') {
+      sourceDetails.hidden = true;
+      sourceText.replaceChildren(); qualificationNote.textContent = ''; namesHint.textContent = '';
       clearBasemap(); coverageNotice.hidden = true;
       baseInfo.hidden = true; layerControls.hidden = true;
       councilControls.hidden = true;
@@ -711,6 +721,7 @@ window.TaiwanVillageMap = (() => {
       context = {...next}; const request = ++sequence;
       const enabled = Boolean(context.enabled !== false && countyId() && TYPES.has(context.typeId) && ['county', 'district', 'result'].includes(context.level));
       root.hidden = !enabled;
+      sourceDetails.hidden = !enabled || destroyed;
       if (!enabled || destroyed) { basemap?.setEnabled(false); return; }
       baseInfo.hidden = false; layerControls.hidden = false;
       root.dataset.countyId = countyId(); root.dataset.level = context.level;
@@ -725,6 +736,8 @@ window.TaiwanVillageMap = (() => {
       }
       if (key !== viewKey) { search.value = ''; searchResults.hidden = true; pointerDrag = null; hoverLock = null; root.classList.remove('is-dragging'); }
       viewKey = key;
+      sourceDetails.hidden = true;
+      sourceText.replaceChildren(); qualificationNote.textContent = ''; namesHint.textContent = '';
       clearBasemap();
       councilControls.hidden = true; councilRetry.hidden = true;
       title.textContent = `${context.county?.name || ''}${family() === 'council' ? '議員選區' : '村里'}地圖`;
@@ -772,7 +785,7 @@ window.TaiwanVillageMap = (() => {
       syncNames();
     });
     syncBasemapMode();
-    return {update, destroy() { destroyed = true; sequence++; labelResizeObserver?.disconnect(); clearBasemap(); listeners.forEach(remove => remove()); root.replaceChildren(); root.classList.remove('is-dragging'); root.hidden = true; }};
+    return {update, destroy() { destroyed = true; sequence++; labelResizeObserver?.disconnect(); clearBasemap(); listeners.forEach(remove => remove()); sourceDetails.remove(); root.replaceChildren(); root.classList.remove('is-dragging'); root.hidden = true; }};
   }
   return {create, councilDisplayName};
 })();

@@ -98,11 +98,11 @@
     const destination = next === 'candidates' ? '2026登記資料' : '現任名冊快照';
     const current = next === 'candidates' ? window.ElectionCandidateContext?.get() : window.ElectionIncumbentContext?.get();
     let message;
-    if (applied) message = `已接續${contextLabel(context)}，現在查看${destination}。${context.office === 'mayor' ? '縣市長以條列名單顯示。' : '請依這個時點的範圍選擇選區；不同年度不以同號自動配對。'}`;
+    if (applied) message = `已接續${contextLabel(context)}，現在查看${destination}。${context.office === 'mayor' ? '' : '請重新選擇選區。'}`;
     else if (!supported) message = next === 'candidates'
       ? `你剛才查看的是現任${officeLabels[context.office] || '公職'}。這裡收錄2026九合一登記資料，沒有總統或立委候選名單；下方保留先前的地方選舉查詢。`
       : '這個職務尚無對應的現任名冊；下方保留先前的現任者查詢，請選擇已收錄的職務。';
-    else message = `剛才：${contextLabel(context)}。下方目前顯示本分頁的${contextLabel(current)}查詢。${context.countyId ? '可用下方按鈕接續剛才的縣市與職務，再依各屆範圍選區。' : next === 'incumbents' ? '可直接閱讀目前名冊，或在下方切換職務；現任名冊與2026登記資料為不同時點。' : '請先選定縣市；現任名冊與2026登記資料為不同時點。'}`;
+    else message = `剛才：${contextLabel(context)}。目前：${contextLabel(current)}。${context.countyId ? '可接續剛才的縣市與職務。' : next === 'incumbents' ? '可直接閱讀目前名冊，或在下方切換職務；現任名冊與2026登記資料為不同時點。' : '請先選定縣市；現任名冊與2026登記資料為不同時點。'}`;
     const notice = document.createElement('section');notice.className = 'page-context-notice';notice.tabIndex = -1;
     notice.setAttribute('aria-label', '跨分頁查詢說明');
     const text = document.createElement('p');text.textContent = message;notice.append(text);

@@ -277,16 +277,16 @@ function syncCountyMap(typeId = state.type?.id || state.selectionTypeId, loading
     button.setAttribute('aria-pressed', String(button.dataset.mapFamily === family));
   }
   $('map-election-hint').textContent = {
-    mayor: '點選縣市，查看整個縣市的首長候選人。',
-    council: state.level === 'taiwan' ? '點選縣市，進入該縣市的議員選區地圖。' : state.level === 'county' ? '點選議員選區的範圍，直接查看該選區候選人。' : '目前顯示所選議員選區的候選人名單；更換選區可使用列表或回到議員選區總覽。',
-    village: state.level === 'taiwan' ? '點選縣市，進入可點選的行政區地圖。' : state.level === 'county' ? '點選行政區的實際範圍，放大到該區各村里。' : '依照位置點選自己的村里，查看村里長名單。',
+    mayor: '選擇縣市，查看候選人。',
+    council: state.level === 'taiwan' ? '先選擇縣市。' : state.level === 'county' ? '選擇議員選區。' : '',
+    village: state.level === 'taiwan' ? '先選擇縣市。' : state.level === 'county' ? '選擇行政區。' : '選擇村里，查看候選人。',
   }[family] || '';
   $('county-map-heading').textContent = state.level === 'taiwan' || family === 'mayor' ? '在台灣地圖上選擇縣市' : `${state.county?.name || ''} · ${family === 'council' ? '議員選區' : '村里長'}`;
   document.querySelector('.county-map-badge').textContent = state.level === 'taiwan' || family === 'mayor' ? '22 縣市' : '縣市檢視';
   for (const button of document.querySelectorAll('[data-region-back], [data-taiwan-return]')) button.disabled = state.level === 'taiwan';
   if (state.type) {
     $('region-level-heading').textContent = districtPicker ? `${state.county.name} · 選擇行政區` : `${state.county.name}${state.district ? ` · ${state.district.name}` : ''} · ${family === 'village' ? '村里清單' : family === 'council' ? '議員分區' : '選擇選區'}`;
-    $('region-summary').textContent = districtPicker ? `共 ${state.type.districts.length} 個鄉鎮市區，點選行政區後列出各村里。` : family === 'council' ? `共 ${state.type.zoneCount} 個議員選區，包含全部類別；範圍依中選會公告。` : family === 'village' && state.district ? `共 ${state.district.zoneCount} 個村里，點選後查看候選人與上屆結果。` : '點選要查看的區域，即可顯示候選人與上屆結果。';
+    $('region-summary').textContent = districtPicker ? `共 ${state.type.districts.length} 個鄉鎮市區` : family === 'council' ? `共 ${state.type.zoneCount} 個議員選區（全部類別）` : family === 'village' && state.district ? `共 ${state.district.zoneCount} 個村里` : '選擇選區，查看候選人。';
   }
   for (const link of document.querySelectorAll('[data-zone-return]')) {
     link.href = mapMode ? '#region-level-heading' : '#zone-heading';
@@ -852,7 +852,7 @@ async function selectDistrict(district, preferredZone, parentSequence, scrollToC
   }
 }
 function promptForZoneSelection() {
-  message('請先選擇選區', '從選區列表選擇要查詢的地區，即可查看該區候選人與上屆結果。');
+  message('請先選擇選區', '點選列表，查看候選人。');
 }
 async function selectZone(zone, scrollToCandidates = false, scrollTarget = 'candidate-heading') {
   if (!zone) return;
@@ -882,6 +882,7 @@ async function selectZone(zone, scrollToCandidates = false, scrollTarget = 'cand
     updateUrl(true);
     const historyReady = loadHistory(sequence);
     state.resultReady = Promise.allSettled([historyReady, loadPartyHistory(sequence, historyReady), state.mapReady]);
+    state.resultReady.then(() => { if (sequence === state.sequence) window.dispatchEvent(new Event('page-notes-ready')); });
     if (scrollToCandidates) focusLevel(sequence, scrollTarget === 'zone-heading' ? 'zone-heading' : 'candidate-heading');
   } catch (error) {
     if (sequence === state.sequence) {
@@ -929,13 +930,16 @@ function renderResult() {
   $('result-source').href = zone.registrationSourceUrl || state.type.sourceUrl;
   $('result-source').textContent = zone.registrationRound ? `第${zone.registrationRound}次登記 PDF ↗` : '中選會登記 PDF ↗';
   const provenance = $('registration-provenance');
-  if (provenance) provenance.textContent = window.ElectionRegistrationSource?.describe(zone.registrationSource || state.type.registrationSource, zone.registrationSourceUrl || state.type.sourceUrl) || '名冊製表日與官方網站更新日：本次未取得。本站非即時同步，請核對官方名冊。';
+  const sourceDescription = window.ElectionRegistrationSource?.describe(zone.registrationSource || state.type.registrationSource, zone.registrationSourceUrl || state.type.sourceUrl) || '名冊製表日與官方網站更新日：本次未取得。本站非即時同步，請核對官方名冊。';
+  if (provenance) provenance.textContent = sourceDescription;
+  if ($('registration-summary')) $('registration-summary').textContent = `${sourceDescription.split('；').slice(0, 2).join('；').split('。')[0]}。`;
   const parties = [...new Set(state.zoneData.candidates.map((candidate) => candidate.party))].sort((a,b) => a.localeCompare(b,'zh-Hant'));
   $('party-filter').innerHTML = '<option value="">全部政黨</option>' + parties.map((party) => `<option value="${escapeHtml(party)}">${escapeHtml(party === '無' ? '無政黨推薦（原資料：無）' : party)}</option>`).join('');
   renderCandidates();
   $('party-history-jump').hidden = !['metro_mayor', 'county_mayor'].includes(state.type.id) || !state.countyData.partyHistoryPath;
 }
 function resetPartyHistory() {
+  for (const id of ['registration-provenance', 'registration-summary', 'candidate-stage-note', 'candidate-history-notes', 'history-share-explanation']) $(id)?.replaceChildren();
   state.partyHistoryView?.destroy();
   state.partyHistoryView = null;
   const container = $('party-history');
@@ -956,7 +960,7 @@ async function loadPartyHistory(sequence, historyReady) {
     const data = await readJson(path);
     if (sequence !== state.sequence) return;
     if (!window.PartyHistory) throw new Error('圖表程式未載入，請重新整理頁面');
-    state.partyHistoryView = window.PartyHistory.render(container, data, {countyName, shareMode: state.partyShareMode,
+    state.partyHistoryView = window.PartyHistory.render(container, data, {countyName, shareMode: state.partyShareMode, notesContainer: $('candidate-chart-notes'),
       onShareModeChange: mode => { if (sequence === state.sequence) setPartyShareMode(mode); }});
     if (location.hash === '#party-history') {
       // The 2022 block sits above the chart and changes its vertical position.
@@ -1083,9 +1087,16 @@ function renderHistoryShareMode(view) {
   const formula = $('history-share-formula');
   if (formula) {
     const validVotes = historyVoteCount(state.historyData?.profile?.validVotes);
-    formula.textContent = blueGreen
+    const explanation = blueGreen
       ? '投票率仍採完整選區資料。候選人比例＝個人原始票數 ÷ 國民黨與民進黨推薦候選人合計票數；兩黨摘要合計 100%，多人候選人的顯示比例合計可能因四捨五入略有差異。'
       : `投票率＝投票數 ÷ 選舉人數。候選人得票率＝個人得票數 ÷ 有效票數（${validVotes == null ? '—' : validVotes.toLocaleString('zh-TW')} 票）。`;
+    const notes = $('history-share-explanation');
+    if (notes) {
+      notes.textContent = explanation;
+      formula.textContent = blueGreen
+        ? `得票率分母：藍綠合計 ${view.total == null ? '—' : view.total.toLocaleString('zh-TW')} 票`
+        : `得票率分母：有效票 ${validVotes == null ? '—' : validVotes.toLocaleString('zh-TW')} 票`;
+    } else formula.textContent = explanation;
   }
   const rateButton = $('history-table')?.querySelector('[data-sort-key="voteSharePercent"]');
   if (rateButton) {
@@ -1111,6 +1122,8 @@ function renderHistoryRows() {
   updateSortHeaders('history-table', sort, 'history-sort-status');
 }
 async function loadHistory(sequence) {
+  $('candidate-history-notes')?.replaceChildren();
+  $('history-share-explanation')?.replaceChildren();
   if (!state.zone?.previousPath) {
     $('history-content').innerHTML = '<p class="history-note">此選區沒有可直接對應的 2022 上屆資料。</p>';
     return;
@@ -1130,7 +1143,11 @@ async function loadHistory(sequence) {
     const historySourceUrl = data.sourceUrl || state.countyData.previousSourceUrl;
     const historicalAreaNote = data.sourceZone && !/[\uE000-\uF8FF]/u.test(data.sourceZone) ?
       `（2022 原始選區名稱：${escapeHtml(data.sourceZone)}）` : '';
-    $('history-content').innerHTML = `<p class="history-note">${escapeHtml(electionLabel)}「${escapeHtml(data.zone)}」${historicalAreaNote}投票結果，資料來自<a href="${escapeHtml(historySourceUrl)}" target="_blank" rel="noopener noreferrer">中選會官方資料</a>。「2026 有參選」依本頁同選區登記名單比對。</p><div class="history-summary"><div><small>選舉人數（可投票）</small><strong>${profile.eligibleVoters.toLocaleString('zh-TW')}</strong><span>人</span></div><div><small>投票數（已投票）</small><strong>${profile.ballotsCast.toLocaleString('zh-TW')}</strong><span>票</span></div><div><small>投票率</small><strong>${profile.turnoutPercent.toFixed(2)}%</strong></div></div>
+    const historyNotes = $('candidate-history-notes');
+    const sourceNote = `${escapeHtml(electionLabel)}「${escapeHtml(data.zone)}」${historicalAreaNote}投票結果，資料來自<a href="${escapeHtml(historySourceUrl)}" target="_blank" rel="noopener noreferrer">中選會官方資料</a>。「2026 有參選」依本頁同選區登記名單比對。`;
+    if (historyNotes) historyNotes.innerHTML = sourceNote;
+    const introduction = historyNotes ? `${escapeHtml(electionLabel)} · ${escapeHtml(data.zone)} <a href="#candidate-history-notes">來源與說明</a>` : sourceNote;
+    $('history-content').innerHTML = `<p class="history-note">${introduction}</p><div class="history-summary"><div><small>選舉人數（可投票）</small><strong>${profile.eligibleVoters.toLocaleString('zh-TW')}</strong><span>人</span></div><div><small>投票數（已投票）</small><strong>${profile.ballotsCast.toLocaleString('zh-TW')}</strong><span>票</span></div><div><small>投票率</small><strong>${profile.turnoutPercent.toFixed(2)}%</strong></div></div>
       <div id="history-share-controls" class="history-share-controls" role="group" aria-label="2022 候選人比例顯示方式">
         <span>比例顯示</span><button type="button" data-history-share-mode="all" aria-controls="history-table history-blue-green-summary" aria-pressed="${state.partyShareMode === 'all'}">全部候選人</button><button type="button" data-history-share-mode="blue-green" aria-controls="history-table history-blue-green-summary" aria-pressed="${state.partyShareMode === 'blue-green'}">只看藍綠（合計100%）</button>
       </div><div id="history-blue-green-summary" class="history-blue-green-summary" hidden></div><p id="history-share-formula" class="history-formula"></p>
@@ -1143,6 +1160,8 @@ async function loadHistory(sequence) {
     renderHistoryRows();
   } catch (error) {
     if (sequence !== state.sequence) return;
+    $('candidate-history-notes')?.replaceChildren();
+    $('history-share-explanation')?.replaceChildren();
     $('history-content').innerHTML = `<p class="history-note">2022 資料載入失敗：${escapeHtml(error.message)}</p><button type="button" class="history-retry">重新載入 2022 資料</button>`;
     $('history-content').querySelector('button').addEventListener('click', () => loadHistory(sequence));
   }
@@ -1277,6 +1296,7 @@ async function init() {
     if (positionResult) history.scrollRestoration = 'manual';
     state.manifest = await readJson('counties.json');
     if (window.TaiwanVillageMap) state.villageMapView = window.TaiwanVillageMap.create($('village-map'), {
+      notesContainer: $('candidate-map-notes'),
       matchesSearch: searchMatches, onVillageListRequest: openVillageList,
       getViewportTopInset: () => {
         const navigation = $('query-navigation');

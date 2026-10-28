@@ -117,7 +117,7 @@
     configureDistrict();render();updateUrl();focusHeading(focusStats?'inc-statistics-heading':area?'inc-selected-heading':'inc-zone-heading');
   }
   function renderOfficeGuide(){
-    const guide=officeGuide[office];
+    const guide=officeGuide[office];$('inc-office-notes').hidden=false;
     $('inc-role-heading').textContent=`${labels[office]} · ${guide.short}`;
     $('inc-role-description').textContent=guide.description;
     $('inc-role-next').textContent=['legislator','council','village'].includes(office)&&counties.some(c=>normalize(c.name)===normalize(county))?`目前查看${county}，${office==='village'?'請選擇行政區，再明確選擇村里':'請從選區列表選擇要看的名單'}。`:guide.flow;
@@ -267,7 +267,7 @@
     $('inc-clear').hidden=!query;
     $('inc-search-hint').hidden=!['legislator','council'].includes(office)||!county||national;
     const covered=rows.filter(r=>normalize(r.county)===normalize(county)).every(r=>r.scope);
-    $('inc-search-hint').textContent=national?'':covered?'可用行政區或村里名找官方選區範圍。區域、平地原住民與山地原住民分開標示；地名不判定個人領票資格。':'此屆部分選區範圍暫未載入或待確認，可先用姓名或選區編號查詢，再核對官方來源；找不到不代表沒有現任者。';
+    $('inc-search-hint').textContent=national?'':covered?'可搜尋行政區、村里或姓名。':'部分選區範圍待確認，可先搜尋姓名或選區編號。';
     renderStatistics();
     if(browsing){renderCountyList();return;}
     $('inc-workspace').classList.toggle('has-sidebar',selected);$('inc-change-zone').hidden=!selected;$('inc-change-zone').textContent=national?'查看名冊類別 ↑':'更換選區 ↑';
@@ -279,7 +279,7 @@
       if(!allAvailable.some(g=>g.key===area))area=national&&!invalidRouteArea&&allAvailable.length===1?allAvailable[0].key:'';
       const current=available.find(g=>g.key===area);
       list.classList.toggle('is-short-list',available.length>0&&available.length<=3);
-      if(available.some(group=>group.matchedCountywide))$('inc-search-hint').textContent+=' 本次也列出涵蓋全縣市的原住民選區，請依資格確認。';
+      if(available.some(group=>group.matchedCountywide))$('inc-search-hint').textContent+=' 含全縣市原住民選區。';
       $('inc-zone-heading').textContent=national?'名冊類別':office==='village'?'村里選區列表':'選區列表';
       const unknown=office==='village'?available.filter(g=>!g.area||normalize(g.area)===normalize(county)).length:0;
       $('inc-zone-count').textContent=`${available.length-unknown} 個${national?'名冊類別':office==='village'?'村里':'選區'}${query?'符合搜尋':''}${unknown?' · '+unknown+'項村里待確認':''}`;
@@ -329,6 +329,7 @@
     $('inc-result-heading').textContent=`${labels[office]}名冊`;
     $('inc-selected-context').textContent='';
     $('inc-checked').textContent='正在讀取本職務的來源資料…';
+    $('inc-snapshot-summary').textContent='正在讀取名冊…';$('inc-office-notes').hidden=true;
     $('inc-source-note').textContent='名冊載入完成後顯示來源與查核日期。';
     $('inc-stale').hidden=true;$('inc-sources').replaceChildren();
     window.OfficeholderStatistics?.reset();$('inc-office-statistics').hidden=true;$('inc-show-stats').hidden=true;$('inc-show-history').hidden=true;$('inc-selected-geography').hidden=true;$('inc-search-hint').hidden=true;$('inc-village-steps').hidden=true;
@@ -366,12 +367,13 @@
         if(corrected.href!==location.href)history.replaceState(null,'',corrected);
       }
       $('inc-checked').textContent=`收錄查核：${index.checkedAt} · 非即時同步`;
+      $('inc-snapshot-summary').textContent=`${index.checkedAt} 名冊快照`;
       $('inc-source-note').textContent=['mayor','council','village'].includes(office)?'地方名冊未提供逐筆任免日期；代理職稱依來源保留，缺漏不代表缺額。黨籍為來源所列，可能尚未反映異動。':office==='legislator'?'依立法院第11屆資料，排除已離職者；不分區與原住民名單另列，不依縣市分配。':'依總統府現任總統介紹，顯示就任日期與官方連結。';
       const sources=[...new Set(rows.flatMap(r=>[r.sourceId,r.additionalSourceId].filter(Boolean)))];$('inc-sources').innerHTML=sources.map(id=>`<li>${link(id)}${index.sources[id].sourceUpdatedAt?`（來源日期：${escape(index.sources[id].sourceUpdatedAt)}）`:''}</li>`).join('');
       $('inc-stale').hidden=Date.now()-Date.parse(index.checkedAt+'T00:00:00+08:00')<30*86400000;
-      render();if(writeRoute&&!root.hidden&&location.href===pendingRoute)updateUrl(true);
+      render();window.dispatchEvent(new Event('page-notes-ready'));if(writeRoute&&!root.hidden&&location.href===pendingRoute)updateUrl(true);
       if(routeWarning)focusHeading('inc-route-note');else if(readingTargets.has(location.hash.slice(1)))focusHeading(location.hash.slice(1));else if(restoreReading)focusHeading(rosterHeading());
-    }catch{if(request!==sequence)return;rows=[];$('inc-status').textContent='名冊暫時無法載入，請重新載入。';$('inc-error').hidden=false;}
+    }catch{if(request!==sequence)return;rows=[];$('inc-snapshot-summary').textContent='名冊尚未載入';$('inc-status').textContent='名冊暫時無法載入，請重新載入。';$('inc-error').hidden=false;}
     finally{if(request===sequence){$('inc-filters').disabled=!rows.length;$('inc-directory').setAttribute('aria-busy','false');}}
   }
   for(const button of root.querySelectorAll('[data-inc-office]'))button.addEventListener('click',()=>{const next=button.dataset.incOffice;if(next===office&&rows.length&&next!=='village')return;const keepCounty=next!==office&&['legislator','council','village'].includes(next)&&counties.some(c=>normalize(c.name)===normalize(county))?county:'';load({office:next,county:keepCounty,view:next==='village'?'list':view},true);});

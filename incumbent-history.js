@@ -60,10 +60,12 @@ window.IncumbentHistory=(()=>{
       return `<tr><th scope="row">${window.ElectionPartyStyle.badge(r.party,partyLabel(r.party))}</th><td>${number(r.votes)}</td><td>${percentage(r.share)}</td><td>${change}</td></tr>`;
     }).join('');
     $('inc-history-total').textContent=number(current.validVotes);
-    $('inc-history-denominator').textContent=`分母：${number(current.validVotes)}張有效票；不含無效票。${previous?'變化與'+previous.year+'年同類選舉比較，使用各年自己的有效票分母；分類依來源原名，上次或本次未列者不計差值。':'這是本範圍已收錄最早的同類選舉。'}`;
+    $('inc-history-comparison-note').textContent=`分母：${number(current.validVotes)}張有效票；不含無效票。${previous?'變化與'+previous.year+'年同類選舉比較，使用各年自己的有效票分母；分類依來源原名，上次或本次未列者不計差值。':'這是本範圍已收錄最早的同類選舉。'}`;
+    $('inc-history-denominator').textContent=`分母：全部有效票 ${number(current.validVotes)} 票`;
     $('inc-history-source').href=current.sourceUrl;$('inc-history-source').textContent=`${current.year}年${current.label} · 中選會來源 ↗`;
     $('inc-history-coverage').textContent=`${data.coverageNote} 本站歷史資料核對日：${data.checkedOn}；非官方即時更新。`;
     $('inc-history-content').hidden=false;$('inc-history-retry').hidden=true;
+    window.dispatchEvent(new Event('page-notes-ready'));
   }
   async function update(next){
     if(!root)return;
@@ -77,6 +79,7 @@ window.IncumbentHistory=(()=>{
       kind=sameOffice&&['president','mayor'].includes(requested)?requested:next.office==='president'?'president':'mayor';
       year=sameOffice?route.get('historyYear')||'':'';
     }
+    for(const id of ['inc-history-note','inc-history-comparison-note','inc-history-coverage'])$(id).textContent='';
     context=next;key=nextKey;data=null;setRouteNote(invalidType?`網址中的歷史選舉種類無法辨識，已改看${kind==='president'?'總統票':'縣市長票'}。`:'');const request=++sequence;
     if(invalidType){const url=new URL(location.href);url.searchParams.set('historyType',kind);history.replaceState(null,'',url);}
     root.hidden=false;$('inc-history-heading').textContent=`${next.scope||'全台'}歷年政治分布`;
@@ -91,7 +94,7 @@ window.IncumbentHistory=(()=>{
     }catch{if(request!==sequence)return;$('inc-history-status').textContent='歷史資料暫時無法載入，現任名冊與最近一次選舉統計仍可使用。';$('inc-history-retry').hidden=false;}
   }
   function show(write=true){if(!root||root.hidden||$('incumbents-panel').hidden)return;if(context&&write)writeRoute();$('inc-history-heading').focus({preventScroll:true});$('inc-history-heading').scrollIntoView({block:'start'});}
-  function reset(){context=null;data=null;sequence++;if(root)root.hidden=true;}
+  function reset(){for(const id of ['inc-history-note','inc-history-comparison-note','inc-history-coverage'])$(id).textContent='';context=null;data=null;sequence++;if(root)root.hidden=true;}
   if(root){
     for(const button of root.querySelectorAll('[data-inc-history-type]'))button.addEventListener('click',()=>{kind=button.dataset.incHistoryType;year='';setRouteNote('');render();writeRoute();});
     $('inc-history-years').addEventListener('click',event=>{const button=event.target.closest('button');if(button){year=button.value;setRouteNote('');render();writeRoute();}});
